@@ -8,7 +8,7 @@ const SearchResultsContainer = (props : any) => {
 
 let mapStateToProps = (state : any) => {
     return {
-        cities: state.search.cities
+        city: state.search.city
     }
 }
 
