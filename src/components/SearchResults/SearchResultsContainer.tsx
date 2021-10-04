@@ -2,15 +2,22 @@ import React from "react";
 import SearchResults from "./SearchResults";
 import {connect} from "react-redux";
 import Loader from "../Loader/Loader";
-import styles from "./SearchResults.module.css";
+import styled from "styled-components";
+
+const Section = styled.section`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`
 
 const SearchResultsContainer = (props : any) => {
     return (
-        <section className={styles.searchResults}>
+        <Section>
             {
                 props.isFetching ? <Loader /> : <SearchResults {...props}/>
             }
-        </section>
+        </Section>
     )
 }
 

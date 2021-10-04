@@ -1,5 +1,25 @@
 import React from "react";
-import styles from './SearchResults.module.css'
+import styled from "styled-components";
+
+const City = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 50px;
+`
+
+const Info = styled.div`
+  display: grid;
+  width: 300px;
+  margin-top: 20px;
+  grid-template-columns: 33% 33% 33%;
+  grid-template-rows: 50px 50px;
+`
+
+const Span = styled.span`
+  text-align: center;
+`
 
 const SearchResults = (props : any) => {
     let formatUnixDate = (unixDate : number) => {
@@ -15,37 +35,37 @@ const SearchResults = (props : any) => {
     )
 
     if (props.city) return (
-        <div className={styles.city}>
+        <City>
             <h1>{props.city.name}, {props.city.sys.country}</h1>
             <p>{Math.round(props.city.main.temp)}°C</p>
             <p>{props.city.weather[0].main}</p>
-            <div className={styles.characteristics}>
-                <span>
+            <Info>
+                <Span>
                     <p>visibility</p>
                     <p>{props.city.visibility / 1000}km</p>
-                </span>
-                <span>
+                </Span>
+                <Span>
                     <p>wind</p>
                     <p>{props.city.wind.speed}km/h</p>
-                </span>
-                <span>
+                </Span>
+                <Span>
                     <p>sunrise</p>
                     <p>{formatUnixDate(props.city.sys.sunrise)}</p>
-                </span>
-                <span>
+                </Span>
+                <Span>
                     <p>humidity</p>
                     <p>{props.city.main.humidity}</p>
-                </span>
-                <span>
+                </Span>
+                <Span>
                     <p>cloudiness</p>
                     <p>{props.city.clouds.all}%</p>
-                </span>
-                <span>
+                </Span>
+                <Span>
                     <p>sunset</p>
                     <p>{formatUnixDate(props.city.sys.sunset)}</p>
-                </span>
-            </div>
-        </div>
+                </Span>
+            </Info>
+        </City>
     )
     return <></>
 }
