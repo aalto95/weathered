@@ -10,6 +10,12 @@ const SearchResults = (props : any) => {
         return formattedTime
     }
 
+    if (props.fetchError) return (
+        <section className={styles.searchResults}>
+            <h1>Failed to fetch...</h1>
+        </section>
+    )
+
     if (props.city) return (
         <section className={styles.searchResults}>
             <div className={styles.city}>
