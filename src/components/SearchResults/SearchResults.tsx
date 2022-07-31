@@ -1,7 +1,11 @@
-import { useLottie } from 'lottie-react'
+import { useLottie } from 'lottie-react';
 import React from "react";
 import styled from "styled-components";
-import cloudyAnimation from '../../assets/animations/cloudy.json'
+import cloudsAnimation from '../../assets/animations/clouds.json'
+import rainAnimation from '../../assets/animations/rain.json'
+import snowAnimation from '../../assets/animations/snow.json'
+import clearAnimation from '../../assets/animations/clear.json'
+import thunderstormAnimation from '../../assets/animations/thunderstorm.json'
 
 const City = styled.div`
   display: flex;
@@ -10,6 +14,7 @@ const City = styled.div`
   flex-direction: column;
   margin: 50px;
   background-color: gray;
+  border-radius: 10px;
 `
 
 const Info = styled.div`
@@ -24,18 +29,43 @@ const Span = styled.span`
   text-align: center;
 `
 
-const CloudyAnimation = () => {
-    const options = {
-        animationData: cloudyAnimation,
+const getWeatherTypeAnimation = (type: string) => {
+    switch (type) {
+        case 'Thunderstorm':
+            return thunderstormAnimation
+        case 'Clear':
+            return clearAnimation
+        case 'Clouds':
+            return cloudsAnimation
+        case 'Rain':
+            return rainAnimation
+        case 'Snow':
+            return snowAnimation
+        default:
+            return null
+    }
+}
+
+const LottieAnimation = ({type}: {type: string}) => {
+    let options = {
+        animationData: getWeatherTypeAnimation(type),
         style: {width: '100px', height: '100px'},
         loop: true,
         autoPlay: true
     }
+    
     const { View } = useLottie(options)
     return View
 }
 
-const SearchResults = (props : any) => {
+interface SearchResultsProps {
+    city: any;
+    isFetching: boolean;
+    fetchError: string;
+}
+
+const SearchResults = (props: SearchResultsProps) => {
+    console.log(props.city)
     let formatUnixDate = (unixDate : number) => {
         let date = new Date(unixDate * 1000);
         let hours = date.getHours();
@@ -53,7 +83,7 @@ const SearchResults = (props : any) => {
             <h1>{props.city.name}, {props.city.sys.country}</h1>
             <p>{Math.round(props.city.main.temp)}°C</p>
             <p>{props.city.weather[0].main}</p>
-            <CloudyAnimation />
+            <LottieAnimation type={props.city.weather[0].main}/>
             <Info>
                 <Span>
                     <p>visibility</p>
@@ -82,7 +112,8 @@ const SearchResults = (props : any) => {
             </Info>
         </City>
     )
-    return <></>
+
+    return null
 }
 
 export default SearchResults
