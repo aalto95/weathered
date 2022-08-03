@@ -2,7 +2,7 @@ import React from "react";
 import SearchBar from "./SearchBar";
 import {connect} from "react-redux";
 import {search} from "../../redux/search-reducer";
-import { setMode } from '../../redux/app-reducer'
+import { toggleMode } from '../../redux/app-reducer'
 
 const SearchBarContainer = (props : any) => {
     return <SearchBar {...props}/>
@@ -16,7 +16,7 @@ let mapStateToProps = (state : any) => {
 
 let mapDispatchToProps = {
     search,
-    setMode
+    toggleMode
 }
 
 export default connect(mapStateToProps, mapDispatchToProps) (SearchBarContainer)

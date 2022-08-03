@@ -28,4 +28,14 @@ export const setMode = (mode: string): SetCityActionType => ({
   mode,
 });
 
+export const toggleMode = (mode: string) => (dispatch: any) => {
+  localStorage.setItem("mode", mode);
+  dispatch(setMode(mode));
+};
+
+export const initializeMode = () => (dispatch: any) => {
+  const mode = localStorage.getItem("mode");
+  dispatch(setMode(mode || "light"));
+};
+
 export default appReducer;

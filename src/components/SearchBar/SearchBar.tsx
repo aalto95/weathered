@@ -8,7 +8,6 @@ const sectionBackgroundColor = theme('mode', {
 })
 
 const Section = styled.section`
-    background-color: ${sectionBackgroundColor};
     color: #FFF;
     display: flex;
     flex-direction: column;
@@ -21,6 +20,8 @@ const Header = styled.header`
     display: flex;
     justify-content: space-between;
     width: 100%;
+    padding: 10px;
+    transition: all 0.5s ease;
 `
 
 const Form = styled.form`
@@ -33,16 +34,25 @@ const Form = styled.form`
 
 const Input = styled.input`
     margin: 1rem 0 1rem 0;
-    height: 30px;
+    width: 200px;
+    height: 50px;
     outline: none;
-    border: none;
-    border-radius: 5px;
+    border: 2px solid ${sectionBackgroundColor};
+    border-radius: 20px;
     padding: 5px;
+`
+
+const ToggleButton = styled.button`
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    color: #FFF;
+    font-size: 16px;
 `
 
 const SearchBar:React.FC = (props : any) => {
     const toggleTheme = () => {
-        props.setMode(props.mode === 'light' ? 'dark' : 'light')
+        props.toggleMode(props.mode === 'light' ? 'dark' : 'light')
         console.log(props.mode)
     }    
 
@@ -55,7 +65,9 @@ const SearchBar:React.FC = (props : any) => {
         <Section>
             <Header>
                 <h1>Weather</h1>
-                <button onClick={toggleTheme}>Theme Change</button>
+                <ToggleButton onClick={toggleTheme}>
+                    {props.mode === 'light' ? 'Dark' : 'Light'}
+                </ToggleButton>
             </Header>
             <Form onSubmit={commenceSearch}>
                 <Input type="text" value={inputField} onChange={(e) => setInputField(e.target.value)}/>
