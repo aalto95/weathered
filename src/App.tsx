@@ -6,6 +6,10 @@ import styled, { ThemeProvider } from 'styled-components'
 import { connect } from 'react-redux'
 import { initializeMode } from './redux/app-reducer'
 import theme from 'styled-theming'
+import { Tabbar } from './components/Tabbar/Tabbar'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { AQI } from './components/AQI'
+import { Settings } from './components/Settings'
 
 const AppContainer = ({mode, initializeMode}: any) => {
   useEffect(() => {
@@ -34,6 +38,7 @@ const WrapperBackgroundColor = theme('mode', {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   width: 100vw;
   height: 100vh;
   background-color: ${WrapperBackgroundColor};
@@ -41,12 +46,24 @@ const Wrapper = styled.div`
 `
 
 const App = (props: any) => {
+
   return (
     <ThemeProvider theme={{ mode: props.mode }}>
-      <Wrapper>
-          <SearchBarContainer />
-          <SearchResultsContainer/>
-      </Wrapper>
+      <Router>
+        <Wrapper>
+          <Routes>
+              <Route path="/weather" element={
+                <div>
+                  <SearchBarContainer />
+                  <SearchResultsContainer/>
+                </div>
+              } />
+              <Route path="/AQI" element={<AQI />} />
+              <Route path="/Settings" element={<Settings />} />
+          </Routes>
+          <Tabbar />
+        </Wrapper>
+      </Router>
     </ThemeProvider>
   );
 }
