@@ -7,14 +7,14 @@ const rotation = theme('mode', {
     dark: 'rotate(360deg)',
 })
 
-const VinylIcon = ({theme}: {theme: string}) => {
+const ThemeImg = styled.div`
+width: 32px;
+height: 32px;
+transform: ${rotation};
+transition: all 0.5s ease;
+`
 
-    const ThemeImg = styled.div`
-        width: 32px;
-        height: 32px;
-        transform: ${rotation};
-        transition: all 0.5s ease;
-    `
+const VinylIcon = ({theme}: {theme: string}) => {
 
     return (
         <ThemeImg>
@@ -96,16 +96,18 @@ const Heading = styled.h1`
 `
 
 const SearchBar:React.FC = (props : any) => {
+
     const toggleTheme = () => {
         props.toggleMode(props.mode === 'light' ? 'dark' : 'light')
-        console.log(props.mode)
     }    
 
     const commenceSearch = (e : any) => {
         e.preventDefault()
         props.search(inputField)
     }
+
     const [inputField, setInputField] = useState('')
+
     return (
         <Section>
             <Header>
