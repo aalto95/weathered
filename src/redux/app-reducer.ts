@@ -31,6 +31,16 @@ export const setMode = (mode: string): SetCityActionType => ({
 export const toggleMode = (mode: string) => (dispatch: any) => {
   localStorage.setItem("mode", mode);
   dispatch(setMode(mode));
+  let themeMode = localStorage.getItem("mode");
+  if (themeMode === "dark") {
+    document
+      .querySelector('meta[name="theme-color"]')!
+      .setAttribute("content", "#51557E");
+  } else if (themeMode === "light") {
+    document
+      .querySelector('meta[name="theme-color"]')!
+      .setAttribute("content", "#F7ECDE");
+  }
 };
 
 export const initializeMode = () => (dispatch: any) => {

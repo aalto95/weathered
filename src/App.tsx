@@ -10,6 +10,12 @@ import theme from 'styled-theming'
 const AppContainer = ({mode, initializeMode}: any) => {
   useEffect(() => {
     initializeMode()
+    let themeMode = localStorage.getItem('mode')
+    if (themeMode === 'dark') {
+      document.querySelector('meta[name="theme-color"]')!.setAttribute('content', '#51557E');
+    } else if (themeMode === 'light') {
+      document.querySelector('meta[name="theme-color"]')!.setAttribute('content', '#F7ECDE');
+    }
   }, [])
   
   return (
