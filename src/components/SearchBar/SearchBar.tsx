@@ -109,7 +109,7 @@ const SearchBar:React.FC = (props : any) => {
     return (
         <Section>
             <Header>
-                <Heading>Weather</Heading>
+                <Heading>Weathered</Heading>
                 <ToggleButton onClick={toggleTheme}>
                     <VinylIcon theme={props.mode} />
                 </ToggleButton>
