@@ -2,9 +2,50 @@ import React, {useState} from "react";
 import styled from "styled-components";
 import theme from 'styled-theming';
 
+const rotation = theme('mode', {
+    light: 'rotate(180deg)',
+    dark: 'rotate(360deg)',
+})
+
+const VinylIcon = ({theme}: {theme: string}) => {
+
+    const ThemeImg = styled.div`
+        width: 32px;
+        height: 32px;
+        transform: ${rotation};
+        transition: all 0.5s ease;
+    `
+
+    return (
+        <ThemeImg>
+            <svg version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 454.745 454.745" width='32px'>
+                <g>
+                    <g>
+                        <g>
+                            <path fill={theme === 'light' ? '#51557E' : '#F7ECDE' } d="M227.372,172.545c-30.238,0-54.819,24.581-54.819,54.827c0,30.23,24.581,54.827,54.819,54.827
+                                c30.222,0,54.819-24.597,54.819-54.827C282.192,197.134,257.595,172.545,227.372,172.545z"/>
+                        </g>
+                        <g>
+                            <path fill={theme === 'light' ? '#51557E' : '#F7ECDE' } d="M227.372,0C102.005,0,0,101.981,0,227.372C0,352.74,102.005,454.745,227.372,454.745
+                                S454.745,352.74,454.745,227.372C454.745,101.981,352.74,0,227.372,0z M122.709,377.003l64.525-56.168l0.813,84.935
+                                C149.013,405.77,122.709,377.003,122.709,377.003z M227.372,308.772c-44.894,0-81.424-36.522-81.424-81.4
+                                c0-44.894,36.522-81.4,81.424-81.4c44.878,0,81.4,36.497,81.4,81.4C308.772,272.25,272.25,308.772,227.372,308.772z"/>
+                        </g>
+                    </g>
+                </g>
+            </svg>
+        </ThemeImg>
+    )
+}
+
 const sectionBackgroundColor = theme('mode', {
-    light: 'lightgray',
-    dark: '#282c34',
+    light: '#F7ECDE',
+    dark: '#51557E',
+})
+
+const headingColor = theme('mode', {
+    light: '#51557E',
+    dark: '#F7ECDE',
 })
 
 const Section = styled.section`
@@ -50,6 +91,10 @@ const ToggleButton = styled.button`
     font-size: 16px;
 `
 
+const Heading = styled.h1`
+    color: ${headingColor};
+`
+
 const SearchBar:React.FC = (props : any) => {
     const toggleTheme = () => {
         props.toggleMode(props.mode === 'light' ? 'dark' : 'light')
@@ -64,9 +109,9 @@ const SearchBar:React.FC = (props : any) => {
     return (
         <Section>
             <Header>
-                <h1>Weather</h1>
+                <Heading>Weather</Heading>
                 <ToggleButton onClick={toggleTheme}>
-                    {props.mode === 'light' ? 'Dark' : 'Light'}
+                    <VinylIcon theme={props.mode} />
                 </ToggleButton>
             </Header>
             <Form onSubmit={commenceSearch}>

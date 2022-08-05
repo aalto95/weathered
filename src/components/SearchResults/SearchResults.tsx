@@ -6,6 +6,22 @@ import rainAnimation from '../../assets/animations/rain.json'
 import snowAnimation from '../../assets/animations/snow.json'
 import clearAnimation from '../../assets/animations/clear.json'
 import thunderstormAnimation from '../../assets/animations/thunderstorm.json'
+import theme from 'styled-theming'
+
+const infoBackgroundColor = theme('mode', {
+    light: '#F7ECDE',
+    dark: '#51557E',
+})
+
+const cardBackgroundColor = theme('mode', {
+    light: '#F7ECCC',
+    dark: '#51557E',
+})
+
+const textColor = theme('mode', {
+    light: '#000',
+    dark: '#FFF',
+})
 
 const City = styled.div`
   display: flex;
@@ -14,7 +30,10 @@ const City = styled.div`
   flex-direction: column;
   margin: 50px;
   background-color: gray;
-  border-radius: 10px;
+  border-radius: 12px;
+  background-color: ${cardBackgroundColor};
+  color: ${textColor};
+  transition: all 0.5s ease;
 `
 
 const Info = styled.div`
@@ -23,6 +42,10 @@ const Info = styled.div`
   margin-top: 20px;
   grid-template-columns: 33% 33% 33%;
   grid-template-rows: 50px 50px;
+  background-color: ${infoBackgroundColor};
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  transition: all 0.5s ease;
 `
 
 const Span = styled.span`

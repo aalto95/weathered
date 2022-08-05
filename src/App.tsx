@@ -2,9 +2,10 @@ import React, { useEffect } from 'react';
 import SearchBarContainer from "./components/SearchBar/SearchBarContainer";
 import SearchResultsContainer from "./components/SearchResults/SearchResultsContainer";
 import './App.css'
-import { ThemeProvider } from 'styled-components'
+import styled, { ThemeProvider } from 'styled-components'
 import { connect } from 'react-redux'
 import { initializeMode } from './redux/app-reducer'
+import theme from 'styled-theming'
 
 const AppContainer = ({mode, initializeMode}: any) => {
   useEffect(() => {
@@ -18,13 +19,28 @@ const AppContainer = ({mode, initializeMode}: any) => {
   )
 }
 
+const WrapperBackgroundColor = theme('mode', {
+  light: '#FBF8F1',
+  dark: '#1B2430',
+})
+
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  background-color: ${WrapperBackgroundColor};
+  transition: all 0.5s ease;
+`
+
 const App = (props: any) => {
   return (
     <ThemeProvider theme={{ mode: props.mode }}>
-      <div className="App">
+      <Wrapper>
           <SearchBarContainer />
           <SearchResultsContainer/>
-      </div>
+      </Wrapper>
     </ThemeProvider>
   );
 }
