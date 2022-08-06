@@ -1,39 +1,21 @@
 import React, { useEffect } from 'react';
-import SearchBarContainer from "./components/SearchBar/SearchBarContainer";
-import SearchResultsContainer from "./components/SearchResults/SearchResultsContainer";
+import SearchBar from "./components/SearchBar";
+import SearchResults from "./components/SearchResults";
 import './App.css'
 import styled, { ThemeProvider } from 'styled-components'
 import { connect } from 'react-redux'
-import { initializeMode } from './redux/app-reducer'
 import theme from 'styled-theming'
-import { Tabbar } from './components/Tabbar/Tabbar'
+import { Tabbar } from './components/Tabbar'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AQI } from './components/AQI'
 import { Settings } from './components/Settings'
-
-const AppContainer = ({mode, initializeMode}: any) => {
-  useEffect(() => {
-    initializeMode()
-    let themeMode = localStorage.getItem('mode')
-    if (themeMode === 'dark') {
-      document.querySelector('meta[name="theme-color"]')!.setAttribute('content', '#51557E');
-    } else if (themeMode === 'light') {
-      document.querySelector('meta[name="theme-color"]')!.setAttribute('content', '#F7ECDE');
-    }
-  }, [])
-  
-  return (
-    <App
-      mode={mode}
-    />
-  )
-}
+import { initializeMode } from './features/app-slice'
+import { useAppDispatch, useAppSelector } from './app/hooks'
 
 const WrapperBackgroundColor = theme('mode', {
   light: '#FBF8F1',
   dark: '#1B2430',
 })
-
 
 const Wrapper = styled.div`
   display: flex;
@@ -45,17 +27,23 @@ const Wrapper = styled.div`
   transition: all 0.5s ease;
 `
 
-const App = (props: any) => {
+const App = () => {
+  const dispatch = useAppDispatch()
+  const mode = useAppSelector(state => state.app.mode)
 
+  useEffect(() => {
+    dispatch(initializeMode())
+  }, [])
+  
   return (
-    <ThemeProvider theme={{ mode: props.mode }}>
+    <ThemeProvider theme={{ mode }}>
       <Router>
         <Wrapper>
           <Routes>
               <Route path="/weather" element={
                 <div>
-                  <SearchBarContainer />
-                  <SearchResultsContainer/>
+                  <SearchBar />
+                  <SearchResults />
                 </div>
               } />
               <Route path="/AQI" element={<AQI />} />
@@ -68,14 +56,4 @@ const App = (props: any) => {
   );
 }
 
-let mapStateToProps = (state : any) => {
-  return {
-    mode: state.app.mode
-  }
-}
-
-let mapDispatchToProps = {
-  initializeMode
-}
-
-export default connect(mapStateToProps, mapDispatchToProps) (AppContainer)
+export default App

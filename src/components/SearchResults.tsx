@@ -1,12 +1,14 @@
 import { useLottie } from 'lottie-react';
 import React from "react";
 import styled from "styled-components";
-import cloudsAnimation from '../../assets/animations/clouds.json'
-import rainAnimation from '../../assets/animations/rain.json'
-import snowAnimation from '../../assets/animations/snow.json'
-import clearAnimation from '../../assets/animations/clear.json'
-import thunderstormAnimation from '../../assets/animations/thunderstorm.json'
+import cloudsAnimation from '../assets/animations/clouds.json'
+import rainAnimation from '../assets/animations/rain.json'
+import snowAnimation from '../assets/animations/snow.json'
+import clearAnimation from '../assets/animations/clear.json'
+import thunderstormAnimation from '../assets/animations/thunderstorm.json'
 import theme from 'styled-theming'
+import { useAppSelector } from '../app/hooks'
+import Loader from './Loader'
 
 const infoBackgroundColor = theme('mode', {
     light: '#F7ECDE',
@@ -81,14 +83,12 @@ const LottieAnimation = ({type}: {type: string}) => {
     return View
 }
 
-interface SearchResultsProps {
-    city: any;
-    isFetching: boolean;
-    fetchError: string;
-}
+const SearchResults = () => {
+    const city = useAppSelector(state => state.app.city)
+    const fetchError = useAppSelector(state => state.app.fetchError)
+    const isFetching = useAppSelector(state => state.app.isFetching)
 
-const SearchResults = (props: SearchResultsProps) => {
-    console.log(props.city)
+    console.log(city)
     let formatUnixDate = (unixDate : number) => {
         let date = new Date(unixDate * 1000);
         let hours = date.getHours();
@@ -97,40 +97,46 @@ const SearchResults = (props: SearchResultsProps) => {
         return formattedTime
     }
 
-    if (props.fetchError) return (
+    if (isFetching) {
+        return (
+            <Loader />
+        )
+    }
+
+    if (fetchError) return (
         <h1>Failed to fetch...</h1>
     )
 
-    if (props.city) return (
+    if (city) return (
         <City>
-            <h1>{props.city.name}, {props.city.sys.country}</h1>
-            <p>{Math.round(props.city.main.temp)}°C</p>
-            <p>{props.city.weather[0].main}</p>
-            <LottieAnimation type={props.city.weather[0].main}/>
+            <h1>{city.name}, {city.sys.country}</h1>
+            <p>{Math.round(city.main.temp)}°C</p>
+            <p>{city.weather[0].main}</p>
+            <LottieAnimation type={city.weather[0].main}/>
             <Info>
                 <Span>
                     <p>visibility</p>
-                    <p>{props.city.visibility / 1000}km</p>
+                    <p>{city.visibility / 1000}km</p>
                 </Span>
                 <Span>
                     <p>wind</p>
-                    <p>{props.city.wind.speed}km/h</p>
+                    <p>{city.wind.speed}km/h</p>
                 </Span>
                 <Span>
                     <p>sunrise</p>
-                    <p>{formatUnixDate(props.city.sys.sunrise)}</p>
+                    <p>{formatUnixDate(city.sys.sunrise)}</p>
                 </Span>
                 <Span>
                     <p>humidity</p>
-                    <p>{props.city.main.humidity}</p>
+                    <p>{city.main.humidity}</p>
                 </Span>
                 <Span>
                     <p>cloudiness</p>
-                    <p>{props.city.clouds.all}%</p>
+                    <p>{city.clouds.all}%</p>
                 </Span>
                 <Span>
                     <p>sunset</p>
-                    <p>{formatUnixDate(props.city.sys.sunset)}</p>
+                    <p>{formatUnixDate(city.sys.sunset)}</p>
                 </Span>
             </Info>
         </City>

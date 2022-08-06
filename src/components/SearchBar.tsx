@@ -1,6 +1,8 @@
 import React, {useState} from "react";
 import styled from "styled-components";
 import theme from 'styled-theming';
+import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { fetchCityWeather, toggleMode } from '../features/app-slice'
 
 const rotation = theme('mode', {
     light: 'rotate(180deg)',
@@ -95,15 +97,17 @@ const Heading = styled.h1`
     color: ${headingColor};
 `
 
-const SearchBar:React.FC = (props : any) => {
+const SearchBar:React.FC = () => {
+    const mode = useAppSelector(state => state.app.mode)
+    const dispatch = useAppDispatch()
 
     const toggleTheme = () => {
-        props.toggleMode(props.mode === 'light' ? 'dark' : 'light')
+        dispatch(toggleMode(mode === "light" ? 'dark' : 'light'))
     }    
 
     const commenceSearch = (e : any) => {
         e.preventDefault()
-        props.search(inputField)
+        dispatch(fetchCityWeather(inputField))
     }
 
     const [inputField, setInputField] = useState('')
@@ -113,7 +117,7 @@ const SearchBar:React.FC = (props : any) => {
             <Header>
                 <Heading>Weathered</Heading>
                 <ToggleButton onClick={toggleTheme}>
-                    <VinylIcon theme={props.mode} />
+                    <VinylIcon theme={mode} />
                 </ToggleButton>
             </Header>
             <Form onSubmit={commenceSearch}>
