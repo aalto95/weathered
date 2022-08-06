@@ -1,25 +1,11 @@
-import React, { useEffect } from 'react';
-import SearchBar from "./components/SearchBar";
-import SearchResults from "./components/SearchResults";
+import { useEffect } from 'react';
 import './App.css'
-import styled, { ThemeProvider } from 'styled-components'
-import theme from 'styled-theming'
+import { ThemeProvider } from 'styled-components'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { initializeMode } from './features/app-slice'
 import { useAppDispatch, useAppSelector } from './app/hooks'
-
-const WrapperBackgroundColor = theme('mode', {
-  light: '#FFF',
-  dark: '#1B1B1D',
-})
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background-color: ${WrapperBackgroundColor};
-  
-`
+import { Header } from './components/Header'
+import { Search } from './pages/Search'
 
 const App = () => {
   const dispatch = useAppDispatch()
@@ -27,23 +13,21 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeMode())
-  }, [])
+  }, [dispatch])
   
   return (
-    <ThemeProvider theme={{ mode }}>
-      <Router>
-        <Wrapper>
+    <div className="App">
+      <ThemeProvider theme={{ mode }}>
+        <Header />
+        <Router>
           <Routes>
               <Route path="/" element={
-                <>
-                  <SearchBar />
-                  <SearchResults />
-                </>
+                <Search />
               } />
           </Routes>
-        </Wrapper>
-      </Router>
-    </ThemeProvider>
+        </Router>
+      </ThemeProvider>
+    </div>
   );
 }
 

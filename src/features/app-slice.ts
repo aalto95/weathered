@@ -28,10 +28,12 @@ const setThemeColors = (themeMode: string) => {
     document
       .querySelector('meta[name="theme-color"]')!
       .setAttribute("content", "#242526");
+    document.documentElement.style.setProperty("background-color", "#1B1B1D");
   } else if (themeMode === "light") {
     document
       .querySelector('meta[name="theme-color"]')!
       .setAttribute("content", "#FFFFFF");
+    document.documentElement.style.setProperty("background-color", "#FAFAFA");
   }
 };
 

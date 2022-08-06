@@ -1,44 +1,7 @@
 import React, {useState} from "react";
 import styled from "styled-components";
-import theme from 'styled-theming';
-import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { fetchCityWeather, toggleMode } from '../features/app-slice'
-import darkModeIcon from '../assets/icons/dark-mode-icon.svg'
-import lightModeIcon from '../assets/icons/light-mode-icon.svg'
-import {HandySvg} from 'handy-svg';
-
-const LightModeIcon = () => (
-    <HandySvg
-        src={lightModeIcon}
-        className="icon"
-        width="32"
-        height="32"
-        color="#000"
-    />
-)
-
-const DarkModeIcon = () => (
-    <HandySvg
-        src={darkModeIcon}
-        className="icon"
-        width="32"
-        height="32"
-    />
-);
-
-const LogoImg = styled.img`
-    width: 32px;
-`
-
-const sectionBackgroundColor = theme('mode', {
-    light: '#FFF',
-    dark: 'rgb(36, 37, 38)',
-})
-
-const headingColor = theme('mode', {
-    light: '#1C1E21',
-    dark: '#E3E3E3;',
-})
+import { useAppDispatch } from '../app/hooks'
+import { fetchCityWeather } from '../features/app-slice'
 
 const Section = styled.section`
     color: #FFF;
@@ -46,16 +9,6 @@ const Section = styled.section`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-`
-
-const Header = styled.header`
-    background-color: ${sectionBackgroundColor};
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 10px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px
 `
 
 const Form = styled.form`
@@ -77,32 +30,9 @@ const Input = styled.input`
     padding: 5px;
 `
 
-const ToggleButton = styled.button`
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    color: #FFF;
-    font-size: 16px;
-`
-
-const Heading = styled.h1`
-    margin-left: 8px;
-    font-size: 18px;
-    color: ${headingColor};
-`
-
-const HeadingWrapper = styled.div`
-    display: flex;
-    align-items: center;
-`
-
 const SearchBar:React.FC = () => {
-    const mode = useAppSelector(state => state.app.mode)
-    const dispatch = useAppDispatch()
 
-    const toggleTheme = () => {
-        dispatch(toggleMode(mode === "light" ? 'dark' : 'light'))
-    }    
+    const dispatch = useAppDispatch()
 
     const commenceSearch = (e : any) => {
         e.preventDefault()
@@ -113,15 +43,6 @@ const SearchBar:React.FC = () => {
 
     return (
         <Section>
-            <Header>
-                <HeadingWrapper>
-                    <LogoImg src="/logo192.png" alt="logo" style={mode === "light" ? { filter: 'invert(1)' } : { filter: 'invert(0)' }} /> 
-                    <Heading>Weathered</Heading>
-                </HeadingWrapper>
-                <ToggleButton onClick={toggleTheme}>
-                    {mode === 'light' ? <LightModeIcon /> : <DarkModeIcon /> }
-                </ToggleButton>
-            </Header>
             <Form onSubmit={commenceSearch}>
                 <Input type="text" value={inputField} onChange={(e) => setInputField(e.target.value)}/>
             </Form>
