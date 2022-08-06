@@ -23,20 +23,24 @@ export const fetchCityWeather = createAsyncThunk(
   }
 );
 
+const setThemeColors = (themeMode: string) => {
+  if (themeMode === "dark") {
+    document
+      .querySelector('meta[name="theme-color"]')!
+      .setAttribute("content", "#242526");
+  } else if (themeMode === "light") {
+    document
+      .querySelector('meta[name="theme-color"]')!
+      .setAttribute("content", "#FFFFFF");
+  }
+};
+
 export const toggleMode = createAsyncThunk(
   "app/toggleMode",
   async (mode: string) => {
     localStorage.setItem("mode", mode);
     const themeMode = localStorage.getItem("mode");
-    if (themeMode === "dark") {
-      document
-        .querySelector('meta[name="theme-color"]')!
-        .setAttribute("content", "#242526");
-    } else if (themeMode === "light") {
-      document
-        .querySelector('meta[name="theme-color"]')!
-        .setAttribute("content", "#FFFFFF");
-    }
+    setThemeColors(mode);
     return themeMode;
   }
 );
@@ -47,8 +51,10 @@ export const initializeMode = createAsyncThunk(
     const mode = localStorage.getItem("mode");
     if (mode === null) {
       localStorage.setItem("mode", "light");
+      setThemeColors("light");
       return "light";
     }
+    setThemeColors(mode);
     return mode;
   }
 );
