@@ -63,11 +63,11 @@ const Form = styled.form`
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    margin: 2rem 0 2rem 0;
+    padding: 2rem 0 2rem 0;
 `
 
 const Input = styled.input`
-    margin: 1rem 0 1rem 0;
+    padding: 1rem 0 1rem 0;
     width: 200px;
     height: 50px;
     outline: none;

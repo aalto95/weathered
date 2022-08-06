@@ -1,35 +1,22 @@
 import React from 'react';
-import styled, {keyframes} from "styled-components";
+import { useLottie } from 'lottie-react'
+import loadingAnimation from '../assets/animations/loading.json'
 
-const spin = keyframes`
-  0% {
-    transform: rotate(0deg);
+const LottieAnimation = () => {
+  let options = {
+      animationData: loadingAnimation,
+      style: {width: '100px', height: '100px'},
+      loop: true,
+      autoPlay: true
   }
-  100% {
-    transform: rotate(360deg);
-  }
-`
-
-const LdsDualRing = styled.div`
-  display: inline-block;
-  width: 80px;
-  height: 80px;
-  &:after {
-    content: " ";
-    display: block;
-    width: 64px;
-    height: 64px;
-    margin: 8px;
-    border-radius: 50%;
-    border: 6px solid #000;
-    border-color: #000 transparent #000 transparent;
-    animation: ${spin} 1.2s linear infinite;
-  }
-`
+  
+  const { View } = useLottie(options)
+  return View
+}
 
 const Loader = () => {
     return (
-        <LdsDualRing />
+      <LottieAnimation />
     );
 };
 

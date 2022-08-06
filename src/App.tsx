@@ -16,11 +16,9 @@ const WrapperBackgroundColor = theme('mode', {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  width: 100vw;
-  min-height: 100vh;
-  max-height: 100vh;
+  height: 100vh;
   background-color: ${WrapperBackgroundColor};
+  
 `
 
 const App = () => {
@@ -37,10 +35,10 @@ const App = () => {
         <Wrapper>
           <Routes>
               <Route path="/" element={
-                <div>
+                <>
                   <SearchBar />
                   <SearchResults />
-                </div>
+                </>
               } />
           </Routes>
         </Wrapper>
