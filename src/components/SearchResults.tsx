@@ -10,19 +10,14 @@ import theme from 'styled-theming'
 import { useAppSelector } from '../app/hooks'
 import Loader from './Loader'
 
-const infoBackgroundColor = theme('mode', {
-    light: '#F7ECDE',
-    dark: '#51557E',
-})
-
 const cardBackgroundColor = theme('mode', {
-    light: '#F7ECCC',
-    dark: '#51557E',
+    light: '#f2f2f2',
+    dark: '#272822',
 })
 
 const textColor = theme('mode', {
-    light: '#000',
-    dark: '#FFF',
+    light: '#1C1E21',
+    dark: '#E3E3E3;',
 })
 
 const City = styled.div`
@@ -35,7 +30,6 @@ const City = styled.div`
   border-radius: 12px;
   background-color: ${cardBackgroundColor};
   color: ${textColor};
-  transition: all 0.5s ease;
 `
 
 const Info = styled.div`
@@ -44,10 +38,6 @@ const Info = styled.div`
   margin-top: 20px;
   grid-template-columns: 33% 33% 33%;
   grid-template-rows: 50px 50px;
-  background-color: ${infoBackgroundColor};
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-  transition: all 0.5s ease;
 `
 
 const Span = styled.span`

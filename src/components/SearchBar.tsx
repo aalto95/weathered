@@ -3,51 +3,41 @@ import styled from "styled-components";
 import theme from 'styled-theming';
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { fetchCityWeather, toggleMode } from '../features/app-slice'
+import darkModeIcon from '../assets/icons/dark-mode-icon.svg'
+import lightModeIcon from '../assets/icons/light-mode-icon.svg'
+import {HandySvg} from 'handy-svg';
 
-const rotation = theme('mode', {
-    light: 'rotate(180deg)',
-    dark: 'rotate(360deg)',
-})
+const LightModeIcon = () => (
+    <HandySvg
+        src={lightModeIcon}
+        className="icon"
+        width="32"
+        height="32"
+        color="#000"
+    />
+)
 
-const ThemeImg = styled.div`
-width: 32px;
-height: 32px;
-transform: ${rotation};
-transition: all 0.5s ease;
+const DarkModeIcon = () => (
+    <HandySvg
+        src={darkModeIcon}
+        className="icon"
+        width="32"
+        height="32"
+    />
+);
+
+const LogoImg = styled.img`
+    width: 32px;
 `
 
-const VinylIcon = ({theme}: {theme: string}) => {
-
-    return (
-        <ThemeImg>
-            <svg version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 454.745 454.745" width='32px'>
-                <g>
-                    <g>
-                        <g>
-                            <path fill={theme === 'light' ? '#51557E' : '#F7ECDE' } d="M227.372,172.545c-30.238,0-54.819,24.581-54.819,54.827c0,30.23,24.581,54.827,54.819,54.827
-                                c30.222,0,54.819-24.597,54.819-54.827C282.192,197.134,257.595,172.545,227.372,172.545z"/>
-                        </g>
-                        <g>
-                            <path fill={theme === 'light' ? '#51557E' : '#F7ECDE' } d="M227.372,0C102.005,0,0,101.981,0,227.372C0,352.74,102.005,454.745,227.372,454.745
-                                S454.745,352.74,454.745,227.372C454.745,101.981,352.74,0,227.372,0z M122.709,377.003l64.525-56.168l0.813,84.935
-                                C149.013,405.77,122.709,377.003,122.709,377.003z M227.372,308.772c-44.894,0-81.424-36.522-81.424-81.4
-                                c0-44.894,36.522-81.4,81.424-81.4c44.878,0,81.4,36.497,81.4,81.4C308.772,272.25,272.25,308.772,227.372,308.772z"/>
-                        </g>
-                    </g>
-                </g>
-            </svg>
-        </ThemeImg>
-    )
-}
-
 const sectionBackgroundColor = theme('mode', {
-    light: '#F7ECDE',
-    dark: '#51557E',
+    light: '#FFF',
+    dark: 'rgb(36, 37, 38)',
 })
 
 const headingColor = theme('mode', {
-    light: '#51557E',
-    dark: '#F7ECDE',
+    light: '#1C1E21',
+    dark: '#E3E3E3;',
 })
 
 const Section = styled.section`
@@ -61,10 +51,11 @@ const Section = styled.section`
 const Header = styled.header`
     background-color: ${sectionBackgroundColor};
     display: flex;
+    align-items: center;
     justify-content: space-between;
     width: 100%;
     padding: 10px;
-    transition: all 0.5s ease;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px
 `
 
 const Form = styled.form`
@@ -80,7 +71,8 @@ const Input = styled.input`
     width: 200px;
     height: 50px;
     outline: none;
-    border: 2px solid ${sectionBackgroundColor};
+    border: none;
+    background-color: #f2f2f2;
     border-radius: 20px;
     padding: 5px;
 `
@@ -94,7 +86,14 @@ const ToggleButton = styled.button`
 `
 
 const Heading = styled.h1`
+    margin-left: 8px;
+    font-size: 18px;
     color: ${headingColor};
+`
+
+const HeadingWrapper = styled.div`
+    display: flex;
+    align-items: center;
 `
 
 const SearchBar:React.FC = () => {
@@ -115,9 +114,12 @@ const SearchBar:React.FC = () => {
     return (
         <Section>
             <Header>
-                <Heading>Weathered</Heading>
+                <HeadingWrapper>
+                    <LogoImg src="/logo192.png" alt="logo" style={mode === "light" ? { filter: 'invert(1)' } : { filter: 'invert(0)' }} /> 
+                    <Heading>Weathered</Heading>
+                </HeadingWrapper>
                 <ToggleButton onClick={toggleTheme}>
-                    <VinylIcon theme={mode} />
+                    {mode === 'light' ? <LightModeIcon /> : <DarkModeIcon /> }
                 </ToggleButton>
             </Header>
             <Form onSubmit={commenceSearch}>

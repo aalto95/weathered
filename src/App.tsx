@@ -3,18 +3,14 @@ import SearchBar from "./components/SearchBar";
 import SearchResults from "./components/SearchResults";
 import './App.css'
 import styled, { ThemeProvider } from 'styled-components'
-import { connect } from 'react-redux'
 import theme from 'styled-theming'
-import { Tabbar } from './components/Tabbar'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { AQI } from './components/AQI'
-import { Settings } from './components/Settings'
 import { initializeMode } from './features/app-slice'
 import { useAppDispatch, useAppSelector } from './app/hooks'
 
 const WrapperBackgroundColor = theme('mode', {
-  light: '#FBF8F1',
-  dark: '#1B2430',
+  light: '#FFF',
+  dark: '#1B1B1D',
 })
 
 const Wrapper = styled.div`
@@ -22,9 +18,9 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: space-between;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
+  max-height: 100vh;
   background-color: ${WrapperBackgroundColor};
-  transition: all 0.5s ease;
 `
 
 const App = () => {
@@ -40,16 +36,13 @@ const App = () => {
       <Router>
         <Wrapper>
           <Routes>
-              <Route path="/weather" element={
+              <Route path="/" element={
                 <div>
                   <SearchBar />
                   <SearchResults />
                 </div>
               } />
-              <Route path="/AQI" element={<AQI />} />
-              <Route path="/Settings" element={<Settings />} />
           </Routes>
-          <Tabbar />
         </Wrapper>
       </Router>
     </ThemeProvider>
