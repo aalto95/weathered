@@ -45,6 +45,9 @@ export const initializeMode = createAsyncThunk(
   "app/initializeMode",
   async () => {
     const mode = localStorage.getItem("mode");
+    if (mode === null) {
+      localStorage.setItem("mode", "light");
+    }
     return mode;
   }
 );
