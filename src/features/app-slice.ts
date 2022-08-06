@@ -31,11 +31,11 @@ export const toggleMode = createAsyncThunk(
     if (themeMode === "dark") {
       document
         .querySelector('meta[name="theme-color"]')!
-        .setAttribute("content", "#51557E");
+        .setAttribute("content", "#242526");
     } else if (themeMode === "light") {
       document
         .querySelector('meta[name="theme-color"]')!
-        .setAttribute("content", "#F7ECDE");
+        .setAttribute("content", "#FFFFFF");
     }
     return themeMode;
   }
