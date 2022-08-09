@@ -50,6 +50,7 @@ interface AppState {
   fetchError: boolean
   isFetching: boolean
   isSidebarOpen: boolean
+  isA2HSButtonDismissed: boolean
 }
 
 const initialState: AppState = {
@@ -57,7 +58,8 @@ const initialState: AppState = {
   city: null,
   fetchError: false,
   isFetching: false,
-  isSidebarOpen: false
+  isSidebarOpen: false,
+  isA2HSButtonDismissed: false
 }
 
 export const fetchWeatherByCityName = createAsyncThunk(
@@ -103,6 +105,14 @@ export const toggleMode = createAsyncThunk(
   }
 )
 
+export const dismissA2HSButton = createAsyncThunk(
+  'app/dismissA2HSButton',
+  async () => {
+    localStorage.setItem('a2hsButtonDismissed', 'true')
+    return true
+  }
+)
+
 export const initializeMode = createAsyncThunk(
   'app/initializeMode',
   async () => {
@@ -123,6 +133,9 @@ const appSlice = createSlice({
   reducers: {
     citySet(state, action) {
       state.city = action.payload
+    },
+    isA2HSButtonDismissedSet(state, action) {
+      state.isA2HSButtonDismissed = action.payload
     },
     modeToggled(state, action) {
       state.mode = action.payload
@@ -163,8 +176,16 @@ const appSlice = createSlice({
       .addCase(initializeMode.fulfilled, (state, action) => {
         state.mode = action.payload!
       })
+      .addCase(dismissA2HSButton.fulfilled, (state) => {
+        state.isA2HSButtonDismissed = true
+      })
   }
 })
 
-export const { citySet, modeToggled, sidebarToggled } = appSlice.actions
+export const {
+  citySet,
+  modeToggled,
+  sidebarToggled,
+  isA2HSButtonDismissedSet
+} = appSlice.actions
 export default appSlice.reducer
