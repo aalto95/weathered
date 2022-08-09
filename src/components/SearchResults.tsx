@@ -1,6 +1,6 @@
-import { useLottie } from 'lottie-react';
-import React from "react";
-import styled from "styled-components";
+import { useLottie } from 'lottie-react'
+import React from 'react'
+import styled from 'styled-components'
 import cloudsAnimation from '../assets/animations/clouds.json'
 import rainAnimation from '../assets/animations/rain.json'
 import snowAnimation from '../assets/animations/snow.json'
@@ -11,13 +11,13 @@ import { useAppSelector } from '../app/hooks'
 import Loader from './Loader'
 
 const cardBackgroundColor = theme('mode', {
-    light: '#f2f2f2',
-    dark: '#272822',
+  light: '#f2f2f2',
+  dark: '#272822'
 })
 
 const textColor = theme('mode', {
-    light: '#1C1E21',
-    dark: '#E3E3E3;',
+  light: '#1C1E21',
+  dark: '#E3E3E3;'
 })
 
 const Container = styled.div`
@@ -51,58 +51,58 @@ const Span = styled.span`
 `
 
 const getWeatherTypeAnimation = (type: string) => {
-    switch (type) {
-        case 'Thunderstorm':
-            return thunderstormAnimation
-        case 'Clear':
-            return clearAnimation
-        case 'Clouds':
-            return cloudsAnimation
-        case 'Rain':
-            return rainAnimation
-        case 'Snow':
-            return snowAnimation
-        default:
-            return null
-    }
+  switch (type) {
+    case 'Thunderstorm':
+      return thunderstormAnimation
+    case 'Clear':
+      return clearAnimation
+    case 'Clouds':
+      return cloudsAnimation
+    case 'Rain':
+      return rainAnimation
+    case 'Snow':
+      return snowAnimation
+    default:
+      return null
+  }
 }
 
-const LottieAnimation = ({type}: {type: string}) => {
-    let options = {
-        animationData: getWeatherTypeAnimation(type),
-        style: {width: '100px', height: '100px'},
-        loop: true,
-        autoPlay: true
-    }
-    
-    const { View } = useLottie(options)
-    return View
+const LottieAnimation = ({ type }: {type: string}) => {
+  const options = {
+    animationData: getWeatherTypeAnimation(type),
+    style: { width: '100px', height: '100px' },
+    loop: true,
+    autoPlay: true
+  }
+
+  const { View } = useLottie(options)
+  return View
 }
 
 const Error404Animation = () => {
-    const { View } = useLottie({
-        animationData: require('../assets/animations/404.json'),
-        style: {width: '300px', height: '300px'},
-        loop: true,
-        autoPlay: true
-    })
-    return View
+  const { View } = useLottie({
+    animationData: require('../assets/animations/404.json'),
+    style: { width: '300px', height: '300px' },
+    loop: true,
+    autoPlay: true
+  })
+  return View
 }
 
 const SearchResults = () => {
-    const city = useAppSelector(state => state.app.city)
-    const fetchError = useAppSelector(state => state.app.fetchError)
-    const isFetching = useAppSelector(state => state.app.isFetching)
+  const city = useAppSelector(state => state.app.city)
+  const fetchError = useAppSelector(state => state.app.fetchError)
+  const isFetching = useAppSelector(state => state.app.isFetching)
 
-    let formatUnixDate = (unixDate : number) => {
-        let date = new Date(unixDate * 1000);
-        let hours = date.getHours();
-        let minutes = "0" + date.getMinutes();
-        let formattedTime = hours + ':' + minutes.substr(-2)
-        return formattedTime
-    }
+  const formatUnixDate = (unixDate : number) => {
+    const date = new Date(unixDate * 1000)
+    const hours = date.getHours()
+    const minutes = '0' + date.getMinutes()
+    const formattedTime = hours + ':' + minutes.substr(-2)
+    return formattedTime
+  }
 
-    return (
+  return (
         <Container>
             {isFetching && <Loader />}
             {fetchError && <Error404Animation />}
@@ -139,7 +139,7 @@ const SearchResults = () => {
                 </Info>
             </City>}
         </Container>
-    )
+  )
 }
 
 export default SearchResults

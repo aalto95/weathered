@@ -1,14 +1,15 @@
 import darkModeIcon from '../assets/icons/dark-mode-icon.svg'
 import lightModeIcon from '../assets/icons/light-mode-icon.svg'
-import {HandySvg} from 'handy-svg';
+import { HandySvg } from 'handy-svg'
 import styled from 'styled-components'
 import theme from 'styled-theming'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { toggleMode } from '../features/app-slice'
+import React from 'react'
 
 const headingColor = theme('mode', {
   light: '#1C1E21',
-  dark: '#E3E3E3;',
+  dark: '#E3E3E3;'
 })
 
 const LightModeIcon = () => (
@@ -28,7 +29,7 @@ const DarkModeIcon = () => (
         width="32"
         height="32"
     />
-);
+)
 
 const LogoImg = styled.img`
     width: 32px;
@@ -36,7 +37,7 @@ const LogoImg = styled.img`
 
 const sectionBackgroundColor = theme('mode', {
   light: '#FFF',
-  dark: 'rgb(36, 37, 38)',
+  dark: 'rgb(36, 37, 38)'
 })
 
 const StyledHeader = styled.header`
@@ -73,13 +74,13 @@ export const Header = () => {
   const mode = useAppSelector(state => state.app.mode)
 
   const toggleTheme = () => {
-    dispatch(toggleMode(mode === "light" ? 'dark' : 'light'))
+    dispatch(toggleMode(mode === 'light' ? 'dark' : 'light'))
   }
 
   return (
     <StyledHeader>
       <HeadingWrapper>
-          <LogoImg src="/logo192.png" alt="logo" style={mode === "light" ? { filter: 'invert(1)' } : { filter: 'invert(0)' }} /> 
+          <LogoImg src="/logo192.png" alt="logo" style={mode === 'light' ? { filter: 'invert(1)' } : { filter: 'invert(0)' }} />
           <Heading>Weathered</Heading>
       </HeadingWrapper>
       <ToggleButton onClick={toggleTheme}>

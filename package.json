@@ -8,7 +8,6 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "@types/jest": "^26.0.15",
-    "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-redux": "^7.1.16",
@@ -20,7 +19,7 @@
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.4",
     "react-router-dom": "^6.3.0",
-    "react-scripts": "4.0.3",
+    "react-scripts": "5.0.1",
     "sass": "^1.54.3",
     "styled-components": "^5.3.1",
     "styled-theming": "^2.2.0",
@@ -31,7 +30,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint --fix --ext .js,.jsx ."
   },
   "eslintConfig": {
     "extends": [
@@ -55,6 +55,18 @@
     "styled-components": "^5"
   },
   "devDependencies": {
-    "@types/styled-theming": "^2.2.5"
+    "@types/node": "^18.6.5",
+    "@types/styled-theming": "^2.2.5",
+    "@typescript-eslint/eslint-plugin": "^5.33.0",
+    "@typescript-eslint/parser": "^5.33.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-react": "^7.30.1",
+    "prettier": "2.7.1"
   }
 }

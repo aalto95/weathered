@@ -1,5 +1,5 @@
-import React, {FormEvent, useState} from "react";
-import styled from "styled-components";
+import React, { FormEvent, useState } from 'react'
+import styled from 'styled-components'
 import { useAppDispatch } from '../app/hooks'
 import { fetchCityWeather } from '../features/app-slice'
 
@@ -30,24 +30,23 @@ const Input = styled.input`
     padding: 5px;
 `
 
-const SearchBar:React.FC = () => {
+const SearchBar: React.FC = () => {
+  const dispatch = useAppDispatch()
 
-    const dispatch = useAppDispatch()
+  const commenceSearch = (e: FormEvent) => {
+    e.preventDefault()
+    dispatch(fetchCityWeather(inputField))
+  }
 
-    const commenceSearch = (e: FormEvent) => {
-        e.preventDefault()
-        dispatch(fetchCityWeather(inputField))
-    }
+  const [inputField, setInputField] = useState('')
 
-    const [inputField, setInputField] = useState('')
-
-    return (
+  return (
         <Section>
             <Form onSubmit={commenceSearch}>
                 <Input type="text" value={inputField} onChange={(e: React.FormEvent<HTMLInputElement>) => setInputField(e.currentTarget.value)}/>
             </Form>
         </Section>
-    )
+  )
 }
 
 export default SearchBar
