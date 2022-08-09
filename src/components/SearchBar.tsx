@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from 'react'
 import styled from 'styled-components'
 import { useAppDispatch } from '../app/hooks'
-import { fetchCityWeather } from '../features/app-slice'
+import { fetchWeatherByCityName } from '../features/app-slice'
 import searchIcon from '../assets/icons/search-icon.svg'
 
 const Section = styled.section`
@@ -41,7 +41,7 @@ const SearchBar: React.FC = () => {
 
   const commenceSearch = (e: FormEvent) => {
     e.preventDefault()
-    dispatch(fetchCityWeather(inputField))
+    dispatch(fetchWeatherByCityName(inputField))
   }
 
   const [inputField, setInputField] = useState('')

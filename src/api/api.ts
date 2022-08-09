@@ -5,9 +5,18 @@ const instance = axios.create({
 })
 
 export const weatherAPI = {
-  getCity: (city: string) => {
+  getCityByName: (city: string) => {
     return instance
       .get(`?q=${city}&units=metric&appid=4cb227e028a1bd4aed635ca5f6820041`)
+      .then((response) => {
+        return response.data
+      })
+  },
+  getCityByCoords: (lat: number, lon: number) => {
+    return instance
+      .get(
+        `?lat=${lat}&lon=${lon}&units=metric&appid=4cb227e028a1bd4aed635ca5f6820041`
+      )
       .then((response) => {
         return response.data
       })

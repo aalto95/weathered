@@ -58,10 +58,18 @@ const initialState: AppState = {
   isFetching: false
 }
 
-export const fetchCityWeather = createAsyncThunk(
-  'city/fetchCityWeather',
+export const fetchWeatherByCityName = createAsyncThunk(
+  'city/fetchWeatherByCityName',
   async (cityName: string) => {
-    const response = await weatherAPI.getCity(cityName)
+    const response = await weatherAPI.getCityByName(cityName)
+    return response
+  }
+)
+
+export const fetchWeatherByCoords = createAsyncThunk(
+  'city/fetchWeatherByCoords',
+  async ({ lat, lon }: { lat: number; lon: number }) => {
+    const response = await weatherAPI.getCityByCoords(lat, lon)
     return response
   }
 )
@@ -120,15 +128,27 @@ const appSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchCityWeather.pending, (state) => {
+      .addCase(fetchWeatherByCityName.pending, (state) => {
         state.fetchError = false
         state.isFetching = true
       })
-      .addCase(fetchCityWeather.rejected, (state) => {
+      .addCase(fetchWeatherByCityName.rejected, (state) => {
         state.fetchError = true
         state.isFetching = false
       })
-      .addCase(fetchCityWeather.fulfilled, (state, action) => {
+      .addCase(fetchWeatherByCityName.fulfilled, (state, action) => {
+        state.isFetching = false
+        state.city = action.payload
+      })
+      .addCase(fetchWeatherByCoords.pending, (state) => {
+        state.fetchError = false
+        state.isFetching = true
+      })
+      .addCase(fetchWeatherByCoords.rejected, (state) => {
+        state.fetchError = true
+        state.isFetching = false
+      })
+      .addCase(fetchWeatherByCoords.fulfilled, (state, action) => {
         state.isFetching = false
         state.city = action.payload
       })
