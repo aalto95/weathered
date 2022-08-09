@@ -67,16 +67,19 @@ export const fetchCityWeather = createAsyncThunk(
 );
 
 const setThemeColors = (themeMode: string) => {
+  const setTheme = (themeColor: string, backgroundColor: string) => {
+    document
+      .querySelector('meta[name="theme-color"]')!
+      .setAttribute("content", themeColor);
+    document.documentElement.style.setProperty(
+      "background-color",
+      backgroundColor
+    );
+  };
   if (themeMode === "dark") {
-    document
-      .querySelector('meta[name="theme-color"]')!
-      .setAttribute("content", "#242526");
-    document.documentElement.style.setProperty("background-color", "#1B1B1D");
+    setTheme("#242526", "#1B1B1D");
   } else if (themeMode === "light") {
-    document
-      .querySelector('meta[name="theme-color"]')!
-      .setAttribute("content", "#FFFFFF");
-    document.documentElement.style.setProperty("background-color", "#FAFAFA");
+    setTheme("#FFFFFF", "#FAFAFA");
   }
 };
 
