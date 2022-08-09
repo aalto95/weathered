@@ -6,14 +6,15 @@ import theme from 'styled-theming'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { sidebarToggled, toggleMode } from '../features/app-slice'
 import React from 'react'
-import burgerIcon from '../assets/icons/burger-menu-icon.svg'
+import burgerIconDark from '../assets/icons/burger-menu-icon-dark.svg'
+import burgerIconLight from '../assets/icons/burger-menu-icon-light.svg'
 
 const headingColor = theme('mode', {
   light: '#1C1E21',
   dark: '#E3E3E3;'
 })
 
-const LightModeIcon = () => (
+const LightModeLogo = () => (
   <HandySvg
     src={lightModeIcon}
     className="icon"
@@ -23,8 +24,16 @@ const LightModeIcon = () => (
   />
 )
 
-const DarkModeIcon = () => (
+const DarkModeLogo = () => (
   <HandySvg src={darkModeIcon} className="icon" width="32" height="32" />
+)
+
+const LightModeBurgerIcon = () => (
+  <HandySvg src={burgerIconDark} className="icon" width="32" height="32" />
+)
+
+const DarkModeBurgerIcon = () => (
+  <HandySvg src={burgerIconLight} className="icon" width="32" height="32" />
 )
 
 const LogoImg = styled.img`
@@ -88,7 +97,7 @@ export const Header = () => {
     <Container>
       <HeadingWrapper>
         <LogoButton onClick={toggleSidebar}>
-          <LogoImg src={burgerIcon}></LogoImg>
+          {mode === 'light' ? <LightModeBurgerIcon /> : <DarkModeBurgerIcon />}
         </LogoButton>
         <LogoImg
           src="/logo192.png"
@@ -100,7 +109,7 @@ export const Header = () => {
         <Heading>Weathered</Heading>
       </HeadingWrapper>
       <ToggleButton onClick={toggleTheme}>
-        {mode === 'light' ? <LightModeIcon /> : <DarkModeIcon />}
+        {mode === 'light' ? <LightModeLogo /> : <DarkModeLogo />}
       </ToggleButton>
     </Container>
   )

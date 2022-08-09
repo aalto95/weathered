@@ -98,7 +98,7 @@ export const AddToHomeScreenPrompt = () => {
   if (!isA2HSButtonDismissed) {
     return (
       <A2HSButton id="add-button">
-        <ButtonText>Add to home screen</ButtonText>
+        <ButtonText>Install this app</ButtonText>
         <DismissButton onClick={(e: any) => dismissButton(e)}>x</DismissButton>
       </A2HSButton>
     )

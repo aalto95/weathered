@@ -11,6 +11,11 @@ const sidebarColor = theme('mode', {
   dark: '#242526;'
 })
 
+const sidebarTextColor = theme('mode', {
+  light: '#242526',
+  dark: '#FFFFFF'
+})
+
 const Container = styled.div`
   position: absolute;
   height: 100vh;
@@ -20,7 +25,6 @@ const Container = styled.div`
   translatex: -100%;
   transition: transform 0.3s;
   z-index: 1;
-  padding: 10px;
 `
 
 const SidebarBackdrop = styled.div`
@@ -33,12 +37,14 @@ const SidebarBackdrop = styled.div`
 
 const Heading = styled.h1`
   font-size: 18px;
+  color: ${sidebarTextColor};
 `
 
 const SidebarHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 10px;
 `
 
 const Icon = styled.img`
