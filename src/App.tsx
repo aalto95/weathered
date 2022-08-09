@@ -6,6 +6,7 @@ import { fetchWeatherByCoords, initializeMode } from './features/app-slice'
 import { useAppDispatch, useAppSelector } from './app/hooks'
 import { Header } from './components/Header'
 import { Search } from './pages/Search'
+import { Sidebar } from './components/Sidebar'
 
 const App = () => {
   const dispatch = useAppDispatch()
@@ -31,6 +32,7 @@ const App = () => {
     <div className="App">
       <ThemeProvider theme={{ mode }}>
         <Header />
+        <Sidebar />
         <Router>
           <Routes>
             <Route path="/" element={<Search />} />

@@ -15,9 +15,7 @@ const LottieAnimation = () => {
 }
 
 const Loader = () => {
-  return (
-      <LottieAnimation />
-  )
+  return <LottieAnimation />
 }
 
 export default Loader

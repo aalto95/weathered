@@ -49,13 +49,15 @@ interface AppState {
   } | null
   fetchError: boolean
   isFetching: boolean
+  isSidebarOpen: boolean
 }
 
 const initialState: AppState = {
   mode: 'light',
   city: null,
   fetchError: false,
-  isFetching: false
+  isFetching: false,
+  isSidebarOpen: false
 }
 
 export const fetchWeatherByCityName = createAsyncThunk(
@@ -124,6 +126,9 @@ const appSlice = createSlice({
     },
     modeToggled(state, action) {
       state.mode = action.payload
+    },
+    sidebarToggled(state, action) {
+      state.isSidebarOpen = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -161,5 +166,5 @@ const appSlice = createSlice({
   }
 })
 
-export const { citySet, modeToggled } = appSlice.actions
+export const { citySet, modeToggled, sidebarToggled } = appSlice.actions
 export default appSlice.reducer

@@ -21,9 +21,9 @@ const textColor = theme('mode', {
 })
 
 const Container = styled.div`
-    width: 100%;
-    display: flex;
-    justify-content: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 `
 
 const City = styled.div`
@@ -67,7 +67,7 @@ const getWeatherTypeAnimation = (type: string) => {
   }
 }
 
-const LottieAnimation = ({ type }: {type: string}) => {
+const LottieAnimation = ({ type }: { type: string }) => {
   const options = {
     animationData: getWeatherTypeAnimation(type),
     style: { width: '100px', height: '100px' },
@@ -90,11 +90,11 @@ const Error404Animation = () => {
 }
 
 const SearchResults = () => {
-  const city = useAppSelector(state => state.app.city)
-  const fetchError = useAppSelector(state => state.app.fetchError)
-  const isFetching = useAppSelector(state => state.app.isFetching)
+  const city = useAppSelector((state) => state.app.city)
+  const fetchError = useAppSelector((state) => state.app.fetchError)
+  const isFetching = useAppSelector((state) => state.app.isFetching)
 
-  const formatUnixDate = (unixDate : number) => {
+  const formatUnixDate = (unixDate: number) => {
     const date = new Date(unixDate * 1000)
     const hours = date.getHours()
     const minutes = '0' + date.getMinutes()
@@ -103,42 +103,46 @@ const SearchResults = () => {
   }
 
   return (
-        <Container>
-            {isFetching && <Loader />}
-            {fetchError && <Error404Animation />}
-            {city && !isFetching && !fetchError && <City>
-                <h1>{city.name}, {city.sys.country}</h1>
-                <p>{Math.round(city.main.temp)}°C</p>
-                <p>{city.weather[0].main}</p>
-                <LottieAnimation type={city.weather[0].main}/>
-                <Info>
-                    <Span>
-                        <p>visibility</p>
-                        <p>{city.visibility / 1000}km</p>
-                    </Span>
-                    <Span>
-                        <p>wind</p>
-                        <p>{city.wind.speed}km/h</p>
-                    </Span>
-                    <Span>
-                        <p>sunrise</p>
-                        <p>{formatUnixDate(city.sys.sunrise)}</p>
-                    </Span>
-                    <Span>
-                        <p>humidity</p>
-                        <p>{city.main.humidity}</p>
-                    </Span>
-                    <Span>
-                        <p>cloudiness</p>
-                        <p>{city.clouds.all}%</p>
-                    </Span>
-                    <Span>
-                        <p>sunset</p>
-                        <p>{formatUnixDate(city.sys.sunset)}</p>
-                    </Span>
-                </Info>
-            </City>}
-        </Container>
+    <Container>
+      {isFetching && <Loader />}
+      {fetchError && <Error404Animation />}
+      {city && !isFetching && !fetchError && (
+        <City>
+          <h1>
+            {city.name}, {city.sys.country}
+          </h1>
+          <p>{Math.round(city.main.temp)}°C</p>
+          <p>{city.weather[0].main}</p>
+          <LottieAnimation type={city.weather[0].main} />
+          <Info>
+            <Span>
+              <p>visibility</p>
+              <p>{city.visibility / 1000}km</p>
+            </Span>
+            <Span>
+              <p>wind</p>
+              <p>{city.wind.speed}km/h</p>
+            </Span>
+            <Span>
+              <p>sunrise</p>
+              <p>{formatUnixDate(city.sys.sunrise)}</p>
+            </Span>
+            <Span>
+              <p>humidity</p>
+              <p>{city.main.humidity}</p>
+            </Span>
+            <Span>
+              <p>cloudiness</p>
+              <p>{city.clouds.all}%</p>
+            </Span>
+            <Span>
+              <p>sunset</p>
+              <p>{formatUnixDate(city.sys.sunset)}</p>
+            </Span>
+          </Info>
+        </City>
+      )}
+    </Container>
   )
 }
 
