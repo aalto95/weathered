@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {FormEvent, useState} from "react";
 import styled from "styled-components";
 import { useAppDispatch } from '../app/hooks'
 import { fetchCityWeather } from '../features/app-slice'
@@ -34,7 +34,7 @@ const SearchBar:React.FC = () => {
 
     const dispatch = useAppDispatch()
 
-    const commenceSearch = (e : any) => {
+    const commenceSearch = (e: FormEvent) => {
         e.preventDefault()
         dispatch(fetchCityWeather(inputField))
     }
@@ -44,7 +44,7 @@ const SearchBar:React.FC = () => {
     return (
         <Section>
             <Form onSubmit={commenceSearch}>
-                <Input type="text" value={inputField} onChange={(e) => setInputField(e.target.value)}/>
+                <Input type="text" value={inputField} onChange={(e: React.FormEvent<HTMLInputElement>) => setInputField(e.currentTarget.value)}/>
             </Form>
         </Section>
     )
