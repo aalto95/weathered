@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from './app/hooks'
 import { Header } from './components/Header'
 import { Search } from './pages/Search'
 import { Sidebar } from './components/Sidebar'
-import { AddToHomeScreenPrompt } from './components/AddToHomeScreenPrompt'
+import { AddToHomeScreenNotification } from './components/AddToHomeScreenNotification'
 
 const App = () => {
   const dispatch = useAppDispatch()
@@ -39,7 +39,7 @@ const App = () => {
             <Route path="/" element={<Search />} />
           </Routes>
         </Router>
-        <AddToHomeScreenPrompt />
+        <AddToHomeScreenNotification />
       </ThemeProvider>
     </div>
   )

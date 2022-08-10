@@ -62,6 +62,7 @@ const ToggleButton = styled.button`
   cursor: pointer;
   color: #fff;
   font-size: 16px;
+  height: 32px;
 `
 
 const Heading = styled.h1`
@@ -79,6 +80,7 @@ const LogoButton = styled.button`
   background-color: transparent;
   border: none;
   cursor: pointer;
+  height: 32px;
 `
 
 export const Header = () => {

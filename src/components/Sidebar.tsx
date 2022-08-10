@@ -4,7 +4,8 @@ import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { useOnClickOutside } from 'usehooks-ts'
 import { sidebarToggled } from '../features/app-slice'
 import theme from 'styled-theming'
-import closeIcon from '../assets/icons/close-icon.svg'
+import closeIconDark from '../assets/icons/close-icon-dark.svg'
+import closeIconLight from '../assets/icons/close-icon-light.svg'
 
 const sidebarColor = theme('mode', {
   light: '#FFFFFF',
@@ -24,7 +25,7 @@ const Container = styled.div`
   width: 80%;
   translatex: -100%;
   transition: transform 0.3s;
-  z-index: 1;
+  z-index: 2;
 `
 
 const SidebarBackdrop = styled.div`
@@ -33,6 +34,7 @@ const SidebarBackdrop = styled.div`
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
 `
 
 const Heading = styled.h1`
@@ -45,6 +47,7 @@ const SidebarHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 10px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
 `
 
 const Icon = styled.img`
@@ -102,7 +105,10 @@ export const Sidebar = () => {
             <Heading>Weathered</Heading>
           </HeadingWrapper>
           <IconButton onClick={closeSidebar}>
-            <Icon src={closeIcon} alt="close" />
+            <Icon
+              src={mode === 'light' ? closeIconDark : closeIconLight}
+              alt="close"
+            />
           </IconButton>
         </SidebarHeader>
       </Container>

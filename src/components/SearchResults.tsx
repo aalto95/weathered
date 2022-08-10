@@ -12,7 +12,7 @@ import Loader from './Loader'
 
 const cardBackgroundColor = theme('mode', {
   light: '#f2f2f2',
-  dark: '#272822'
+  dark: '#242526'
 })
 
 const textColor = theme('mode', {

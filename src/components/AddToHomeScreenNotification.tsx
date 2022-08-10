@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import theme from 'styled-theming'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
@@ -6,9 +6,12 @@ import {
   dismissA2HSButton,
   isA2HSButtonDismissedSet
 } from '../features/app-slice'
+import closeIconDark from '../assets/icons/close-icon-dark.svg'
+import closeIconLight from '../assets/icons/close-icon-light.svg'
+import { useTimeout } from 'usehooks-ts'
 
 const buttonColor = theme('mode', {
-  light: '#FFFFFF',
+  light: '#F2F2F2',
   dark: '#242526;'
 })
 
@@ -17,48 +20,69 @@ const buttonTextColor = theme('mode', {
   dark: '#FFFFFF'
 })
 
-const A2HSButton = styled.button`
+const Container = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
   width: 200px;
   padding: 10px;
-  border: none;
   border-radius: 10px;
-  cursor: pointer;
   position: absolute;
-  bottom: 20px;
+  bottom: 0;
   left: 0;
   right: 0;
   margin-left: auto;
   margin-right: auto;
-  color: ${buttonTextColor};
+  transform: translateY(100px);
+  transition: transform 0.5s;
   background-color: ${buttonColor};
 `
 
-const ButtonText = styled.p`
-  width: 70%;
+const InstallButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  width: 100%;
+  color: ${buttonTextColor};
 `
 
-const DismissButton = styled.span`
-  width: 30%;
-  background-color: red;
+const DismissButton = styled.button`
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
 `
 
-export const AddToHomeScreenPrompt = () => {
+const Icon = styled.img`
+  width: 32px;
+  height: 32px;
+`
+
+export const AddToHomeScreenNotification = () => {
+  const mode = useAppSelector((state) => state.app.mode)
   const dispatch = useAppDispatch()
 
-  const dismissButton = (e: any) => {
-    e.stopPropagation()
-    console.log('dismiss button clicked')
-    dispatch(dismissA2HSButton())
+  const dismissButton = () => {
+    setVisible(false)
+    setTimeout(() => {
+      dispatch(dismissA2HSButton())
+    }, 1000)
   }
 
   const isA2HSButtonDismissed = useAppSelector(
     (state) => state.app.isA2HSButtonDismissed
   )
 
+  const [visible, setVisible] = useState(false)
+
+  const show = () => setVisible(true)
+
+  useTimeout(show, 1000)
+
   useEffect(() => {
-    console.log(Boolean(localStorage.getItem('a2hsButtonDismissed')))
     dispatch(
       isA2HSButtonDismissedSet(
         localStorage.getItem('a2hsButtonDismissed') === 'true'
@@ -66,20 +90,22 @@ export const AddToHomeScreenPrompt = () => {
     )
     if (!isA2HSButtonDismissed) {
       let deferredPrompt: any
+      const container = document.getElementById('a2hs-container')
       const addBtn = document.getElementById('add-button')
 
-      addBtn!.style.display = 'none'
+      container!.style.display = 'none'
+
       window.addEventListener('beforeinstallprompt', (e) => {
         // Prevent Chrome 67 and earlier from automatically showing the prompt
         e.preventDefault()
         // Stash the event so it can be triggered later.
         deferredPrompt = e
         // Update UI to notify the user they can add to home screen
-        addBtn!.style.display = 'flex'
+        container!.style.display = 'flex'
 
         addBtn!.addEventListener('click', (e) => {
           // hide our user interface that shows our A2HS button
-          addBtn!.style.display = 'none'
+          container!.style.display = 'none'
           // Show the prompt
           deferredPrompt.prompt()
           // Wait for the user to respond to the prompt
@@ -95,12 +121,25 @@ export const AddToHomeScreenPrompt = () => {
       })
     }
   }, [])
+
   if (!isA2HSButtonDismissed) {
     return (
-      <A2HSButton id="add-button">
-        <ButtonText>Install this app</ButtonText>
-        <DismissButton onClick={(e: any) => dismissButton(e)}>x</DismissButton>
-      </A2HSButton>
+      <Container
+        id="a2hs-container"
+        style={
+          visible
+            ? { transform: 'translateY(-20px)' }
+            : { transform: 'translateY(100px)' }
+        }
+      >
+        <InstallButton id="add-button">Install this app</InstallButton>
+        <DismissButton onClick={dismissButton}>
+          <Icon
+            src={mode === 'light' ? closeIconDark : closeIconLight}
+            alt="close"
+          />
+        </DismissButton>
+      </Container>
     )
   }
 
