@@ -17,6 +17,7 @@ module.exports = {
     'no-use-before-define': 'off',
     camelcase: 'off',
     'space-before-function-paren': 'off',
-    'no-undef': 'off'
+    'no-undef': 'off',
+    'no-unused-vars': 'off'
   }
 }

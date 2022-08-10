@@ -8,6 +8,7 @@ import { Header } from './components/Header'
 import { Search } from './pages/Search'
 import { Sidebar } from './components/Sidebar'
 import { AddToHomeScreenNotification } from './components/AddToHomeScreenNotification'
+import { SidebarGestureHandler } from './components/SidebarGestureHandler'
 
 const App = () => {
   const dispatch = useAppDispatch()
@@ -34,6 +35,7 @@ const App = () => {
       <ThemeProvider theme={{ mode }}>
         <Header />
         <Sidebar />
+        <SidebarGestureHandler />
         <Router>
           <Routes>
             <Route path="/" element={<Search />} />
