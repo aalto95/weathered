@@ -28,6 +28,10 @@ const App = () => {
     } else {
       /* geolocation IS NOT available */
     }
+    window.addEventListener('scroll', (e) => {
+      e.preventDefault()
+      window.scrollTo(0, 0)
+    })
   }, [dispatch])
 
   return (
