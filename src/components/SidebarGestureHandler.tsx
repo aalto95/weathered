@@ -5,7 +5,7 @@ import { sidebarToggled } from '../features/app-slice'
 
 const Container = styled.button`
   width: 30px;
-  height: 100vh;
+  height: 100%;
   position: absolute;
   background-color: transparent;
   border: none;
