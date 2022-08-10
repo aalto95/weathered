@@ -9,6 +9,7 @@ import thunderstormAnimation from '../assets/animations/thunderstorm.json'
 import theme from 'styled-theming'
 import { useAppSelector } from '../app/hooks'
 import Loader from './Loader'
+import { useTranslation } from 'react-i18next'
 
 const cardBackgroundColor = theme('mode', {
   light: '#f2f2f2',
@@ -43,7 +44,7 @@ const Info = styled.div`
   width: 300px;
   padding-top: 20px;
   grid-template-columns: 33% 33% 33%;
-  grid-template-rows: 50px 50px;
+  grid-template-rows: 70px 50px;
 `
 
 const Span = styled.span`
@@ -102,6 +103,8 @@ const SearchResults = () => {
     return formattedTime
   }
 
+  const { t, i18n } = useTranslation()
+
   return (
     <Container>
       {isFetching && <Loader />}
@@ -116,27 +119,31 @@ const SearchResults = () => {
           <LottieAnimation type={city.weather[0].main} />
           <Info>
             <Span>
-              <p>visibility</p>
-              <p>{city.visibility / 1000}km</p>
+              <p>{t('visibility')}</p>
+              <p>
+                {city.visibility / 1000} {t('km')}
+              </p>
             </Span>
             <Span>
-              <p>wind</p>
-              <p>{city.wind.speed}km/h</p>
+              <p>{t('wind')}</p>
+              <p>
+                {city.wind.speed} {t('kmperhour')}
+              </p>
             </Span>
             <Span>
-              <p>sunrise</p>
+              <p>{t('sunrise')}</p>
               <p>{formatUnixDate(city.sys.sunrise)}</p>
             </Span>
             <Span>
-              <p>humidity</p>
-              <p>{city.main.humidity}</p>
+              <p>{t('humidity')}</p>
+              <p>{city.main.humidity}%</p>
             </Span>
             <Span>
-              <p>cloudiness</p>
+              <p>{t('cloudiness')}</p>
               <p>{city.clouds.all}%</p>
             </Span>
             <Span>
-              <p>sunset</p>
+              <p>{t('sunset')}</p>
               <p>{formatUnixDate(city.sys.sunset)}</p>
             </Span>
           </Info>

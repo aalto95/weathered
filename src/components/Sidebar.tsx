@@ -6,6 +6,7 @@ import { sidebarToggled } from '../features/app-slice'
 import theme from 'styled-theming'
 import closeIconDark from '../assets/icons/close-icon-dark.svg'
 import closeIconLight from '../assets/icons/close-icon-light.svg'
+import { useTranslation } from 'react-i18next'
 
 const sidebarColor = theme('mode', {
   light: '#FFFFFF',
@@ -70,6 +71,12 @@ const HeadingWrapper = styled.div`
   gap: 10px;
 `
 
+const LanguageToggler = styled.button`
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+`
+
 export const Sidebar = () => {
   const dispatch = useAppDispatch()
   const mode = useAppSelector((state) => state.app.mode)
@@ -80,6 +87,18 @@ export const Sidebar = () => {
   }
 
   useOnClickOutside(ref, closeSidebar)
+
+  const { t, i18n } = useTranslation()
+
+  const changeLanguageHandler = () => {
+    if (i18n.language === 'en') {
+      i18n.changeLanguage('ru')
+      localStorage.setItem('lang', 'ru')
+    } else {
+      i18n.changeLanguage('en')
+      localStorage.setItem('lang', 'en')
+    }
+  }
 
   return (
     <>
@@ -111,6 +130,9 @@ export const Sidebar = () => {
             />
           </IconButton>
         </SidebarHeader>
+        <LanguageToggler onClick={() => changeLanguageHandler()}>
+          <span>EN</span> / <span>RU</span>
+        </LanguageToggler>
       </Container>
       {isSidebarOpen && <SidebarBackdrop></SidebarBackdrop>}
     </>

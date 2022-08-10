@@ -65,7 +65,8 @@ const initialState: AppState = {
 export const fetchWeatherByCityName = createAsyncThunk(
   'city/fetchWeatherByCityName',
   async (cityName: string) => {
-    const response = await weatherAPI.getCityByName(cityName)
+    const lang = window.localStorage.lang
+    const response = await weatherAPI.getCityByName(cityName, lang)
     return response
   }
 )
