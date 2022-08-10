@@ -1,10 +1,11 @@
-import React, { FormEvent, useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useAppDispatch } from '../app/hooks'
 import { fetchWeatherByCityName } from '../features/app-slice'
 import searchIcon from '../assets/icons/search-icon.svg'
+import closeIcon from '../assets/icons/close-icon-dark.svg'
 
-const Section = styled.section`
+const Container = styled.section`
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -14,51 +15,82 @@ const Section = styled.section`
 
 const Form = styled.form`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  flex-direction: column;
-  padding: 2rem 0 2rem 0;
+  margin: 2rem 0 2rem 0;
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 5px;
+  width: 280px;
+  height: 60px;
 `
 
 const Input = styled.input`
   padding: 1rem 0 1rem 0;
-  width: 200px;
-  height: 50px;
   outline: none;
   border: none;
   border-radius: 20px;
-  padding: 5px;
-  padding-left: 25px;
   font-family: inherit;
   font-size: inherit;
-  background-image: url(${searchIcon});
-  background-repeat: no-repeat;
-  background-position: 5px;
+  padding-left: 10px;
+`
+
+const DeleteButton = styled.button`
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+`
+
+const Icon = styled.img`
+  width: 32px;
+  height: 32px;
+`
+
+const Span = styled.span`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 const SearchBar: React.FC = () => {
   const dispatch = useAppDispatch()
 
-  const commenceSearch = (e: FormEvent) => {
-    e.preventDefault()
+  const commenceSearch = () => {
     dispatch(fetchWeatherByCityName(inputField))
+  }
+
+  const clearInputField = () => {
+    setInputField('')
   }
 
   const [inputField, setInputField] = useState('')
 
   return (
-    <Section>
+    <Container>
       <Form onSubmit={commenceSearch}>
-        <Input
-          type="text"
-          placeholder="Search..."
-          value={inputField}
-          onChange={(e: React.FormEvent<HTMLInputElement>) =>
-            setInputField(e.currentTarget.value)
-          }
-        />
+        <Span>
+          <Icon src={searchIcon} alt="search" />
+          <Input
+            type="text"
+            placeholder="Search"
+            value={inputField}
+            onChange={(e: React.FormEvent<HTMLInputElement>) =>
+              setInputField(e.currentTarget.value)
+            }
+            onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              if (e.key === 'Enter') {
+                commenceSearch()
+              }
+            }}
+          />
+        </Span>
+        {inputField && (
+          <DeleteButton onClick={clearInputField}>
+            <Icon src={closeIcon} />
+          </DeleteButton>
+        )}
       </Form>
-    </Section>
+    </Container>
   )
 }
 
