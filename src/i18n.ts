@@ -14,7 +14,9 @@ const resources = {
       cloudiness: 'cloudiness',
       sunset: 'sunset',
       km: 'km',
-      kmperhour: 'km/h'
+      kmperhour: 'km/h',
+      switch: 'Switch to Russian \uD83C\uDDF7\uD83C\uDDFA',
+      install: 'Install this app'
     }
   },
   ru: {
@@ -26,7 +28,9 @@ const resources = {
       cloudiness: 'облачность',
       sunset: 'закат',
       km: 'км',
-      kmperhour: 'км/ч'
+      kmperhour: 'км/ч',
+      switch: 'Переключить на английский \uD83C\uDDEC\uD83C\uDDE7',
+      install: 'Установить это приложение'
     }
   }
 }

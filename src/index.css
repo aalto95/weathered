@@ -36,4 +36,5 @@ button {
   background: none;
   outline: none;
   cursor: pointer;
+  font-family: inherit;
 }

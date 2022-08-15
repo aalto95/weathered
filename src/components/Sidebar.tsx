@@ -27,6 +27,7 @@ const Container = styled.div`
   translatex: -100%;
   transition: transform 0.3s;
   z-index: 2;
+  padding: 10px;
 `
 
 const SidebarBackdrop = styled.div`
@@ -47,8 +48,11 @@ const SidebarHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+`
+
+const List = styled.ul`
+  margin-top: 10px;
 `
 
 const Icon = styled.img`
@@ -68,10 +72,10 @@ const HeadingWrapper = styled.div`
   gap: 10px;
 `
 
-const LanguageToggler = styled.button`
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
+const LanguageTogglerText = styled.p`
+  color: ${sidebarTextColor};
+  font-size: 16px;
+  font-family: inherit;
 `
 
 export const Sidebar = () => {
@@ -87,7 +91,7 @@ export const Sidebar = () => {
 
   const { t, i18n } = useTranslation()
 
-  const changeLanguageHandler = () => {
+  const handleLanguageChange = () => {
     if (i18n.language === 'en') {
       i18n.changeLanguage('ru')
       localStorage.setItem('lang', 'ru')
@@ -95,6 +99,7 @@ export const Sidebar = () => {
       i18n.changeLanguage('en')
       localStorage.setItem('lang', 'en')
     }
+    closeSidebar()
   }
 
   return (
@@ -127,9 +132,13 @@ export const Sidebar = () => {
             />
           </IconButton>
         </SidebarHeader>
-        <LanguageToggler onClick={() => changeLanguageHandler()}>
-          <span>EN</span> / <span>RU</span>
-        </LanguageToggler>
+        <List>
+          <li>
+            <button onClick={handleLanguageChange}>
+              <LanguageTogglerText>{t('switch')}</LanguageTogglerText>
+            </button>
+          </li>
+        </List>
       </Container>
       {isSidebarOpen && <SidebarBackdrop></SidebarBackdrop>}
     </>

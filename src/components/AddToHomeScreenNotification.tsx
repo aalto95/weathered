@@ -9,6 +9,7 @@ import {
 import closeIconDark from '../assets/icons/close-icon-dark.svg'
 import closeIconLight from '../assets/icons/close-icon-light.svg'
 import { useTimeout } from 'usehooks-ts'
+import { useTranslation } from 'react-i18next'
 
 const buttonColor = theme('mode', {
   light: '#F2F2F2',
@@ -52,6 +53,11 @@ const Icon = styled.img`
   height: 32px;
 `
 
+const DismissButton = styled.button`
+  width: 32px;
+  height: 32px;
+`
+
 export const AddToHomeScreenNotification = () => {
   const mode = useAppSelector((state) => state.app.mode)
   const dispatch = useAppDispatch()
@@ -62,6 +68,8 @@ export const AddToHomeScreenNotification = () => {
       dispatch(dismissA2HSButton())
     }, 1000)
   }
+
+  const { t, i18n } = useTranslation()
 
   const isA2HSButtonDismissed = useAppSelector(
     (state) => state.app.isA2HSButtonDismissed
@@ -123,13 +131,13 @@ export const AddToHomeScreenNotification = () => {
             : { transform: 'translateY(100px)' }
         }
       >
-        <InstallButton id="add-button">Install this app</InstallButton>
-        <button onClick={dismissButton}>
+        <InstallButton id="add-button">{t('install')}</InstallButton>
+        <DismissButton onClick={dismissButton}>
           <Icon
             src={mode === 'light' ? closeIconDark : closeIconLight}
             alt="close"
           />
-        </button>
+        </DismissButton>
       </Container>
     )
   }
