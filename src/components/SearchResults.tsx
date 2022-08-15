@@ -111,8 +111,8 @@ const SearchResults = () => {
       {fetchError && <Error404Animation />}
       {city && !isFetching && !fetchError && (
         <City>
-          <h1>
-            {city.name}, {city.sys.country}
+          <h1 style={{ textAlign: 'center' }}>
+            {city.name}, {t(city.sys.country)}
           </h1>
           <p>{Math.round(city.main.temp)}°C</p>
           <p>{city.weather[0].description}</p>
