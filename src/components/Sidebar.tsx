@@ -2,7 +2,7 @@ import React, { useRef } from 'react'
 import styled from 'styled-components'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { useOnClickOutside } from 'usehooks-ts'
-import { sidebarToggled } from '../features/app-slice'
+import { fetchWeatherByCityName, sidebarToggled } from '../features/app-slice'
 import theme from 'styled-theming'
 import closeIconDark from '../assets/icons/close-icon-dark.svg'
 import closeIconLight from '../assets/icons/close-icon-light.svg'
@@ -27,7 +27,6 @@ const Container = styled.div`
   translatex: -100%;
   transition: transform 0.3s;
   z-index: 2;
-  padding: 10px;
 `
 
 const SidebarBackdrop = styled.div`
@@ -48,11 +47,13 @@ const SidebarHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 10px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
 `
 
 const List = styled.ul`
   margin-top: 10px;
+  padding: 10px;
 `
 
 const Icon = styled.img`
@@ -79,6 +80,7 @@ const LanguageTogglerText = styled.p`
 `
 
 export const Sidebar = () => {
+  const city = useAppSelector((state) => state.app.city)
   const dispatch = useAppDispatch()
   const mode = useAppSelector((state) => state.app.mode)
   const isSidebarOpen = useAppSelector((state) => state.app.isSidebarOpen)
@@ -100,6 +102,7 @@ export const Sidebar = () => {
       localStorage.setItem('lang', 'en')
     }
     closeSidebar()
+    dispatch(fetchWeatherByCityName(city!.name))
   }
 
   return (

@@ -115,7 +115,7 @@ const SearchResults = () => {
             {city.name}, {city.sys.country}
           </h1>
           <p>{Math.round(city.main.temp)}°C</p>
-          <p>{city.weather[0].main}</p>
+          <p>{city.weather[0].description}</p>
           <LottieAnimation type={city.weather[0].main} />
           <Info>
             <Span>

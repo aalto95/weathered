@@ -73,8 +73,8 @@ export const fetchWeatherByCityName = createAsyncThunk(
 
 export const fetchWeatherByCoords = createAsyncThunk(
   'city/fetchWeatherByCoords',
-  async ({ lat, lon }: { lat: number; lon: number }) => {
-    const response = await weatherAPI.getCityByCoords(lat, lon)
+  async ({ lat, lon, lang }: { lat: number; lon: number; lang: string }) => {
+    const response = await weatherAPI.getCityByCoords(lat, lon, lang)
     return response
   }
 )
