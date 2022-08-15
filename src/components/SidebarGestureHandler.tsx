@@ -7,9 +7,6 @@ const Container = styled.button`
   width: 30px;
   height: 100%;
   position: absolute;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
 `
 
 export const SidebarGestureHandler = () => {

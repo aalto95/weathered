@@ -35,12 +35,6 @@ const Input = styled.input`
   padding-left: 10px;
 `
 
-const DeleteButton = styled.button`
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-`
-
 const Icon = styled.img`
   width: 32px;
   height: 32px;
@@ -85,9 +79,9 @@ const SearchBar: React.FC = () => {
           />
         </Span>
         {inputField && (
-          <DeleteButton onClick={clearInputField}>
+          <button onClick={clearInputField}>
             <Icon src={closeIcon} />
-          </DeleteButton>
+          </button>
         )}
       </Form>
     </Container>

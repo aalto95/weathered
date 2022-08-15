@@ -43,17 +43,8 @@ const InstallButton = styled.button`
   justify-content: center;
   align-items: center;
   font-size: 18px;
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
   width: 100%;
   color: ${buttonTextColor};
-`
-
-const DismissButton = styled.button`
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
 `
 
 const Icon = styled.img`
@@ -133,12 +124,12 @@ export const AddToHomeScreenNotification = () => {
         }
       >
         <InstallButton id="add-button">Install this app</InstallButton>
-        <DismissButton onClick={dismissButton}>
+        <button onClick={dismissButton}>
           <Icon
             src={mode === 'light' ? closeIconDark : closeIconLight}
             alt="close"
           />
-        </DismissButton>
+        </button>
       </Container>
     )
   }

@@ -77,9 +77,6 @@ const HeadingWrapper = styled.div`
 `
 
 const LogoButton = styled.button`
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
   height: 32px;
 `
 

@@ -57,9 +57,6 @@ const Icon = styled.img`
 `
 
 const IconButton = styled.button`
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
   width: 32px;
   height: 32px;
 `
