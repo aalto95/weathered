@@ -4,6 +4,7 @@ import { useAppDispatch } from '../app/hooks'
 import { fetchWeatherByCityName } from '../features/app-slice'
 import searchIcon from '../assets/icons/search-icon.svg'
 import closeIcon from '../assets/icons/close-icon-dark.svg'
+import { useTranslation } from 'react-i18next'
 
 const Container = styled.section`
   color: #fff;
@@ -59,6 +60,8 @@ const SearchBar: React.FC = () => {
 
   const [inputField, setInputField] = useState('')
 
+  const { t, i18n } = useTranslation()
+
   return (
     <Container>
       <Form onSubmit={commenceSearch}>
@@ -66,7 +69,7 @@ const SearchBar: React.FC = () => {
           <Icon src={searchIcon} alt="search" />
           <Input
             type="text"
-            placeholder="Search"
+            placeholder={t('searchPlaceholder')}
             value={inputField}
             onChange={(e: React.FormEvent<HTMLInputElement>) =>
               setInputField(e.currentTarget.value)
