@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, TouchEvent, MouseEvent, useEffect } from 'react'
 import styled from 'styled-components'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { useOnClickOutside } from 'usehooks-ts'
@@ -79,6 +79,14 @@ const LanguageTogglerText = styled.p`
   font-family: inherit;
 `
 
+const GestureHandler = styled.button`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px;
+  height: 100%;
+`
+
 export const Sidebar = () => {
   const city = useAppSelector((state) => state.app.city)
   const dispatch = useAppDispatch()
@@ -104,6 +112,49 @@ export const Sidebar = () => {
     closeSidebar()
     dispatch(fetchWeatherByCityName(city!.name))
   }
+
+  const [isMouseDown, setIsMouseDown] = React.useState(false)
+  const [mouseLeft, setMouseLeft] = React.useState(false)
+  const [downX, setDownX] = React.useState(0)
+
+  const handleMouseDown = (e: MouseEvent<HTMLButtonElement>) => {
+    setIsMouseDown(true)
+    setDownX(e.clientX)
+  }
+
+  const handleMouseLeave = (e: MouseEvent<HTMLButtonElement>) => {
+    if (e.clientX + 30 <= downX && isMouseDown) {
+      setMouseLeft(true)
+    }
+  }
+
+  const handleMouseUp = (e: MouseEvent<HTMLButtonElement>) => {
+    setIsMouseDown(false)
+  }
+
+  const handleTouchStart = (e: TouchEvent<HTMLButtonElement>) => {
+    setIsMouseDown(true)
+    setDownX(e.touches[0].clientX)
+  }
+
+  const handleTouchEnd = (e: TouchEvent<HTMLButtonElement>) => {
+    setIsMouseDown(false)
+    setDownX(e.changedTouches[0].clientX)
+  }
+
+  const handleTouchMove = (e: TouchEvent<HTMLButtonElement>) => {
+    if (e.changedTouches[0].clientX + 30 <= downX && isMouseDown) {
+      setMouseLeft(true)
+    }
+  }
+
+  useEffect(() => {
+    if (mouseLeft && isMouseDown) {
+      dispatch(sidebarToggled(false))
+      setIsMouseDown(false)
+      setMouseLeft(false)
+    }
+  }, [mouseLeft])
 
   return (
     <>
@@ -142,6 +193,14 @@ export const Sidebar = () => {
             </button>
           </li>
         </List>
+        <GestureHandler
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        ></GestureHandler>
       </Container>
       {isSidebarOpen && <SidebarBackdrop></SidebarBackdrop>}
     </>
