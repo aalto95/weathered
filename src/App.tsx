@@ -15,6 +15,9 @@ const App = () => {
   const mode = useAppSelector((state) => state.app.mode)
 
   useEffect(() => {
+    if (localStorage.getItem('lang') === null) {
+      localStorage.setItem('lang', 'en')
+    }
     dispatch(initializeMode())
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {

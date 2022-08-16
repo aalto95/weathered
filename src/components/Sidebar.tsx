@@ -56,6 +56,10 @@ const List = styled.ul`
   padding: 10px;
 `
 
+const ListItem = styled.li`
+  list-style: none;
+`
+
 const Icon = styled.img`
   width: 32px;
   height: 32px;
@@ -187,11 +191,11 @@ export const Sidebar = () => {
           </IconButton>
         </SidebarHeader>
         <List>
-          <li>
+          <ListItem>
             <button onClick={handleLanguageChange}>
               <LanguageTogglerText>{t('switch')}</LanguageTogglerText>
             </button>
-          </li>
+          </ListItem>
         </List>
         <GestureHandler
           onMouseDown={handleMouseDown}
