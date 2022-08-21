@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useAppSelector } from '../app/hooks'
 import SearchBar from '../components/SearchBar'
 import SearchResults from '../components/SearchResults'
 
@@ -10,10 +11,18 @@ const Wrapper = styled.div`
 `
 
 export const Search = () => {
+  const city = useAppSelector((state) => state.app.city)
+  const fetchError = useAppSelector((state) => state.app.fetchError)
+  const isFetching = useAppSelector((state) => state.app.isFetching)
+
   return (
     <Wrapper>
       <SearchBar />
-      <SearchResults />
+      <SearchResults
+        city={city}
+        fetchError={fetchError}
+        isFetching={isFetching}
+      />
     </Wrapper>
   )
 }

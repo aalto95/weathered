@@ -7,9 +7,10 @@ import snowAnimation from '../assets/animations/snow.json'
 import clearAnimation from '../assets/animations/clear.json'
 import thunderstormAnimation from '../assets/animations/thunderstorm.json'
 import theme from 'styled-theming'
-import { useAppSelector } from '../app/hooks'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
 import Loader from './Loader'
 import { useTranslation } from 'react-i18next'
+import { favoritePushed } from '../features/app-slice'
 
 const cardBackgroundColor = theme('mode', {
   light: '#f2f2f2',
@@ -90,11 +91,18 @@ const Error404Animation = () => {
   return View
 }
 
-const SearchResults = () => {
-  const city = useAppSelector((state) => state.app.city)
-  const fetchError = useAppSelector((state) => state.app.fetchError)
-  const isFetching = useAppSelector((state) => state.app.isFetching)
+interface SearchResultsProps {
+  city: any
+  fetchError: boolean
+  isFetching: boolean
+}
 
+const SearchResults = ({
+  city,
+  fetchError,
+  isFetching
+}: SearchResultsProps) => {
+  const dispatch = useAppDispatch()
   const formatUnixDate = (unixDate: number) => {
     const date = new Date(unixDate * 1000)
     const hours = date.getHours()
@@ -104,6 +112,10 @@ const SearchResults = () => {
   }
 
   const { t, i18n } = useTranslation()
+
+  const addToFavorite = () => {
+    dispatch(favoritePushed(city.id))
+  }
 
   return (
     <Container>
@@ -154,6 +166,7 @@ const SearchResults = () => {
           >
             View on map
           </a>
+          <button onClick={addToFavorite}>fav</button>
         </City>
       )}
     </Container>

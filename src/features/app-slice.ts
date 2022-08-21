@@ -1,56 +1,16 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { weatherAPI } from '../api/api'
+import { WeatherModel } from '../models/weather.model'
 
 interface AppState {
   mode: string
-  city: {
-    coord: {
-      lat: number
-      lon: number
-    }
-    weather: {
-      0: {
-        id: number
-        main: string
-        description: string
-        icon: string
-      }
-      base: string
-    }
-    main: {
-      temp: number
-      feels_like: number
-      temp_min: number
-      temp_max: number
-      pressure: number
-      humidity: number
-      sea_level: number
-      grnd_level: number
-    }
-    visibility: number
-    wind: {
-      speed: number
-      deg: number
-      gust: number
-    }
-    clouds: {
-      all: number
-    }
-    dt: number
-    sys: {
-      country: string
-      sunrise: number
-      sunset: number
-    }
-    timezone: number
-    id: number
-    name: string
-    cod: number
-  } | null
+  city: WeatherModel | null
   fetchError: boolean
   isFetching: boolean
   isSidebarOpen: boolean
   isA2HSButtonDismissed: boolean
+  favoritesIds: number[]
+  favorites: WeatherModel[]
 }
 
 const initialState: AppState = {
@@ -59,7 +19,9 @@ const initialState: AppState = {
   fetchError: false,
   isFetching: false,
   isSidebarOpen: false,
-  isA2HSButtonDismissed: false
+  isA2HSButtonDismissed: false,
+  favoritesIds: [],
+  favorites: []
 }
 
 export const fetchWeatherByCityName = createAsyncThunk(
@@ -75,6 +37,16 @@ export const fetchWeatherByCoords = createAsyncThunk(
   'city/fetchWeatherByCoords',
   async ({ lat, lon, lang }: { lat: number; lon: number; lang: string }) => {
     const response = await weatherAPI.getCityByCoords(lat, lon, lang)
+    return response
+  }
+)
+
+export const fetchMultipleCities = createAsyncThunk(
+  'city/fetchMultipleCities',
+  async (cities: number[]) => {
+    const response = await weatherAPI.getMultipleCities(
+      initializeFavoritesIds()
+    )
     return response
   }
 )
@@ -128,6 +100,15 @@ export const initializeMode = createAsyncThunk(
   }
 )
 
+const initializeFavoritesIds = () => {
+  const favoritesIds = localStorage.getItem('favoritesIds')
+  if (favoritesIds === null) {
+    localStorage.setItem('favoritesIds', '[]')
+    return []
+  }
+  return JSON.parse(favoritesIds)
+}
+
 const appSlice = createSlice({
   name: 'items',
   initialState,
@@ -143,6 +124,10 @@ const appSlice = createSlice({
     },
     sidebarToggled(state, action) {
       state.isSidebarOpen = action.payload
+    },
+    favoritePushed(state, action) {
+      state.favoritesIds.push(action.payload)
+      localStorage.setItem('favoritesIds', JSON.stringify(state.favoritesIds))
     }
   },
   extraReducers: (builder) => {
@@ -180,6 +165,14 @@ const appSlice = createSlice({
       .addCase(dismissA2HSButton.fulfilled, (state) => {
         state.isA2HSButtonDismissed = true
       })
+      .addCase(fetchMultipleCities.pending, (state, action) => {
+        state.fetchError = false
+        state.isFetching = true
+      })
+      .addCase(fetchMultipleCities.fulfilled, (state, action) => {
+        state.isFetching = false
+        state.favorites = action.payload.list
+      })
   }
 })
 
@@ -187,6 +180,7 @@ export const {
   citySet,
   modeToggled,
   sidebarToggled,
-  isA2HSButtonDismissedSet
+  isA2HSButtonDismissedSet,
+  favoritePushed
 } = appSlice.actions
 export default appSlice.reducer

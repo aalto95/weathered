@@ -8,6 +8,7 @@ import { sidebarToggled, toggleMode } from '../features/app-slice'
 import React from 'react'
 import burgerIconDark from '../assets/icons/burger-menu-icon-dark.svg'
 import burgerIconLight from '../assets/icons/burger-menu-icon-light.svg'
+import { Link } from 'react-router-dom'
 
 const headingColor = theme('mode', {
   light: '#1C1E21',
@@ -98,14 +99,27 @@ export const Header = () => {
         <LogoButton onClick={toggleSidebar}>
           {mode === 'light' ? <LightModeBurgerIcon /> : <DarkModeBurgerIcon />}
         </LogoButton>
-        <LogoImg
-          src="/logo192.png"
-          alt="logo"
-          style={
-            mode === 'light' ? { filter: 'invert(1)' } : { filter: 'invert(0)' }
-          }
-        />
-        <Heading>Weathered</Heading>
+        <Link
+          to="/"
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '10px',
+            textDecoration: 'none'
+          }}
+        >
+          <LogoImg
+            src="/logo192.png"
+            alt="logo"
+            style={
+              mode === 'light'
+                ? { filter: 'invert(1)' }
+                : { filter: 'invert(0)' }
+            }
+          />
+          <Heading>Weathered</Heading>
+        </Link>
       </HeadingWrapper>
       <ToggleButton onClick={toggleTheme}>
         {mode === 'light' ? <LightModeLogo /> : <DarkModeLogo />}
