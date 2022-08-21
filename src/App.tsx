@@ -9,6 +9,7 @@ import { Search } from './pages/Search'
 import { Sidebar } from './components/Sidebar'
 import { AddToHomeScreenNotification } from './components/AddToHomeScreenNotification'
 import { SidebarGestureHandler } from './components/SidebarGestureHandler'
+import Favorites from './pages/Favorites'
 
 const App = () => {
   const dispatch = useAppDispatch()
@@ -40,17 +41,18 @@ const App = () => {
 
   return (
     <div className="App">
-      <ThemeProvider theme={{ mode }}>
-        <Header />
-        <Sidebar />
-        <SidebarGestureHandler />
-        <Router>
+      <Router>
+        <ThemeProvider theme={{ mode }}>
+          <Header />
+          <Sidebar />
+          <SidebarGestureHandler />
           <Routes>
             <Route path="/" element={<Search />} />
+            <Route path="/favorites" element={<Favorites />} />
           </Routes>
-        </Router>
-        <AddToHomeScreenNotification />
-      </ThemeProvider>
+          <AddToHomeScreenNotification />
+        </ThemeProvider>
+      </Router>
     </div>
   )
 }

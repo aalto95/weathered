@@ -7,6 +7,7 @@ import theme from 'styled-theming'
 import closeIconDark from '../assets/icons/close-icon-dark.svg'
 import closeIconLight from '../assets/icons/close-icon-light.svg'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 
 const sidebarColor = theme('mode', {
   light: '#FFFFFF',
@@ -195,6 +196,11 @@ export const Sidebar = () => {
             <button onClick={handleLanguageChange}>
               <LanguageTogglerText>{t('switch')}</LanguageTogglerText>
             </button>
+          </ListItem>
+          <ListItem>
+            <Link to="/favorites" onClick={closeSidebar}>
+              {t('favorites')}
+            </Link>
           </ListItem>
         </List>
         <GestureHandler
