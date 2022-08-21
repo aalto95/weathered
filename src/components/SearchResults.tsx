@@ -147,6 +147,13 @@ const SearchResults = () => {
               <p>{formatUnixDate(city.sys.sunset)}</p>
             </Span>
           </Info>
+          <a
+            href={`https://www.google.com/maps/place/${city.coord.lat}%2C${city.coord.lon}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            View on map
+          </a>
         </City>
       )}
     </Container>
