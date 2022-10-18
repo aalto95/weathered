@@ -47,7 +47,7 @@ const Span = styled.span`
   align-items: center;
 `
 
-const SearchBar: React.FC = () => {
+export const SearchBar: React.FC = () => {
   const dispatch = useAppDispatch()
 
   const commenceSearch = () => {
@@ -90,5 +90,3 @@ const SearchBar: React.FC = () => {
     </Container>
   )
 }
-
-export default SearchBar

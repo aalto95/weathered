@@ -1,4 +1,4 @@
-import React, { useRef, TouchEvent, MouseEvent, useEffect } from 'react'
+import React, { useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { useOnClickOutside } from 'usehooks-ts'
@@ -84,7 +84,7 @@ const LanguageTogglerText = styled.p`
   font-family: inherit;
 `
 
-export const Sidebar = () => {
+export const Sidebar: React.FC = () => {
   const city = useAppSelector((state) => state.app.city)
   const dispatch = useAppDispatch()
   const mode = useAppSelector((state) => state.app.mode)
@@ -112,38 +112,6 @@ export const Sidebar = () => {
 
   const [isMouseDown, setIsMouseDown] = React.useState(false)
   const [mouseLeft, setMouseLeft] = React.useState(false)
-  const [downX, setDownX] = React.useState(0)
-
-  const handleMouseDown = (e: MouseEvent<HTMLButtonElement>) => {
-    setIsMouseDown(true)
-    setDownX(e.clientX)
-  }
-
-  const handleMouseLeave = (e: MouseEvent<HTMLButtonElement>) => {
-    if (e.clientX + 30 <= downX && isMouseDown) {
-      setMouseLeft(true)
-    }
-  }
-
-  const handleMouseUp = (e: MouseEvent<HTMLButtonElement>) => {
-    setIsMouseDown(false)
-  }
-
-  const handleTouchStart = (e: TouchEvent<HTMLButtonElement>) => {
-    setIsMouseDown(true)
-    setDownX(e.touches[0].clientX)
-  }
-
-  const handleTouchEnd = (e: TouchEvent<HTMLButtonElement>) => {
-    setIsMouseDown(false)
-    setDownX(e.changedTouches[0].clientX)
-  }
-
-  const handleTouchMove = (e: TouchEvent<HTMLButtonElement>) => {
-    if (e.changedTouches[0].clientX + 30 <= downX && isMouseDown) {
-      setMouseLeft(true)
-    }
-  }
 
   useEffect(() => {
     if (mouseLeft && isMouseDown) {

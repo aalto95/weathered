@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import SearchResults from '../components/SearchResults'
@@ -14,7 +14,7 @@ const Container = styled.div`
   text-align: center;
 `
 
-const Favorites: FunctionComponent<FavoritesProps> = () => {
+export const Favorites: React.FC<FavoritesProps> = () => {
   const dispatch = useAppDispatch()
   const favoritesIds = useAppSelector((state) => state.app.favoritesIds)
   const favorites = useAppSelector((state) => state.app.favorites)
@@ -39,5 +39,3 @@ const Favorites: FunctionComponent<FavoritesProps> = () => {
     </Container>
   )
 }
-
-export default Favorites

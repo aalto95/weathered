@@ -8,9 +8,9 @@ import { Header } from './components/Header'
 import { Search } from './pages/Search'
 import { Sidebar } from './components/Sidebar'
 import { AddToHomeScreenNotification } from './components/AddToHomeScreenNotification'
-import Favorites from './pages/Favorites'
+import { Favorites } from './pages/Favorites'
 
-const App = () => {
+const App: React.FC = () => {
   const dispatch = useAppDispatch()
   const mode = useAppSelector((state) => state.app.mode)
 

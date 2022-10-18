@@ -14,8 +14,6 @@ const LottieAnimation = () => {
   return View
 }
 
-const Loader = () => {
+export const Loader: React.FC = () => {
   return <LottieAnimation />
 }
-
-export default Loader

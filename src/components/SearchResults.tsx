@@ -7,8 +7,8 @@ import snowAnimation from '../assets/animations/snow.json'
 import clearAnimation from '../assets/animations/clear.json'
 import thunderstormAnimation from '../assets/animations/thunderstorm.json'
 import theme from 'styled-theming'
-import { useAppDispatch, useAppSelector } from '../app/hooks'
-import Loader from './Loader'
+import { useAppDispatch } from '../app/hooks'
+import { Loader } from './Loader'
 import { useTranslation } from 'react-i18next'
 import { favoritePushed } from '../features/app-slice'
 
@@ -97,11 +97,11 @@ interface SearchResultsProps {
   isFetching: boolean
 }
 
-const SearchResults = ({
+const SearchResults: React.FC<SearchResultsProps> = ({
   city,
   fetchError,
   isFetching
-}: SearchResultsProps) => {
+}) => {
   const dispatch = useAppDispatch()
   const formatUnixDate = (unixDate: number) => {
     const date = new Date(unixDate * 1000)

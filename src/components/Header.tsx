@@ -81,7 +81,7 @@ const LogoButton = styled.button`
   height: 32px;
 `
 
-export const Header = () => {
+export const Header: React.FC = () => {
   const dispatch = useAppDispatch()
   const mode = useAppSelector((state) => state.app.mode)
 

@@ -58,7 +58,7 @@ const DismissButton = styled.button`
   height: 32px;
 `
 
-export const AddToHomeScreenNotification = () => {
+export const AddToHomeScreenNotification: React.FC = () => {
   const mode = useAppSelector((state) => state.app.mode)
   const dispatch = useAppDispatch()
 

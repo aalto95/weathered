@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useAppSelector } from '../app/hooks'
-import SearchBar from '../components/SearchBar'
+import { SearchBar } from '../components/SearchBar'
 import SearchResults from '../components/SearchResults'
 
 const Wrapper = styled.div`
@@ -10,7 +10,7 @@ const Wrapper = styled.div`
   color: transparent;
 `
 
-export const Search = () => {
+export const Search: React.FC = () => {
   const city = useAppSelector((state) => state.app.city)
   const fetchError = useAppSelector((state) => state.app.fetchError)
   const isFetching = useAppSelector((state) => state.app.isFetching)
