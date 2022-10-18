@@ -125,8 +125,20 @@ const appSlice = createSlice({
     sidebarToggled(state, action) {
       state.isSidebarOpen = action.payload
     },
+    favoritesIdsSet(state, action) {
+      state.favoritesIds = action.payload
+    },
     favoritePushed(state, action) {
       state.favoritesIds.push(action.payload)
+      localStorage.setItem('favoritesIds', JSON.stringify(state.favoritesIds))
+    },
+    favoriteRemoved(state, action) {
+      state.favoritesIds = state.favoritesIds.filter(
+        (id) => id !== action.payload
+      )
+      state.favorites = state.favorites.filter(
+        (city) => city.id !== action.payload
+      )
       localStorage.setItem('favoritesIds', JSON.stringify(state.favoritesIds))
     }
   },
@@ -181,6 +193,8 @@ export const {
   modeToggled,
   sidebarToggled,
   isA2HSButtonDismissedSet,
-  favoritePushed
+  favoritePushed,
+  favoriteRemoved,
+  favoritesIdsSet
 } = appSlice.actions
 export default appSlice.reducer

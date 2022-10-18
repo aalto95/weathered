@@ -2,7 +2,11 @@ import React, { useEffect } from 'react'
 import './App.css'
 import { ThemeProvider } from 'styled-components'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { fetchWeatherByCoords, initializeMode } from './features/app-slice'
+import {
+  favoritesIdsSet,
+  fetchWeatherByCoords,
+  initializeMode
+} from './features/app-slice'
 import { useAppDispatch, useAppSelector } from './app/hooks'
 import { Header } from './components/Header'
 import { Search } from './pages/Search'
@@ -15,6 +19,10 @@ const App: React.FC = () => {
   const mode = useAppSelector((state) => state.app.mode)
 
   useEffect(() => {
+    if (localStorage.getItem('favoritesIds')) {
+      const favoritesIds = JSON.parse(localStorage.getItem('favoritesIds')!)
+      dispatch(favoritesIdsSet(favoritesIds))
+    }
     if (localStorage.getItem('lang') === null) {
       localStorage.setItem('lang', 'en')
     }

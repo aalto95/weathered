@@ -14,7 +14,6 @@
     "@types/react-redux": "^7.1.16",
     "@types/styled-components": "^5.1.14",
     "axios": "^0.21.1",
-    "handy-svg": "^1.0.8",
     "i18next": "^21.9.0",
     "lottie-react": "^2.2.1",
     "react": "^17.0.2",

@@ -5,7 +5,7 @@ import { useOnClickOutside } from 'usehooks-ts'
 import { fetchWeatherByCityName, sidebarToggled } from '../features/app-slice'
 import theme from 'styled-theming'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { XMarkIcon } from '@heroicons/react/24/solid'
 
 const sidebarColor = theme('mode', {
@@ -92,6 +92,7 @@ export const Sidebar: React.FC = () => {
   const dispatch = useAppDispatch()
   const mode = useAppSelector((state) => state.app.mode)
   const isSidebarOpen = useAppSelector((state) => state.app.isSidebarOpen)
+  const location = useLocation()
   const ref = useRef(null)
   const closeSidebar = () => {
     dispatch(sidebarToggled(false))
@@ -115,6 +116,11 @@ export const Sidebar: React.FC = () => {
 
   const goToFavorites = () => {
     navigate('/favorites')
+    closeSidebar()
+  }
+
+  const goToHome = () => {
+    navigate('/')
     closeSidebar()
   }
 
@@ -157,8 +163,13 @@ export const Sidebar: React.FC = () => {
           </IconButton>
         </SidebarHeader>
         <List>
+          {location.pathname === '/' && (
+            <ListItem onClick={goToFavorites}>{t('favorites')}</ListItem>
+          )}
+          {location.pathname === '/favorites' && (
+            <ListItem onClick={goToHome}>{t('home')}</ListItem>
+          )}
           <ListItem onClick={handleLanguageChange}>{t('switch')}</ListItem>
-          <ListItem onClick={goToFavorites}>{t('favorites')}</ListItem>
         </List>
       </Container>
       {isSidebarOpen && <SidebarBackdrop></SidebarBackdrop>}

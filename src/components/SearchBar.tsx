@@ -21,7 +21,12 @@ const Form = styled.form`
   background-color: #fff;
   border-radius: 15px;
   padding: 5px;
-  width: 280px;
+  @media (max-width: 480px) {
+    width: 90%;
+  }
+  @media (min-width: 480px) {
+    width: 300px;
+  }
   height: 60px;
 `
 
@@ -33,11 +38,6 @@ const Input = styled.input`
   font-family: inherit;
   font-size: inherit;
   padding-left: 10px;
-`
-
-const Icon = styled.img`
-  width: 32px;
-  height: 32px;
 `
 
 const Span = styled.span`
