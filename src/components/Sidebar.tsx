@@ -84,14 +84,6 @@ const LanguageTogglerText = styled.p`
   font-family: inherit;
 `
 
-const GestureHandler = styled.button`
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 50px;
-  height: 100%;
-`
-
 export const Sidebar = () => {
   const city = useAppSelector((state) => state.app.city)
   const dispatch = useAppDispatch()
@@ -203,14 +195,6 @@ export const Sidebar = () => {
             </Link>
           </ListItem>
         </List>
-        <GestureHandler
-          onMouseDown={handleMouseDown}
-          onMouseLeave={handleMouseLeave}
-          onMouseUp={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        ></GestureHandler>
       </Container>
       {isSidebarOpen && <SidebarBackdrop></SidebarBackdrop>}
     </>
