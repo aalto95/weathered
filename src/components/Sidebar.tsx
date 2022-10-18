@@ -4,10 +4,9 @@ import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { useOnClickOutside } from 'usehooks-ts'
 import { fetchWeatherByCityName, sidebarToggled } from '../features/app-slice'
 import theme from 'styled-theming'
-import closeIconDark from '../assets/icons/close-icon-dark.svg'
-import closeIconLight from '../assets/icons/close-icon-light.svg'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { XMarkIcon } from '@heroicons/react/24/solid'
 
 const sidebarColor = theme('mode', {
   light: '#FFFFFF',
@@ -24,7 +23,12 @@ const Container = styled.div`
   height: 100vh;
   top: 0;
   background-color: ${sidebarColor};
-  width: 80%;
+  @media (max-width: 480px) {
+    width: 100%;
+  }
+  @media (min-width: 480px) {
+    width: 300px;
+  }
   translatex: -100%;
   transition: transform 0.3s;
   z-index: 2;
@@ -59,6 +63,10 @@ const List = styled.ul`
 
 const ListItem = styled.li`
   list-style: none;
+  line-height: 2;
+  color: ${sidebarTextColor};
+  text-decoration: none;
+  cursor: pointer;
 `
 
 const Icon = styled.img`
@@ -78,13 +86,8 @@ const HeadingWrapper = styled.div`
   gap: 10px;
 `
 
-const LanguageTogglerText = styled.p`
-  color: ${sidebarTextColor};
-  font-size: 16px;
-  font-family: inherit;
-`
-
 export const Sidebar: React.FC = () => {
+  const navigate = useNavigate()
   const city = useAppSelector((state) => state.app.city)
   const dispatch = useAppDispatch()
   const mode = useAppSelector((state) => state.app.mode)
@@ -108,6 +111,11 @@ export const Sidebar: React.FC = () => {
     }
     closeSidebar()
     dispatch(fetchWeatherByCityName(city!.name))
+  }
+
+  const goToFavorites = () => {
+    navigate('/favorites')
+    closeSidebar()
   }
 
   const [isMouseDown, setIsMouseDown] = React.useState(false)
@@ -145,23 +153,12 @@ export const Sidebar: React.FC = () => {
             <Heading>Weathered</Heading>
           </HeadingWrapper>
           <IconButton onClick={closeSidebar}>
-            <Icon
-              src={mode === 'light' ? closeIconDark : closeIconLight}
-              alt="close"
-            />
+            <XMarkIcon color={mode === 'light' ? 'black' : 'white'} />
           </IconButton>
         </SidebarHeader>
         <List>
-          <ListItem>
-            <button onClick={handleLanguageChange}>
-              <LanguageTogglerText>{t('switch')}</LanguageTogglerText>
-            </button>
-          </ListItem>
-          <ListItem>
-            <Link to="/favorites" onClick={closeSidebar}>
-              {t('favorites')}
-            </Link>
-          </ListItem>
+          <ListItem onClick={handleLanguageChange}>{t('switch')}</ListItem>
+          <ListItem onClick={goToFavorites}>{t('favorites')}</ListItem>
         </List>
       </Container>
       {isSidebarOpen && <SidebarBackdrop></SidebarBackdrop>}

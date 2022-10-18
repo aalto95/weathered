@@ -6,10 +6,9 @@ import {
   dismissA2HSButton,
   isA2HSButtonDismissedSet
 } from '../features/app-slice'
-import closeIconDark from '../assets/icons/close-icon-dark.svg'
-import closeIconLight from '../assets/icons/close-icon-light.svg'
 import { useTimeout } from 'usehooks-ts'
 import { useTranslation } from 'react-i18next'
+import { XMarkIcon } from '@heroicons/react/24/solid'
 
 const buttonColor = theme('mode', {
   light: '#F2F2F2',
@@ -23,7 +22,7 @@ const buttonTextColor = theme('mode', {
 
 const Container = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   width: 200px;
   padding: 10px;
@@ -44,13 +43,8 @@ const InstallButton = styled.button`
   justify-content: center;
   align-items: center;
   font-size: 18px;
-  width: 100%;
-  color: ${buttonTextColor};
-`
 
-const Icon = styled.img`
-  width: 32px;
-  height: 32px;
+  color: ${buttonTextColor};
 `
 
 const DismissButton = styled.button`
@@ -133,10 +127,7 @@ export const AddToHomeScreenNotification: React.FC = () => {
       >
         <InstallButton id="add-button">{t('install')}</InstallButton>
         <DismissButton onClick={dismissButton}>
-          <Icon
-            src={mode === 'light' ? closeIconDark : closeIconLight}
-            alt="close"
-          />
+          <XMarkIcon color={mode === 'light' ? 'black' : 'white'} />
         </DismissButton>
       </Container>
     )

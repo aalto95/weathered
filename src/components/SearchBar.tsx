@@ -2,9 +2,8 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useAppDispatch } from '../app/hooks'
 import { fetchWeatherByCityName } from '../features/app-slice'
-import searchIcon from '../assets/icons/search-icon.svg'
-import closeIcon from '../assets/icons/close-icon-dark.svg'
 import { useTranslation } from 'react-i18next'
+import { XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 
 const Container = styled.section`
   color: #fff;
@@ -47,6 +46,11 @@ const Span = styled.span`
   align-items: center;
 `
 
+const PurgeButton = styled.button`
+  min-width: 32px;
+  height: 32px;
+`
+
 export const SearchBar: React.FC = () => {
   const dispatch = useAppDispatch()
 
@@ -66,7 +70,7 @@ export const SearchBar: React.FC = () => {
     <Container>
       <Form onSubmit={commenceSearch}>
         <Span>
-          <Icon src={searchIcon} alt="search" />
+          <MagnifyingGlassIcon style={{ width: '32px' }} color="black" />
           <Input
             type="text"
             placeholder={t('searchPlaceholder')}
@@ -82,9 +86,9 @@ export const SearchBar: React.FC = () => {
           />
         </Span>
         {inputField && (
-          <button onClick={clearInputField}>
-            <Icon src={closeIcon} />
-          </button>
+          <PurgeButton onClick={clearInputField}>
+            <XMarkIcon color="black" />
+          </PurgeButton>
         )}
       </Form>
     </Container>
