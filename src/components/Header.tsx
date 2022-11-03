@@ -1,40 +1,16 @@
-import darkModeIcon from '../assets/icons/dark-mode-icon.svg'
-import lightModeIcon from '../assets/icons/light-mode-icon.svg'
-import { HandySvg } from 'handy-svg'
 import styled from 'styled-components'
 import theme from 'styled-theming'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { sidebarToggled, toggleMode } from '../features/app-slice'
 import React from 'react'
-import burgerIconDark from '../assets/icons/burger-menu-icon-dark.svg'
-import burgerIconLight from '../assets/icons/burger-menu-icon-light.svg'
+import { Link } from 'react-router-dom'
+import { MoonIcon, Bars3Icon } from '@heroicons/react/24/solid'
+import { SunIcon } from '@heroicons/react/24/outline'
 
 const headingColor = theme('mode', {
   light: '#1C1E21',
   dark: '#E3E3E3;'
 })
-
-const LightModeLogo = () => (
-  <HandySvg
-    src={lightModeIcon}
-    className="icon"
-    width="32"
-    height="32"
-    color="#000"
-  />
-)
-
-const DarkModeLogo = () => (
-  <HandySvg src={darkModeIcon} className="icon" width="32" height="32" />
-)
-
-const LightModeBurgerIcon = () => (
-  <HandySvg src={burgerIconDark} className="icon" width="32" height="32" />
-)
-
-const DarkModeBurgerIcon = () => (
-  <HandySvg src={burgerIconLight} className="icon" width="32" height="32" />
-)
 
 const LogoImg = styled.img`
   width: 32px;
@@ -80,7 +56,7 @@ const LogoButton = styled.button`
   height: 32px;
 `
 
-export const Header = () => {
+export const Header: React.FC = () => {
   const dispatch = useAppDispatch()
   const mode = useAppSelector((state) => state.app.mode)
 
@@ -96,19 +72,38 @@ export const Header = () => {
     <Container>
       <HeadingWrapper>
         <LogoButton onClick={toggleSidebar}>
-          {mode === 'light' ? <LightModeBurgerIcon /> : <DarkModeBurgerIcon />}
+          {mode === 'light' && <Bars3Icon width="32" color="#1C1E21" />}
+          {mode === 'dark' && <Bars3Icon width="32" color="#E3E3E3" />}
         </LogoButton>
-        <LogoImg
-          src="/logo192.png"
-          alt="logo"
-          style={
-            mode === 'light' ? { filter: 'invert(1)' } : { filter: 'invert(0)' }
-          }
-        />
-        <Heading>Weathered</Heading>
+        <Link
+          to="/"
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '10px',
+            textDecoration: 'none'
+          }}
+        >
+          <LogoImg
+            src="/logo192.png"
+            alt="logo"
+            style={
+              mode === 'light'
+                ? { filter: 'invert(1)' }
+                : { filter: 'invert(0)' }
+            }
+          />
+          <Heading>Weathered</Heading>
+        </Link>
       </HeadingWrapper>
       <ToggleButton onClick={toggleTheme}>
-        {mode === 'light' ? <LightModeLogo /> : <DarkModeLogo />}
+        {mode === 'light' && (
+          <MoonIcon color="#1C1E21" style={{ width: '32px' }} />
+        )}
+        {mode === 'dark' && (
+          <SunIcon color="#E3E3E3" style={{ width: '32px' }} />
+        )}
       </ToggleButton>
     </Container>
   )

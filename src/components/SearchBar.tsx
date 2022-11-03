@@ -2,9 +2,8 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useAppDispatch } from '../app/hooks'
 import { fetchWeatherByCityName } from '../features/app-slice'
-import searchIcon from '../assets/icons/search-icon.svg'
-import closeIcon from '../assets/icons/close-icon-dark.svg'
 import { useTranslation } from 'react-i18next'
+import { XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 
 const Container = styled.section`
   color: #fff;
@@ -22,7 +21,12 @@ const Form = styled.form`
   background-color: #fff;
   border-radius: 15px;
   padding: 5px;
-  width: 280px;
+  @media (max-width: 480px) {
+    width: 90%;
+  }
+  @media (min-width: 480px) {
+    width: 300px;
+  }
   height: 60px;
 `
 
@@ -36,18 +40,18 @@ const Input = styled.input`
   padding-left: 10px;
 `
 
-const Icon = styled.img`
-  width: 32px;
-  height: 32px;
-`
-
 const Span = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
 `
 
-const SearchBar: React.FC = () => {
+const PurgeButton = styled.button`
+  min-width: 32px;
+  height: 32px;
+`
+
+export const SearchBar: React.FC = () => {
   const dispatch = useAppDispatch()
 
   const commenceSearch = () => {
@@ -66,7 +70,7 @@ const SearchBar: React.FC = () => {
     <Container>
       <Form onSubmit={commenceSearch}>
         <Span>
-          <Icon src={searchIcon} alt="search" />
+          <MagnifyingGlassIcon style={{ width: '32px' }} color="black" />
           <Input
             type="text"
             placeholder={t('searchPlaceholder')}
@@ -82,13 +86,11 @@ const SearchBar: React.FC = () => {
           />
         </Span>
         {inputField && (
-          <button onClick={clearInputField}>
-            <Icon src={closeIcon} />
-          </button>
+          <PurgeButton onClick={clearInputField}>
+            <XMarkIcon color="black" />
+          </PurgeButton>
         )}
       </Form>
     </Container>
   )
 }
-
-export default SearchBar

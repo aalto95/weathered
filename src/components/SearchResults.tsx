@@ -7,9 +7,15 @@ import snowAnimation from '../assets/animations/snow.json'
 import clearAnimation from '../assets/animations/clear.json'
 import thunderstormAnimation from '../assets/animations/thunderstorm.json'
 import theme from 'styled-theming'
-import { useAppSelector } from '../app/hooks'
-import Loader from './Loader'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { Loader } from './Loader'
 import { useTranslation } from 'react-i18next'
+import { favoritePushed, favoriteRemoved } from '../features/app-slice'
+import {
+  MapPinIcon,
+  StarIcon as StarIconSolid
+} from '@heroicons/react/24/solid'
+import { StarIcon as StarIconOutline } from '@heroicons/react/24/outline'
 
 const cardBackgroundColor = theme('mode', {
   light: '#f2f2f2',
@@ -25,6 +31,7 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
+  margin-top: 2rem;
 `
 
 const City = styled.div`
@@ -90,10 +97,22 @@ const Error404Animation = () => {
   return View
 }
 
-const SearchResults = () => {
-  const city = useAppSelector((state) => state.app.city)
-  const fetchError = useAppSelector((state) => state.app.fetchError)
-  const isFetching = useAppSelector((state) => state.app.isFetching)
+interface SearchResultsProps {
+  city: any
+  fetchError: boolean
+  isFetching: boolean
+  isFavorite?: boolean
+}
+
+const SearchResults: React.FC<SearchResultsProps> = ({
+  city,
+  fetchError,
+  isFetching,
+  isFavorite
+}) => {
+  const dispatch = useAppDispatch()
+  const mode = useAppSelector((state) => state.app.mode)
+  const favoritesIds = useAppSelector((state) => state.app.favoritesIds)
 
   const formatUnixDate = (unixDate: number) => {
     const date = new Date(unixDate * 1000)
@@ -104,6 +123,18 @@ const SearchResults = () => {
   }
 
   const { t, i18n } = useTranslation()
+
+  const addToFavorite = () => {
+    dispatch(favoritePushed(city.id))
+  }
+
+  const removeFromFavorite = () => {
+    dispatch(favoriteRemoved(city.id))
+  }
+
+  const getIsFavorite = () => {
+    return favoritesIds.includes(city.id)
+  }
 
   return (
     <Container>
@@ -147,6 +178,34 @@ const SearchResults = () => {
               <p>{formatUnixDate(city.sys.sunset)}</p>
             </Span>
           </Info>
+          <div>
+            <a
+              href={`https://www.google.com/maps/place/${city.coord.lat}%2C${city.coord.lon}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <MapPinIcon
+                color={mode === 'light' ? 'black' : 'white'}
+                width="32"
+              />
+            </a>
+            <button
+              onClick={getIsFavorite() ? removeFromFavorite : addToFavorite}
+            >
+              {!getIsFavorite() && (
+                <StarIconOutline
+                  color={mode === 'light' ? 'black' : 'white'}
+                  width="32"
+                />
+              )}
+              {getIsFavorite() && (
+                <StarIconSolid
+                  color={mode === 'light' ? 'black' : 'white'}
+                  width="32"
+                />
+              )}
+            </button>
+          </div>
         </City>
       )}
     </Container>

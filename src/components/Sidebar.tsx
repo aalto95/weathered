@@ -1,12 +1,12 @@
-import React, { useRef, TouchEvent, MouseEvent, useEffect } from 'react'
+import React, { useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { useOnClickOutside } from 'usehooks-ts'
 import { fetchWeatherByCityName, sidebarToggled } from '../features/app-slice'
 import theme from 'styled-theming'
-import closeIconDark from '../assets/icons/close-icon-dark.svg'
-import closeIconLight from '../assets/icons/close-icon-light.svg'
 import { useTranslation } from 'react-i18next'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { XMarkIcon } from '@heroicons/react/24/solid'
 
 const sidebarColor = theme('mode', {
   light: '#FFFFFF',
@@ -23,7 +23,12 @@ const Container = styled.div`
   height: 100vh;
   top: 0;
   background-color: ${sidebarColor};
-  width: 80%;
+  @media (max-width: 480px) {
+    width: 100%;
+  }
+  @media (min-width: 480px) {
+    width: 300px;
+  }
   translatex: -100%;
   transition: transform 0.3s;
   z-index: 2;
@@ -58,6 +63,10 @@ const List = styled.ul`
 
 const ListItem = styled.li`
   list-style: none;
+  line-height: 2;
+  color: ${sidebarTextColor};
+  text-decoration: none;
+  cursor: pointer;
 `
 
 const Icon = styled.img`
@@ -77,25 +86,13 @@ const HeadingWrapper = styled.div`
   gap: 10px;
 `
 
-const LanguageTogglerText = styled.p`
-  color: ${sidebarTextColor};
-  font-size: 16px;
-  font-family: inherit;
-`
-
-const GestureHandler = styled.button`
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 50px;
-  height: 100%;
-`
-
-export const Sidebar = () => {
+export const Sidebar: React.FC = () => {
+  const navigate = useNavigate()
   const city = useAppSelector((state) => state.app.city)
   const dispatch = useAppDispatch()
   const mode = useAppSelector((state) => state.app.mode)
   const isSidebarOpen = useAppSelector((state) => state.app.isSidebarOpen)
+  const location = useLocation()
   const ref = useRef(null)
   const closeSidebar = () => {
     dispatch(sidebarToggled(false))
@@ -117,40 +114,18 @@ export const Sidebar = () => {
     dispatch(fetchWeatherByCityName(city!.name))
   }
 
+  const goToFavorites = () => {
+    navigate('/favorites')
+    closeSidebar()
+  }
+
+  const goToHome = () => {
+    navigate('/')
+    closeSidebar()
+  }
+
   const [isMouseDown, setIsMouseDown] = React.useState(false)
   const [mouseLeft, setMouseLeft] = React.useState(false)
-  const [downX, setDownX] = React.useState(0)
-
-  const handleMouseDown = (e: MouseEvent<HTMLButtonElement>) => {
-    setIsMouseDown(true)
-    setDownX(e.clientX)
-  }
-
-  const handleMouseLeave = (e: MouseEvent<HTMLButtonElement>) => {
-    if (e.clientX + 30 <= downX && isMouseDown) {
-      setMouseLeft(true)
-    }
-  }
-
-  const handleMouseUp = (e: MouseEvent<HTMLButtonElement>) => {
-    setIsMouseDown(false)
-  }
-
-  const handleTouchStart = (e: TouchEvent<HTMLButtonElement>) => {
-    setIsMouseDown(true)
-    setDownX(e.touches[0].clientX)
-  }
-
-  const handleTouchEnd = (e: TouchEvent<HTMLButtonElement>) => {
-    setIsMouseDown(false)
-    setDownX(e.changedTouches[0].clientX)
-  }
-
-  const handleTouchMove = (e: TouchEvent<HTMLButtonElement>) => {
-    if (e.changedTouches[0].clientX + 30 <= downX && isMouseDown) {
-      setMouseLeft(true)
-    }
-  }
 
   useEffect(() => {
     if (mouseLeft && isMouseDown) {
@@ -184,27 +159,18 @@ export const Sidebar = () => {
             <Heading>Weathered</Heading>
           </HeadingWrapper>
           <IconButton onClick={closeSidebar}>
-            <Icon
-              src={mode === 'light' ? closeIconDark : closeIconLight}
-              alt="close"
-            />
+            <XMarkIcon color={mode === 'light' ? 'black' : 'white'} />
           </IconButton>
         </SidebarHeader>
         <List>
-          <ListItem>
-            <button onClick={handleLanguageChange}>
-              <LanguageTogglerText>{t('switch')}</LanguageTogglerText>
-            </button>
-          </ListItem>
+          {location.pathname === '/' && (
+            <ListItem onClick={goToFavorites}>{t('favorites')}</ListItem>
+          )}
+          {location.pathname === '/favorites' && (
+            <ListItem onClick={goToHome}>{t('home')}</ListItem>
+          )}
+          <ListItem onClick={handleLanguageChange}>{t('switch')}</ListItem>
         </List>
-        <GestureHandler
-          onMouseDown={handleMouseDown}
-          onMouseLeave={handleMouseLeave}
-          onMouseUp={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        ></GestureHandler>
       </Container>
       {isSidebarOpen && <SidebarBackdrop></SidebarBackdrop>}
     </>
