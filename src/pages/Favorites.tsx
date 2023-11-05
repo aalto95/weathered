@@ -14,6 +14,8 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
+  gap: 16px;
+  padding: 16px 0;
 `
 
 const noFavoritesColor = theme('mode', {
