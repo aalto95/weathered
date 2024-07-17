@@ -1,7 +1,7 @@
 {
   "short_name": "Weathered",
   "name": "Weathered",
-  "description": "Weathered is a Progressive Web Application for checking the weather. Enjoy!",
+  "description": "Weathered is a Progressive Web Application for viewing the weather forecast. Enjoy!",
   "categories": ["weather"],
   "lang": "en-US",
   "icons": [
