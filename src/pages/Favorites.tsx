@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import theme from 'styled-theming'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import SearchResults from '../components/SearchResults'
-import { fetchMultipleCities } from '../features/app-slice'
+import { favoritesIdsSet, fetchMultipleCities } from '../features/app-slice'
 
 interface FavoritesProps {}
 
@@ -28,10 +28,10 @@ const NoFavoritesText = styled.h1`
   padding: 1rem;
 `
 
-export const Favorites: React.FC<FavoritesProps> = () => {
+const Favorites: React.FC<FavoritesProps> = () => {
   const dispatch = useAppDispatch()
-  const favoritesIds = useAppSelector((state) => state.app.favoritesIds)
   const favorites = useAppSelector((state) => state.app.favorites)
+  const favoritesIds = useAppSelector((state) => state.app.favoritesIds)
   const isFetching = useAppSelector((state) => state.app.isFetching)
   const fetchError = useAppSelector((state) => state.app.fetchError)
 
@@ -40,6 +40,7 @@ export const Favorites: React.FC<FavoritesProps> = () => {
   useEffect(() => {
     dispatch(fetchMultipleCities(favoritesIds))
   }, [])
+
   if (favorites.length) {
     return (
       <Container>
@@ -64,3 +65,5 @@ export const Favorites: React.FC<FavoritesProps> = () => {
     </Container>
   )
 }
+
+export default Favorites

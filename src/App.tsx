@@ -1,18 +1,17 @@
-import React, { useEffect } from 'react'
+import React, { lazy, Suspense, useEffect } from 'react'
 import './App.css'
 import { ThemeProvider } from 'styled-components'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import {
-  favoritesIdsSet,
-  fetchWeatherByCoords,
-  initializeMode
-} from './features/app-slice'
+import { favoritesIdsSet, initializeMode } from './features/app-slice'
 import { useAppDispatch, useAppSelector } from './app/hooks'
 import { Header } from './components/Header'
-import { Search } from './pages/Search'
+
 import { Sidebar } from './components/Sidebar'
 import { AddToHomeScreenNotification } from './components/AddToHomeScreenNotification'
-import { Favorites } from './pages/Favorites'
+import { Loader } from './components/Loader'
+
+const Search = lazy(() => import('./pages/Search'))
+const Favorites = lazy(() => import('./pages/Favorites'))
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -27,19 +26,6 @@ const App: React.FC = () => {
       localStorage.setItem('lang', 'en')
     }
     dispatch(initializeMode())
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        dispatch(
-          fetchWeatherByCoords({
-            lat: position.coords.latitude,
-            lon: position.coords.longitude,
-            lang: localStorage.getItem('lang') || 'en'
-          })
-        )
-      })
-    } else {
-      /* geolocation IS NOT available */
-    }
   }, [dispatch])
 
   return (
