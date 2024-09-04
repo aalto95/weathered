@@ -1,10 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import cloudsAnimation from '../assets/animations/clouds.json'
-import rainAnimation from '../assets/animations/rain.json'
-import snowAnimation from '../assets/animations/snow.json'
-import clearAnimation from '../assets/animations/clear.json'
-import thunderstormAnimation from '../assets/animations/thunderstorm.json'
+
 import theme from 'styled-theming'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import { Loader } from './Loader'
