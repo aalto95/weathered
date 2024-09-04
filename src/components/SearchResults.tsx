@@ -1,4 +1,3 @@
-import { useLottie } from 'lottie-react'
 import React from 'react'
 import styled from 'styled-components'
 import cloudsAnimation from '../assets/animations/clouds.json'
@@ -16,6 +15,7 @@ import {
   StarIcon as StarIconSolid
 } from '@heroicons/react/24/solid'
 import { StarIcon as StarIconOutline } from '@heroicons/react/24/outline'
+import { RiveAnimation } from './RiveAnimation'
 
 const cardBackgroundColor = theme('mode', {
   light: '#f2f2f2',
@@ -56,45 +56,6 @@ const Info = styled.div`
 const Span = styled.span`
   text-align: center;
 `
-
-const getWeatherTypeAnimation = (type: string) => {
-  switch (type) {
-    case 'Thunderstorm':
-      return thunderstormAnimation
-    case 'Clear':
-      return clearAnimation
-    case 'Clouds':
-      return cloudsAnimation
-    case 'Rain':
-      return rainAnimation
-    case 'Snow':
-      return snowAnimation
-    default:
-      return null
-  }
-}
-
-const LottieAnimation = ({ type }: { type: string }) => {
-  const options = {
-    animationData: getWeatherTypeAnimation(type),
-    style: { width: '100px', height: '100px' },
-    loop: true,
-    autoPlay: true
-  }
-
-  const { View } = useLottie(options)
-  return View
-}
-
-const Error404Animation = () => {
-  const { View } = useLottie({
-    animationData: require('../assets/animations/404.json'),
-    style: { width: '300px', height: '300px' },
-    loop: true,
-    autoPlay: true
-  })
-  return View
-}
 
 interface SearchResultsProps {
   city: any
@@ -138,7 +99,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   return (
     <Container>
       {isFetching && <Loader />}
-      {fetchError && <Error404Animation />}
+      {fetchError && <RiveAnimation animationName="404" />}
       {city && !isFetching && !fetchError && (
         <City>
           <h1 style={{ textAlign: 'center' }}>
@@ -146,7 +107,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({
           </h1>
           <p>{Math.round(city.main.temp)}°C</p>
           <p>{city.weather[0].description}</p>
-          <LottieAnimation type={city.weather[0].main} />
+          <RiveAnimation
+            animationName={city.weather[0].main.toLowerCase()}
+            width={100}
+            height={100}
+          />
           <Info>
             <Span>
               <p>{t('visibility')}</p>

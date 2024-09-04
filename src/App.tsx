@@ -8,7 +8,6 @@ import { Header } from './components/Header'
 
 import { Sidebar } from './components/Sidebar'
 import { AddToHomeScreenNotification } from './components/AddToHomeScreenNotification'
-import { Loader } from './components/Loader'
 
 const Search = lazy(() => import('./pages/Search'))
 const Favorites = lazy(() => import('./pages/Favorites'))

@@ -663,6 +663,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rive-app/canvas@npm:2.20.0":
+  version: 2.20.0
+  resolution: "@rive-app/canvas@npm:2.20.0"
+  checksum: 10c0/d1c0eaf6efbe4a9f077e8bef5fa3084a16f8df6d52e4d83f7c1baa0d3733f8ba658477cda24702656f8c1d22a16d7aefb6952e0cd23d6c54704b7edb1202cd51
+  languageName: node
+  linkType: hard
+
+"@rive-app/react-canvas@npm:^4.13.8":
+  version: 4.13.8
+  resolution: "@rive-app/react-canvas@npm:4.13.8"
+  dependencies:
+    "@rive-app/canvas": "npm:2.20.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 10c0/0fd60fa566b5b9f9e35e1b12c97957fe5bf7cf91f0b0947880e16452ddce069e3c326b6b4f6ba1e125c0edd66b2e8c8a3f43b3aaf3417a830d70a2a553b3c9a4
+  languageName: node
+  linkType: hard
+
 "@rollup/rollup-android-arm-eabi@npm:4.21.2":
   version: 4.21.2
   resolution: "@rollup/rollup-android-arm-eabi@npm:4.21.2"
@@ -3642,25 +3660,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lottie-react@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "lottie-react@npm:2.4.0"
-  dependencies:
-    lottie-web: "npm:^5.10.2"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/5c0ef3f1832b21232fe6826cc021cd90bb0e3c9d63f1047031ce77a0992092f8712b6f3a6aeeaa0f410d918ca557df160b1c776399f69b498c560273767befe0
-  languageName: node
-  linkType: hard
-
-"lottie-web@npm:^5.10.2":
-  version: 5.12.2
-  resolution: "lottie-web@npm:5.12.2"
-  checksum: 10c0/0aeaf631b10a76afd025df70c2a1486543530708e07a316946c08e55891dac483ffbaf2bf3648ae0b9c54c733118a0a086fd150aa76f7848606214c67ad72c30
-  languageName: node
-  linkType: hard
-
 "loupe@npm:^3.1.0, loupe@npm:^3.1.1":
   version: 3.1.1
   resolution: "loupe@npm:3.1.1"
@@ -5550,6 +5549,7 @@ __metadata:
   dependencies:
     "@heroicons/react": "npm:^2.1.5"
     "@reduxjs/toolkit": "npm:^2.2.7"
+    "@rive-app/react-canvas": "npm:^4.13.8"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.5.0"
     "@testing-library/react": "npm:^16.0.1"
@@ -5575,7 +5575,6 @@ __metadata:
     eslint-plugin-react: "npm:^7.30.1"
     happy-dom: "npm:^15.7.3"
     i18next: "npm:^23.14.0"
-    lottie-react: "npm:^2.4.0"
     prettier: "npm:3.3.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
