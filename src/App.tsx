@@ -1,5 +1,5 @@
 import React, { lazy, useEffect } from 'react';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { Route, BrowserRouter as Router, Routes } from 'react-router';
 import { ThemeProvider } from 'styled-components';
 import './App.css';
 import { useAppDispatch, useAppSelector } from './app/hooks';
