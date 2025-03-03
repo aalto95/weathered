@@ -1,5 +1,5 @@
-import React, { lazy, useEffect } from 'react';
-import { Route, BrowserRouter as Router, Routes } from 'react-router';
+import React, { useEffect } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router';
 import { ThemeProvider } from 'styled-components';
 import './App.css';
 import { useAppDispatch, useAppSelector } from './app/hooks';
@@ -7,9 +7,8 @@ import { AddToHomeScreenNotification } from './components/AddToHomeScreenNotific
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { favoritesIdsSet, initializeMode } from './features/app-slice';
-
-const Search = lazy(() => import('./pages/Search'));
-const Favorites = lazy(() => import('./pages/Favorites'));
+import Favorites from './pages/Favorites';
+import Search from './pages/Search';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -28,7 +27,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <Router>
+      <BrowserRouter>
         <ThemeProvider theme={{ mode }}>
           <Header />
           <Sidebar />
@@ -38,7 +37,7 @@ const App: React.FC = () => {
           </Routes>
           <AddToHomeScreenNotification />
         </ThemeProvider>
-      </Router>
+      </BrowserRouter>
     </div>
   );
 };
