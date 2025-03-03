@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -23,42 +23,46 @@
       property="og:image"
       content="https://weathered.vercel.app/images/og-image.png"
     />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Weathered" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <link rel="apple-touch-icon" href="/logo192.png" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-icon" href="/icons/manifest/180x180.png" />
     <link
       rel="apple-touch-startup-image"
       href="/splash/launch-640x1136.png"
-      media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+      media="screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
     />
     <link
       rel="apple-touch-startup-image"
       href="/splash/launch-750x1294.png"
-      media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+      media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
     />
     <link
       rel="apple-touch-startup-image"
       href="/splash/launch-1242x2148.png"
-      media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+      media="screen and (device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
     />
     <link
       rel="apple-touch-startup-image"
       href="/splash/launch-1125x2436.png"
-      media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+      media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
     />
     <link
       rel="apple-touch-startup-image"
       href="/splash/launch-1536x2048.png"
-      media="(min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)"
+      media="screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)"
     />
     <link
       rel="apple-touch-startup-image"
       href="/splash/launch-1668x2224.png"
-      media="(min-device-width: 834px) and (max-device-width: 834px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)"
+      media="screen and (min-device-width: 834px) and (max-device-width: 834px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)"
     />
     <link
       rel="apple-touch-startup-image"
       href="/splash/launch-2048x2732.png"
-      media="(min-device-width: 1024px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)"
+      media="screen and (min-device-width: 1024px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)"
     />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -96,15 +100,15 @@
       // site using the default scope.
       navigator.serviceWorker.register('/service-worker.js').then(
         function (registration) {
-          console.log('Service worker registration succeeded:', registration)
+          console.log('Service worker registration succeeded:', registration);
         },
         /*catch*/ function (error) {
-          console.log('Service worker registration failed:', error)
+          console.log('Service worker registration failed:', error);
         }
-      )
+      );
     } else {
-      console.log('Service workers are not supported.')
+      console.log('Service workers are not supported.');
     }
   </script>
-   <script type="module" src="/src/index.tsx"></script>
+  <script type="module" src="/src/index.tsx"></script>
 </html>
