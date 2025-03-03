@@ -1,22 +1,22 @@
-import React, { useRef, useEffect } from 'react'
-import styled from 'styled-components'
-import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { useOnClickOutside } from 'usehooks-ts'
-import { fetchWeatherByCityName, sidebarToggled } from '../features/app-slice'
-import theme from 'styled-theming'
-import { useTranslation } from 'react-i18next'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { XMarkIcon } from '@heroicons/react/24/solid'
+import { XMarkIcon } from '@heroicons/react/24/solid';
+import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import theme from 'styled-theming';
+import { useOnClickOutside } from 'usehooks-ts';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { fetchWeatherByCityName, sidebarToggled } from '../features/app-slice';
 
 const sidebarColor = theme('mode', {
   light: '#FFFFFF',
   dark: '#242526;'
-})
+});
 
 const sidebarTextColor = theme('mode', {
   light: '#242526',
   dark: '#FFFFFF'
-})
+});
 
 const Container = styled.div`
   position: absolute;
@@ -32,7 +32,7 @@ const Container = styled.div`
   translatex: -100%;
   transition: transform 0.3s;
   z-index: 2;
-`
+`;
 
 const SidebarBackdrop = styled.div`
   position: absolute;
@@ -41,12 +41,12 @@ const SidebarBackdrop = styled.div`
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1;
-`
+`;
 
 const Heading = styled.h1`
   font-size: 18px;
   color: ${sidebarTextColor};
-`
+`;
 
 const SidebarHeader = styled.div`
   display: flex;
@@ -54,12 +54,12 @@ const SidebarHeader = styled.div`
   align-items: center;
   padding: 10px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
-`
+`;
 
 const List = styled.ul`
   margin-top: 10px;
   padding: 10px;
-`
+`;
 
 const ListItem = styled.li`
   list-style: none;
@@ -67,73 +67,73 @@ const ListItem = styled.li`
   color: ${sidebarTextColor};
   text-decoration: none;
   cursor: pointer;
-`
+`;
 
 const Icon = styled.img`
   width: 32px;
   height: 32px;
-`
+`;
 
 const IconButton = styled.button`
   width: 32px;
   height: 32px;
-`
+`;
 
 const HeadingWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
-`
+`;
 
 export const Sidebar: React.FC = () => {
-  const navigate = useNavigate()
-  const city = useAppSelector((state) => state.app.city)
-  const dispatch = useAppDispatch()
-  const mode = useAppSelector((state) => state.app.mode)
-  const isSidebarOpen = useAppSelector((state) => state.app.isSidebarOpen)
-  const location = useLocation()
-  const ref = useRef(null)
+  const navigate = useNavigate();
+  const city = useAppSelector((state) => state.app.city);
+  const dispatch = useAppDispatch();
+  const mode = useAppSelector((state) => state.app.mode);
+  const isSidebarOpen = useAppSelector((state) => state.app.isSidebarOpen);
+  const location = useLocation();
+  const ref = useRef(null);
   const closeSidebar = () => {
-    dispatch(sidebarToggled(false))
-  }
+    dispatch(sidebarToggled(false));
+  };
 
-  useOnClickOutside(ref, closeSidebar)
+  useOnClickOutside(ref, closeSidebar);
 
-  const { t, i18n } = useTranslation()
+  const { t, i18n } = useTranslation();
 
   const handleLanguageChange = () => {
     if (i18n.language === 'en') {
-      i18n.changeLanguage('ru')
-      localStorage.setItem('lang', 'ru')
+      i18n.changeLanguage('ru');
+      localStorage.setItem('lang', 'ru');
     } else {
-      i18n.changeLanguage('en')
-      localStorage.setItem('lang', 'en')
+      i18n.changeLanguage('en');
+      localStorage.setItem('lang', 'en');
     }
-    closeSidebar()
-    dispatch(fetchWeatherByCityName(city!.name))
-  }
+    closeSidebar();
+    dispatch(fetchWeatherByCityName(city!.name));
+  };
 
   const goToFavorites = () => {
-    navigate('/favorites')
-    closeSidebar()
-  }
+    navigate('/favorites');
+    closeSidebar();
+  };
 
   const goToHome = () => {
-    navigate('/')
-    closeSidebar()
-  }
+    navigate('/');
+    closeSidebar();
+  };
 
-  const [isMouseDown, setIsMouseDown] = React.useState(false)
-  const [mouseLeft, setMouseLeft] = React.useState(false)
+  const [isMouseDown, setIsMouseDown] = React.useState(false);
+  const [mouseLeft, setMouseLeft] = React.useState(false);
 
   useEffect(() => {
     if (mouseLeft && isMouseDown) {
-      dispatch(sidebarToggled(false))
-      setIsMouseDown(false)
-      setMouseLeft(false)
+      dispatch(sidebarToggled(false));
+      setIsMouseDown(false);
+      setMouseLeft(false);
     }
-  }, [mouseLeft])
+  }, [mouseLeft]);
 
   return (
     <>
@@ -174,5 +174,5 @@ export const Sidebar: React.FC = () => {
       </Container>
       {isSidebarOpen && <SidebarBackdrop></SidebarBackdrop>}
     </>
-  )
-}
+  );
+};

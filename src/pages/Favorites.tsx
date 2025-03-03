@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
-import theme from 'styled-theming'
-import { useAppDispatch, useAppSelector } from '../app/hooks'
-import SearchResults from '../components/SearchResults'
-import { favoritesIdsSet, fetchMultipleCities } from '../features/app-slice'
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import theme from 'styled-theming';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import SearchResults from '../components/SearchResults';
+import { fetchMultipleCities } from '../features/app-slice';
 
 interface FavoritesProps {}
 
@@ -16,30 +16,30 @@ const Container = styled.div`
   text-align: center;
   gap: 16px;
   padding: 16px 0;
-`
+`;
 
 const noFavoritesColor = theme('mode', {
   light: '#1C1E21',
   dark: '#E3E3E3;'
-})
+});
 
 const NoFavoritesText = styled.h1`
   color: ${noFavoritesColor};
   padding: 1rem;
-`
+`;
 
 const Favorites: React.FC<FavoritesProps> = () => {
-  const dispatch = useAppDispatch()
-  const favorites = useAppSelector((state) => state.app.favorites)
-  const favoritesIds = useAppSelector((state) => state.app.favoritesIds)
-  const isFetching = useAppSelector((state) => state.app.isFetching)
-  const fetchError = useAppSelector((state) => state.app.fetchError)
+  const dispatch = useAppDispatch();
+  const favorites = useAppSelector((state) => state.app.favorites);
+  const favoritesIds = useAppSelector((state) => state.app.favoritesIds);
+  const isFetching = useAppSelector((state) => state.app.isFetching);
+  const fetchError = useAppSelector((state) => state.app.fetchError);
 
-  const { t, i18n } = useTranslation()
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    dispatch(fetchMultipleCities(favoritesIds))
-  }, [])
+    dispatch(fetchMultipleCities(favoritesIds));
+  }, []);
 
   if (favorites.length) {
     return (
@@ -53,17 +53,17 @@ const Favorites: React.FC<FavoritesProps> = () => {
               isFetching={isFetching}
               isFavorite={true}
             ></SearchResults>
-          )
+          );
         })}
       </Container>
-    )
+    );
   }
 
   return (
     <Container>
       <NoFavoritesText>{t('noFavorites')}</NoFavoritesText>
     </Container>
-  )
-}
+  );
+};
 
-export default Favorites
+export default Favorites;

@@ -7,7 +7,9 @@
     "build": "vite build",
     "test": "vitest run --coverage",
     "lint": "eslint --ext .js,.jsx .",
-    "lint:fix": "eslint --ext .js,.jsx ."
+    "lint:fix": "eslint --ext .js,.jsx .",
+    "prettier": "prettier src/**/*.{js,jsx,ts,tsx,mjs,cjs,json}'",
+    "prettier:fix": "prettier src/**/*.{js,jsx,ts,tsx,mjs,cjs,json}' --write"
   },
   "type": "module",
   "dependencies": {
@@ -46,6 +48,7 @@
     "happy-dom": "^15.7.3",
     "i18next": "^23.14.0",
     "prettier": "3.3.3",
+    "prettier-plugin-organize-imports": "^4.1.0",
     "react-i18next": "^15.0.1",
     "sass": "^1.77.8",
     "styled-components": "^6.1.13",

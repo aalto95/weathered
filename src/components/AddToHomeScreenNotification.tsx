@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
-import theme from 'styled-theming'
-import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { XMarkIcon } from '@heroicons/react/24/solid';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import theme from 'styled-theming';
+import { useTimeout } from 'usehooks-ts';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
 import {
   dismissA2HSButton,
   isA2HSButtonDismissedSet
-} from '../features/app-slice'
-import { useTimeout } from 'usehooks-ts'
-import { useTranslation } from 'react-i18next'
-import { XMarkIcon } from '@heroicons/react/24/solid'
+} from '../features/app-slice';
 
 const buttonColor = theme('mode', {
   light: '#F2F2F2',
   dark: '#242526;'
-})
+});
 
 const buttonTextColor = theme('mode', {
   light: '#242526',
   dark: '#FFFFFF'
-})
+});
 
 const Container = styled.div`
   display: flex;
@@ -36,7 +36,7 @@ const Container = styled.div`
   transform: translateY(100px);
   transition: transform 0.5s;
   background-color: ${buttonColor};
-`
+`;
 
 const InstallButton = styled.button`
   display: flex;
@@ -45,75 +45,75 @@ const InstallButton = styled.button`
   font-size: 18px;
 
   color: ${buttonTextColor};
-`
+`;
 
 const DismissButton = styled.button`
   width: 32px;
   height: 32px;
-`
+`;
 
 export const AddToHomeScreenNotification: React.FC = () => {
-  const mode = useAppSelector((state) => state.app.mode)
-  const dispatch = useAppDispatch()
+  const mode = useAppSelector((state) => state.app.mode);
+  const dispatch = useAppDispatch();
 
   const dismissButton = () => {
-    setVisible(false)
+    setVisible(false);
     setTimeout(() => {
-      dispatch(dismissA2HSButton())
-    }, 1000)
-  }
+      dispatch(dismissA2HSButton());
+    }, 1000);
+  };
 
-  const { t, i18n } = useTranslation()
+  const { t, i18n } = useTranslation();
 
   const isA2HSButtonDismissed = useAppSelector(
     (state) => state.app.isA2HSButtonDismissed
-  )
+  );
 
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
 
-  const show = () => setVisible(true)
+  const show = () => setVisible(true);
 
-  useTimeout(show, 1000)
+  useTimeout(show, 1000);
 
   useEffect(() => {
     dispatch(
       isA2HSButtonDismissedSet(
         localStorage.getItem('a2hsButtonDismissed') === 'true'
       )
-    )
+    );
     if (!isA2HSButtonDismissed) {
-      let deferredPrompt: any
-      const container = document.getElementById('a2hs-container')
-      const addBtn = document.getElementById('add-button')
+      let deferredPrompt: any;
+      const container = document.getElementById('a2hs-container');
+      const addBtn = document.getElementById('add-button');
 
-      container!.style.display = 'none'
+      container!.style.display = 'none';
 
       window.addEventListener('beforeinstallprompt', (e) => {
         // Prevent Chrome 67 and earlier from automatically showing the prompt
-        e.preventDefault()
+        e.preventDefault();
         // Stash the event so it can be triggered later.
-        deferredPrompt = e
+        deferredPrompt = e;
         // Update UI to notify the user they can add to home screen
-        container!.style.display = 'flex'
+        container!.style.display = 'flex';
 
         addBtn!.addEventListener('click', (e) => {
           // hide our user interface that shows our A2HS button
-          container!.style.display = 'none'
+          container!.style.display = 'none';
           // Show the prompt
-          deferredPrompt.prompt()
+          deferredPrompt.prompt();
           // Wait for the user to respond to the prompt
           deferredPrompt.userChoice.then((choiceResult: any) => {
             if (choiceResult.outcome === 'accepted') {
-              console.log('User accepted the A2HS prompt')
+              console.log('User accepted the A2HS prompt');
             } else {
-              console.log('User dismissed the A2HS prompt')
+              console.log('User dismissed the A2HS prompt');
             }
-            deferredPrompt = null
-          })
-        })
-      })
+            deferredPrompt = null;
+          });
+        });
+      });
     }
-  }, [])
+  }, []);
 
   if (!isA2HSButtonDismissed) {
     return (
@@ -130,8 +130,8 @@ export const AddToHomeScreenNotification: React.FC = () => {
           <XMarkIcon color={mode === 'light' ? 'black' : 'white'} />
         </DismissButton>
       </Container>
-    )
+    );
   }
 
-  return null
-}
+  return null;
+};

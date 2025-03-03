@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import styled from 'styled-components'
-import { useAppDispatch } from '../app/hooks'
-import { fetchWeatherByCityName } from '../features/app-slice'
-import { useTranslation } from 'react-i18next'
-import { XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid'
+import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import { useAppDispatch } from '../app/hooks';
+import { fetchWeatherByCityName } from '../features/app-slice';
 
 const Container = styled.section`
   color: #fff;
@@ -11,7 +11,7 @@ const Container = styled.section`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-`
+`;
 
 const Form = styled.form`
   display: flex;
@@ -28,7 +28,7 @@ const Form = styled.form`
     width: 300px;
   }
   height: 60px;
-`
+`;
 
 const Input = styled.input`
   padding: 1rem 0 1rem 0;
@@ -38,33 +38,33 @@ const Input = styled.input`
   font-family: inherit;
   font-size: inherit;
   padding-left: 10px;
-`
+`;
 
 const Span = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
-`
+`;
 
 const PurgeButton = styled.button`
   min-width: 32px;
   height: 32px;
-`
+`;
 
 export const SearchBar: React.FC = () => {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
   const commenceSearch = () => {
-    dispatch(fetchWeatherByCityName(inputField))
-  }
+    dispatch(fetchWeatherByCityName(inputField));
+  };
 
   const clearInputField = () => {
-    setInputField('')
-  }
+    setInputField('');
+  };
 
-  const [inputField, setInputField] = useState('')
+  const [inputField, setInputField] = useState('');
 
-  const { t, i18n } = useTranslation()
+  const { t, i18n } = useTranslation();
 
   return (
     <Container>
@@ -80,7 +80,7 @@ export const SearchBar: React.FC = () => {
             }
             onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
               if (e.key === 'Enter') {
-                commenceSearch()
+                commenceSearch();
               }
             }}
           />
@@ -92,5 +92,5 @@ export const SearchBar: React.FC = () => {
         )}
       </Form>
     </Container>
-  )
-}
+  );
+};

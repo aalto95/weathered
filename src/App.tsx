@@ -1,31 +1,30 @@
-import React, { lazy, Suspense, useEffect } from 'react'
-import './App.css'
-import { ThemeProvider } from 'styled-components'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { favoritesIdsSet, initializeMode } from './features/app-slice'
-import { useAppDispatch, useAppSelector } from './app/hooks'
-import { Header } from './components/Header'
+import React, { lazy, useEffect } from 'react';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
+import './App.css';
+import { useAppDispatch, useAppSelector } from './app/hooks';
+import { AddToHomeScreenNotification } from './components/AddToHomeScreenNotification';
+import { Header } from './components/Header';
+import { Sidebar } from './components/Sidebar';
+import { favoritesIdsSet, initializeMode } from './features/app-slice';
 
-import { Sidebar } from './components/Sidebar'
-import { AddToHomeScreenNotification } from './components/AddToHomeScreenNotification'
-
-const Search = lazy(() => import('./pages/Search'))
-const Favorites = lazy(() => import('./pages/Favorites'))
+const Search = lazy(() => import('./pages/Search'));
+const Favorites = lazy(() => import('./pages/Favorites'));
 
 const App: React.FC = () => {
-  const dispatch = useAppDispatch()
-  const mode = useAppSelector((state) => state.app.mode)
+  const dispatch = useAppDispatch();
+  const mode = useAppSelector((state) => state.app.mode);
 
   useEffect(() => {
     if (localStorage.getItem('favoritesIds')) {
-      const favoritesIds = JSON.parse(localStorage.getItem('favoritesIds')!)
-      dispatch(favoritesIdsSet(favoritesIds))
+      const favoritesIds = JSON.parse(localStorage.getItem('favoritesIds')!);
+      dispatch(favoritesIdsSet(favoritesIds));
     }
     if (localStorage.getItem('lang') === null) {
-      localStorage.setItem('lang', 'en')
+      localStorage.setItem('lang', 'en');
     }
-    dispatch(initializeMode())
-  }, [dispatch])
+    dispatch(initializeMode());
+  }, [dispatch]);
 
   return (
     <div className="App">
@@ -41,7 +40,7 @@ const App: React.FC = () => {
         </ThemeProvider>
       </Router>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;

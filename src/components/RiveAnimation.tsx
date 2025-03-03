@@ -1,9 +1,8 @@
-import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
-import { styled } from 'styled-components'
+import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas';
 
 export const RiveAnimation: React.FC<{
-  width?: number
-  height?: number
+  width?: number;
+  height?: number;
   animationName:
     | '404'
     | 'clear'
@@ -11,7 +10,7 @@ export const RiveAnimation: React.FC<{
     | 'loading'
     | 'rain'
     | 'snow'
-    | 'thunderstorm'
+    | 'thunderstorm';
 }> = ({ width, height, animationName }) => {
   const { RiveComponent } = useRive({
     // Load a local riv `clean_the_car.riv` or upload your own!
@@ -24,7 +23,7 @@ export const RiveAnimation: React.FC<{
       alignment: Alignment.Center
     }),
     autoplay: true
-  })
+  });
 
   return (
     <div
@@ -35,5 +34,5 @@ export const RiveAnimation: React.FC<{
     >
       <RiveComponent />
     </div>
-  )
-}
+  );
+};

@@ -1,13 +1,15 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
 
-import { store } from './app/store'
-import './index.css'
-import { Provider } from 'react-redux'
-import './i18n'
+import { Provider } from 'react-redux';
+import { store } from './app/store';
+import './i18n';
+import './index.css';
 
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
 
 root.render(
   <React.StrictMode>
@@ -15,4 +17,4 @@ root.render(
       <App />
     </Provider>
   </React.StrictMode>
-)
+);

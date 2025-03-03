@@ -1,33 +1,33 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from 'react';
+import styled from 'styled-components';
 
-import theme from 'styled-theming'
-import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { Loader } from './Loader'
-import { useTranslation } from 'react-i18next'
-import { favoritePushed, favoriteRemoved } from '../features/app-slice'
+import { StarIcon as StarIconOutline } from '@heroicons/react/24/outline';
 import {
   MapPinIcon,
   StarIcon as StarIconSolid
-} from '@heroicons/react/24/solid'
-import { StarIcon as StarIconOutline } from '@heroicons/react/24/outline'
-import { RiveAnimation } from './RiveAnimation'
+} from '@heroicons/react/24/solid';
+import { useTranslation } from 'react-i18next';
+import theme from 'styled-theming';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { favoritePushed, favoriteRemoved } from '../features/app-slice';
+import { Loader } from './Loader';
+import { RiveAnimation } from './RiveAnimation';
 
 const cardBackgroundColor = theme('mode', {
   light: '#f2f2f2',
   dark: '#242526'
-})
+});
 
 const textColor = theme('mode', {
   light: '#1C1E21',
   dark: '#E3E3E3;'
-})
+});
 
 const Container = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-`
+`;
 
 const City = styled.div`
   display: flex;
@@ -39,7 +39,7 @@ const City = styled.div`
   border-radius: 12px;
   background-color: ${cardBackgroundColor};
   color: ${textColor};
-`
+`;
 
 const Info = styled.div`
   display: grid;
@@ -47,17 +47,17 @@ const Info = styled.div`
   padding-top: 20px;
   grid-template-columns: 33% 33% 33%;
   grid-template-rows: 70px 50px;
-`
+`;
 
 const Span = styled.span`
   text-align: center;
-`
+`;
 
 interface SearchResultsProps {
-  city: any
-  fetchError: boolean
-  isFetching: boolean
-  isFavorite?: boolean
+  city: any;
+  fetchError: boolean;
+  isFetching: boolean;
+  isFavorite?: boolean;
 }
 
 const SearchResults: React.FC<SearchResultsProps> = ({
@@ -66,31 +66,31 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   isFetching,
   isFavorite
 }) => {
-  const dispatch = useAppDispatch()
-  const mode = useAppSelector((state) => state.app.mode)
-  const favoritesIds = useAppSelector((state) => state.app.favoritesIds)
+  const dispatch = useAppDispatch();
+  const mode = useAppSelector((state) => state.app.mode);
+  const favoritesIds = useAppSelector((state) => state.app.favoritesIds);
 
   const formatUnixDate = (unixDate: number) => {
-    const date = new Date(unixDate * 1000)
-    const hours = date.getHours()
-    const minutes = '0' + date.getMinutes()
-    const formattedTime = hours + ':' + minutes.substr(-2)
-    return formattedTime
-  }
+    const date = new Date(unixDate * 1000);
+    const hours = date.getHours();
+    const minutes = '0' + date.getMinutes();
+    const formattedTime = hours + ':' + minutes.substr(-2);
+    return formattedTime;
+  };
 
-  const { t, i18n } = useTranslation()
+  const { t, i18n } = useTranslation();
 
   const addToFavorite = () => {
-    dispatch(favoritePushed(city.id))
-  }
+    dispatch(favoritePushed(city.id));
+  };
 
   const removeFromFavorite = () => {
-    dispatch(favoriteRemoved(city.id))
-  }
+    dispatch(favoriteRemoved(city.id));
+  };
 
   const getIsFavorite = () => {
-    return favoritesIds.includes(city.id)
-  }
+    return favoritesIds.includes(city.id);
+  };
 
   return (
     <Container>
@@ -169,7 +169,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         </City>
       )}
     </Container>
-  )
-}
+  );
+};
 
-export default SearchResults
+export default SearchResults;

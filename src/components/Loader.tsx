@@ -1,6 +1,6 @@
-import React from 'react'
-import { RiveAnimation } from './RiveAnimation'
+import React from 'react';
+import { RiveAnimation } from './RiveAnimation';
 
 export const Loader: React.FC = () => {
-  return <RiveAnimation animationName="loading" />
-}
+  return <RiveAnimation animationName="loading" />;
+};
