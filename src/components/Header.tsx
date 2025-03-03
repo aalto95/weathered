@@ -86,7 +86,7 @@ export const Header: React.FC = () => {
           }}
         >
           <LogoImg
-            src="/logo192.png"
+            src="/icons/manifest/192x192.png"
             alt="logo"
             style={
               mode === 'light'
