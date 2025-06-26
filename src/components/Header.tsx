@@ -12,10 +12,6 @@ const headingColor = theme('mode', {
   dark: '#E3E3E3;'
 });
 
-const LogoImg = styled.img`
-  width: 32px;
-`;
-
 const sectionBackgroundColor = theme('mode', {
   light: '#FFF',
   dark: 'rgb(36, 37, 38)'
@@ -85,15 +81,6 @@ export const Header: React.FC = () => {
             textDecoration: 'none'
           }}
         >
-          <LogoImg
-            src="/icons/manifest/192x192.png"
-            alt="logo"
-            style={
-              mode === 'light'
-                ? { filter: 'invert(1)' }
-                : { filter: 'invert(0)' }
-            }
-          />
           <Heading>Weathered</Heading>
         </Link>
       </HeadingWrapper>

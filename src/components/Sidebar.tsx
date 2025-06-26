@@ -69,11 +69,6 @@ const ListItem = styled.li`
   cursor: pointer;
 `;
 
-const Icon = styled.img`
-  width: 32px;
-  height: 32px;
-`;
-
 const IconButton = styled.button`
   width: 32px;
   height: 32px;
@@ -147,15 +142,6 @@ export const Sidebar: React.FC = () => {
       >
         <SidebarHeader>
           <HeadingWrapper>
-            <Icon
-              src="/logo192.png"
-              alt="logo"
-              style={
-                mode === 'light'
-                  ? { filter: 'invert(1)' }
-                  : { filter: 'invert(0)' }
-              }
-            />
             <Heading>Weathered</Heading>
           </HeadingWrapper>
           <IconButton onClick={closeSidebar}>
