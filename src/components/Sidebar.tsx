@@ -1,5 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import React, { useEffect, useRef } from 'react';
+import React, { RefObject, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
 import styled from 'styled-components';
@@ -88,12 +88,12 @@ export const Sidebar: React.FC = () => {
   const mode = useAppSelector((state) => state.app.mode);
   const isSidebarOpen = useAppSelector((state) => state.app.isSidebarOpen);
   const location = useLocation();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const closeSidebar = () => {
     dispatch(sidebarToggled(false));
   };
 
-  useOnClickOutside(ref, closeSidebar);
+  useOnClickOutside(ref as RefObject<HTMLDivElement>, closeSidebar);
 
   const { t, i18n } = useTranslation();
 
