@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import sendHandler from '../../api/send';
 import subscribeHandler from '../../api/subscribe';
 import testHandler from '../../api/test';
 import tickHandler from '../../api/tick';
@@ -17,6 +18,12 @@ import {
   fetchWeatherSummaries
 } from './digest';
 import { isPushConfigured, sendPush } from './push';
+import {
+  cancelNotification,
+  isQstashConfigured,
+  scheduleNotification,
+  verifyQstashRequest
+} from './qstash';
 import { NotificationPreferences } from './types';
 
 vi.mock('./blob', () => ({
@@ -38,6 +45,13 @@ vi.mock('./digest', () => ({
   fetchWeatherSummaries: vi.fn()
 }));
 
+vi.mock('./qstash', () => ({
+  isQstashConfigured: vi.fn(),
+  scheduleNotification: vi.fn(),
+  cancelNotification: vi.fn(),
+  verifyQstashRequest: vi.fn()
+}));
+
 const storageConfigured = vi.mocked(isStorageConfigured);
 const pushConfigured = vi.mocked(isPushConfigured);
 const save = vi.mocked(savePreferences);
@@ -48,6 +62,10 @@ const send = vi.mocked(sendPush);
 const dailyMessage = vi.mocked(buildDailyNotification);
 const testMessage = vi.mocked(buildTestNotification);
 const summaries = vi.mocked(fetchWeatherSummaries);
+const qstashConfigured = vi.mocked(isQstashConfigured);
+const schedule = vi.mocked(scheduleNotification);
+const cancel = vi.mocked(cancelNotification);
+const verify = vi.mocked(verifyQstashRequest);
 
 const request = (
   method: string,
@@ -109,11 +127,17 @@ beforeEach(() => {
   vi.clearAllMocks();
   storageConfigured.mockReturnValue(true);
   pushConfigured.mockReturnValue(true);
+  qstashConfigured.mockReturnValue(true);
+  schedule.mockResolvedValue('msg_1');
+  cancel.mockResolvedValue(undefined);
+  verify.mockResolvedValue(false);
+  process.env.APP_URL = 'https://weathered.test';
 });
 
 afterEach(() => {
   vi.useRealTimers();
   delete process.env.CRON_SECRET;
+  delete process.env.APP_URL;
 });
 
 describe('POST /api/subscribe', () => {
@@ -131,10 +155,14 @@ describe('POST /api/subscribe', () => {
         favorites: validBody().favorites
       })
     );
+    expect(schedule).toHaveBeenCalled();
+    expect(save).toHaveBeenLastCalledWith(
+      expect.objectContaining({ qstashMessageId: 'msg_1' })
+    );
   });
 
   test('updates an existing subscription and preserves creation time', async () => {
-    const existing = preferences();
+    const existing = preferences({ qstashMessageId: 'msg_old' });
     load.mockResolvedValue(existing);
     const res = response();
 
@@ -143,12 +171,14 @@ describe('POST /api/subscribe', () => {
       res
     );
 
+    expect(cancel).toHaveBeenCalledWith('msg_old');
     expect(save).toHaveBeenCalledWith(
       expect.objectContaining({
         id: existing.id,
         createdAt: existing.createdAt
       })
     );
+    expect(schedule).toHaveBeenCalled();
   });
 
   test('rejects invalid input', async () => {
@@ -172,12 +202,14 @@ describe('POST /api/subscribe', () => {
 });
 
 describe('POST /api/unsubscribe', () => {
-  test('deletes the subscription', async () => {
+  test('deletes the subscription and cancels the QStash message', async () => {
     const res = response();
     const id = '3f1b2c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d';
+    load.mockResolvedValue(preferences({ qstashMessageId: 'msg_old' }));
 
     await unsubscribeHandler(request('POST', { id }), res);
 
+    expect(cancel).toHaveBeenCalledWith('msg_old');
     expect(remove).toHaveBeenCalledWith(id);
     expect(res.status).toHaveBeenCalledWith(200);
   });
@@ -278,6 +310,7 @@ describe('GET /api/tick', () => {
     await tickHandler(tickRequest(), res);
 
     expect(send).toHaveBeenCalled();
+    expect(schedule).toHaveBeenCalled();
     expect(save).toHaveBeenCalledWith(
       expect.objectContaining({
         id: prefs.id,
@@ -330,5 +363,156 @@ describe('GET /api/tick', () => {
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({ expired: 1 })
     );
+  });
+});
+
+describe('POST /api/send', () => {
+  const sendRequest = (id: string, headers: Record<string, string> = {}) =>
+    request('POST', { id }, headers);
+
+  test('rejects an unauthorized request', async () => {
+    process.env.CRON_SECRET = 'secret';
+    const res = response();
+
+    await sendHandler(sendRequest(preferences().id), res);
+
+    expect(res.status).toHaveBeenCalledWith(401);
+  });
+
+  test('accepts a valid QStash signature', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-11-10T07:00:00.000Z'));
+    process.env.CRON_SECRET = 'secret';
+    verify.mockResolvedValue(true);
+
+    const prefs = preferences({ time: '08:00' });
+    load.mockResolvedValue(prefs);
+    summaries.mockResolvedValue([{ name: 'Berlin', temperature: 5, code: 3 }]);
+    dailyMessage.mockReturnValue({
+      title: 'Weathered',
+      body: 'Berlin',
+      tag: 'weathered-daily',
+      url: '/favorites'
+    });
+    send.mockResolvedValue('sent');
+
+    const res = response();
+
+    await sendHandler(
+      sendRequest(prefs.id, { 'upstash-signature': 'signature' }),
+      res
+    );
+
+    expect(verify).toHaveBeenCalledWith(
+      'signature',
+      JSON.stringify({ id: prefs.id })
+    );
+    expect(send).toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  test('sends a due digest and schedules the next QStash run', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-11-10T07:00:00.000Z'));
+    process.env.CRON_SECRET = 'secret';
+
+    const prefs = preferences({
+      time: '08:00',
+      qstashMessageId: 'msg_current'
+    });
+    load.mockResolvedValue(prefs);
+    summaries.mockResolvedValue([{ name: 'Berlin', temperature: 5, code: 3 }]);
+    dailyMessage.mockReturnValue({
+      title: 'Weathered',
+      body: 'Berlin',
+      tag: 'weathered-daily',
+      url: '/favorites'
+    });
+    send.mockResolvedValue('sent');
+    schedule.mockResolvedValue('msg_next');
+
+    const res = response();
+
+    await sendHandler(
+      sendRequest(prefs.id, { 'x-weathered-secret': 'secret' }),
+      res
+    );
+
+    expect(send).toHaveBeenCalled();
+    expect(schedule).toHaveBeenCalled();
+    expect(save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        lastSentDate: '2026-11-10',
+        qstashMessageId: 'msg_next'
+      })
+    );
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  test('skips a message that is not due yet and reschedules', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-11-10T05:00:00.000Z'));
+    process.env.CRON_SECRET = 'secret';
+
+    const prefs = preferences({ time: '08:00' });
+    load.mockResolvedValue(prefs);
+
+    const res = response();
+
+    await sendHandler(
+      sendRequest(prefs.id, { 'x-weathered-secret': 'secret' }),
+      res
+    );
+
+    expect(send).not.toHaveBeenCalled();
+    expect(schedule).toHaveBeenCalled();
+    expect(res.json).toHaveBeenCalledWith({
+      ok: true,
+      skipped: 'not-due'
+    });
+  });
+
+  test('returns 502 when push delivery fails', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-11-10T07:00:00.000Z'));
+    process.env.CRON_SECRET = 'secret';
+
+    const prefs = preferences({ time: '08:00' });
+    load.mockResolvedValue(prefs);
+    summaries.mockResolvedValue([]);
+    dailyMessage.mockReturnValue({
+      title: 'Weathered',
+      body: '',
+      tag: 'weathered-daily',
+      url: '/favorites'
+    });
+    send.mockResolvedValue('failed');
+
+    const res = response();
+
+    await sendHandler(
+      sendRequest(prefs.id, { 'x-weathered-secret': 'secret' }),
+      res
+    );
+
+    expect(res.status).toHaveBeenCalledWith(502);
+    expect(schedule).not.toHaveBeenCalled();
+  });
+
+  test('returns success for a missing subscription', async () => {
+    process.env.CRON_SECRET = 'secret';
+    load.mockResolvedValue(null);
+
+    const res = response();
+
+    await sendHandler(
+      sendRequest(preferences().id, { 'x-weathered-secret': 'secret' }),
+      res
+    );
+
+    expect(res.json).toHaveBeenCalledWith({
+      ok: true,
+      skipped: 'missing'
+    });
   });
 });

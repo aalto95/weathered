@@ -29,7 +29,8 @@ type DuePreferences = Pick<
 export const isDueNow = (
   now: DateTime,
   preferences: DuePreferences,
-  graceMinutes = 120
+  graceMinutes = 120,
+  earlyMinutes = 0
 ) => {
   if (
     !isValidTime(preferences.time) ||
@@ -47,7 +48,10 @@ export const isDueNow = (
   const scheduled = localNow.set({ hour, minute, second: 0, millisecond: 0 });
 
   if (localNow.toMillis() < scheduled.toMillis()) {
-    return false;
+    return (
+      scheduled.diff(localNow, 'minutes').minutes <= earlyMinutes &&
+      preferences.lastSentDate !== localNow.toISODate()
+    );
   }
 
   if (localNow.diff(scheduled, 'minutes').minutes > graceMinutes) {
@@ -55,4 +59,33 @@ export const isDueNow = (
   }
 
   return preferences.lastSentDate !== localNow.toISODate();
+};
+
+/**
+ * Next occurrence of the chosen local time, in UTC. When a digest has already
+ * been sent today, `skipLocalDate` moves the result to tomorrow.
+ */
+export const nextDeliveryTime = (
+  now: DateTime,
+  timezone: string,
+  time: string,
+  skipLocalDate?: string
+): Date | null => {
+  if (!isValidTime(time) || !isValidTimezone(timezone)) {
+    return null;
+  }
+
+  const [hour, minute] = time.split(':').map(Number);
+  const localNow = now.setZone(timezone);
+  let next = localNow.set({ hour, minute, second: 0, millisecond: 0 });
+
+  if (next.toMillis() <= now.toMillis()) {
+    next = next.plus({ days: 1 });
+  }
+
+  if (skipLocalDate && next.toISODate() === skipLocalDate) {
+    next = next.plus({ days: 1 });
+  }
+
+  return next.toUTC().toJSDate();
 };

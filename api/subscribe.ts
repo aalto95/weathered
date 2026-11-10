@@ -5,6 +5,9 @@ import {
   loadPreferences,
   savePreferences
 } from '../src/server/blob.js';
+import { getAppUrl } from '../src/server/http.js';
+import { cancelNotification } from '../src/server/qstash.js';
+import { scheduleNextDelivery } from '../src/server/scheduler.js';
 import type { NotificationPreferences } from '../src/server/types.js';
 import {
   parseSubscribePayload,
@@ -31,8 +34,12 @@ export default async function handler(
     const payload = parseSubscribePayload(request.body);
     const id = payload.id ?? randomUUID();
     const existing = payload.id ? await loadPreferences(payload.id) : null;
-    const now = new Date().toISOString();
 
+    if (existing?.qstashMessageId) {
+      await cancelNotification(existing.qstashMessageId);
+    }
+
+    const now = new Date().toISOString();
     const preferences: NotificationPreferences = {
       id,
       subscription: payload.subscription,
@@ -47,6 +54,21 @@ export default async function handler(
     };
 
     await savePreferences(preferences);
+
+    try {
+      const messageId = await scheduleNextDelivery(
+        preferences,
+        getAppUrl(request)
+      );
+
+      if (messageId) {
+        preferences.qstashMessageId = messageId;
+        await savePreferences(preferences);
+      }
+    } catch (error) {
+      // The hourly Vercel Cron still acts as a fallback.
+      console.error('Failed to schedule the next QStash delivery', error);
+    }
 
     return response.status(200).json({ id });
   } catch (error) {

@@ -31,6 +31,8 @@ export interface NotificationPreferences {
   /** Local date (YYYY-MM-DD) of the last successful send, for deduplication. */
   lastSentDate?: string;
   lastSentAt?: string;
+  /** Pending QStash message id for the next delivery. */
+  qstashMessageId?: string;
 }
 
 export interface SubscribePayload {

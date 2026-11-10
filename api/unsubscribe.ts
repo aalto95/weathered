@@ -1,5 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { deletePreferences, isStorageConfigured } from '../src/server/blob.js';
+import {
+  deletePreferences,
+  isStorageConfigured,
+  loadPreferences
+} from '../src/server/blob.js';
+import { cancelNotification } from '../src/server/qstash.js';
 import { parseId, ValidationError } from '../src/server/validation.js';
 
 export default async function handler(
@@ -20,6 +25,12 @@ export default async function handler(
 
   try {
     const id = parseId(request.body?.id);
+    const preferences = await loadPreferences(id);
+
+    if (preferences?.qstashMessageId) {
+      await cancelNotification(preferences.qstashMessageId);
+    }
+
     await deletePreferences(id);
     return response.status(200).json({ ok: true });
   } catch (error) {

@@ -2,6 +2,9 @@
   "functions": {
     "api/tick.ts": {
       "maxDuration": 60
+    },
+    "api/send.ts": {
+      "maxDuration": 60
     }
   },
   "crons": [

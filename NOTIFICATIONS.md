@@ -9,32 +9,35 @@ favorite city. The backend is implemented with Vercel Functions and Vercel Blob.
    browser with `pushManager.subscribe()`.
 2. The subscription, local delivery time, timezone, language and favorites are
    stored as a private JSON blob at `notifications/<id>.json`.
-3. Vercel Cron runs `/api/tick` every hour. Because Hobby cron jobs are limited
-   to one run per day, `vercel.json` contains one daily job per hour. Each job
-   can fire anywhere inside its hour, so delivery is typically within about an
-   hour of the chosen local time.
-4. `api/tick.ts` finds subscriptions whose local time has arrived, fetches
-   current weather from Open-Meteo, sends the digest with `web-push`, and records
-   `lastSentDate` so it only sends once per local day.
+3. On save, the backend schedules a one-off QStash message for the next local
+   delivery time. When it fires, `/api/send` sends the digest and schedules the
+   next day’s message.
+4. The Vercel Cron jobs in `vercel.json` remain as a fallback. They run
+   `/api/tick` hourly; anything QStash already delivered is skipped by
+   `lastSentDate`, and if QStash failed the cron picks it up.
+5. `api/tick.ts` and `api/send.ts` fetch current weather from Open-Meteo, send
+   the digest with `web-push`, and record `lastSentDate` so each subscriber gets
+   at most one digest per local day.
 
-The optional GitHub Actions workflow remains as a more precise scheduler. If
-you use it, add the same `CRON_SECRET` as a GitHub Actions repository secret.
-The Vercel Cron jobs are the reliable fallback and use the `CRON_SECRET` that is
-already configured in Vercel.
+QStash gives minute-level scheduling. The Vercel Cron fallback is approximate
+because Hobby cron jobs have an hourly window.
 
 The Blob store `weathered-notifications` is already connected to the Vercel
 project and injects `BLOB_READ_WRITE_TOKEN` automatically.
 
 ## Required environment variables
 
-| Variable                | Purpose                                    |
-| ----------------------- | ------------------------------------------ |
-| `VAPID_PUBLIC_KEY`      | Web Push public key (server + client)      |
-| `VAPID_PRIVATE_KEY`     | Web Push private key (server only, secret) |
-| `VAPID_SUBJECT`         | Contact URL or `mailto:` address           |
-| `VITE_VAPID_PUBLIC_KEY` | Public key exposed to the Vite build       |
-| `CRON_SECRET`           | Shared secret for `/api/tick`              |
-| `BLOB_READ_WRITE_TOKEN` | Injected by Vercel Blob                    |
+| Variable                     | Purpose                                    |
+| ---------------------------- | ------------------------------------------ |
+| `VAPID_PUBLIC_KEY`           | Web Push public key (server + client)      |
+| `VAPID_PRIVATE_KEY`          | Web Push private key (server only, secret) |
+| `VAPID_SUBJECT`              | Contact URL or `mailto:` address           |
+| `VITE_VAPID_PUBLIC_KEY`      | Public key exposed to the Vite build       |
+| `QSTASH_TOKEN`               | Upstash QStash token                       |
+| `QSTASH_CURRENT_SIGNING_KEY` | QStash request verification key            |
+| `QSTASH_NEXT_SIGNING_KEY`    | QStash key-rotation verification key       |
+| `CRON_SECRET`                | Shared secret for `/api/tick`              |
+| `BLOB_READ_WRITE_TOKEN`      | Injected by Vercel Blob                    |
 
 Generate and write the local configuration:
 
@@ -51,11 +54,17 @@ Add these to Vercel for Production, Preview and Development:
 - `VAPID_PRIVATE_KEY`
 - `VAPID_SUBJECT`
 - `VITE_VAPID_PUBLIC_KEY`
+- `QSTASH_TOKEN`
+- `QSTASH_CURRENT_SIGNING_KEY`
+- `QSTASH_NEXT_SIGNING_KEY`
 - `CRON_SECRET`
 
 `BLOB_READ_WRITE_TOKEN` is already present on the project.
 
-Then add the same `CRON_SECRET` value as a **GitHub Actions repository secret**:
+The GitHub Actions workflow is **optional** now. QStash performs the precise
+per-subscriber scheduling, and the Vercel Cron jobs are the fallback. If you
+also want the GitHub workflow, add the same `CRON_SECRET` as a GitHub Actions
+repository secret:
 
 ```
 Repository → Settings → Secrets and variables → Actions → New repository secret
@@ -92,17 +101,21 @@ curl -X POST \
 
 ## API
 
-| Endpoint           | Method       | Purpose                                            |
-| ------------------ | ------------ | -------------------------------------------------- |
-| `/api/subscribe`   | `POST`       | Create or update a subscription                    |
-| `/api/unsubscribe` | `POST`       | Delete a subscription                              |
-| `/api/test`        | `POST`       | Send a test notification                           |
-| `/api/tick`        | `GET`/`POST` | Process due notifications (requires `CRON_SECRET`) |
+| Endpoint           | Method       | Purpose                                                       |
+| ------------------ | ------------ | ------------------------------------------------------------- |
+| `/api/subscribe`   | `POST`       | Save a subscription and schedule the next QStash run          |
+| `/api/unsubscribe` | `POST`       | Delete a subscription and cancel its QStash message           |
+| `/api/test`        | `POST`       | Send a test notification                                      |
+| `/api/send`        | `POST`       | QStash delivery endpoint for one subscriber                   |
+| `/api/tick`        | `GET`/`POST` | Fallback sweep for due subscriptions (requires `CRON_SECRET`) |
 
 ## Limitations
 
-- GitHub Actions has a 5-minute minimum interval and can run late under load.
-  Notifications may arrive a few minutes after the chosen time.
+- QStash delivery is minute-level, but it depends on QStash having capacity.
+- The Vercel Cron fallback is hourly because Hobby cron jobs have an hourly
+  window.
+- GitHub Actions is optional; if enabled, it has a 5-minute minimum interval and
+  can run late under load.
 - iOS/iPadOS requires the PWA to be installed on the Home Screen before Web Push
   can be enabled.
 - Notification permission can be revoked by the browser at any time.

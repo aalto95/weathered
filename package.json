@@ -15,6 +15,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@upstash/qstash": "^2.12.1",
 		"@vercel/blob": "^2.8.2",
 		"luxon": "^3.7.2",
 		"react": "^19.3.1",
