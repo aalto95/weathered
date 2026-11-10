@@ -28,7 +28,6 @@ export const scheduleNotification = async (
     body: { id: subscriberId },
     notBefore: Math.floor(when.getTime() / 1000),
     retries: 3,
-    deduplicationId: `${subscriberId}:${when.toISOString()}`,
     headers: cronSecret ? { 'x-weathered-secret': cronSecret } : undefined
   });
 
