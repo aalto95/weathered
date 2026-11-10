@@ -34,12 +34,38 @@ describe('SearchResults', () => {
     expect(screen.getByText('Overcast')).toBeInTheDocument();
     expect(screen.getByText(/Feels like 2°C/)).toBeInTheDocument();
     expect(screen.getByText('26.6 km')).toBeInTheDocument();
-    expect(screen.getByText('7 km/h')).toBeInTheDocument();
+    expect(screen.getByText(/7 km\/h/)).toBeInTheDocument();
+    expect(screen.getByText('1008 hPa')).toBeInTheDocument();
+    expect(screen.getByText('0.2 mm')).toBeInTheDocument();
     expect(screen.getByText('07:19')).toBeInTheDocument();
     expect(screen.getByText('81%')).toBeInTheDocument();
     expect(screen.getByText('90%')).toBeInTheDocument();
     expect(screen.getByText('16:20')).toBeInTheDocument();
     expect(screen.getByTestId('rive-clouds')).toBeInTheDocument();
+  });
+
+  test('renders hourly and daily forecasts', () => {
+    renderCity();
+
+    expect(screen.getByText('Hourly forecast')).toBeInTheDocument();
+    expect(screen.getByText('7-day forecast')).toBeInTheDocument();
+    expect(screen.getByText('Now')).toBeInTheDocument();
+    expect(screen.getByText('Today')).toBeInTheDocument();
+    expect(screen.getByText(/Updated 14:45/)).toBeInTheDocument();
+  });
+
+  test('can hide forecasts for compact cards', () => {
+    renderWithProviders(
+      <SearchResults
+        city={makeCity()}
+        fetchError={false}
+        isFetching={false}
+        showForecast={false}
+      />
+    );
+
+    expect(screen.queryByText('Hourly forecast')).not.toBeInTheDocument();
+    expect(screen.queryByText('7-day forecast')).not.toBeInTheDocument();
   });
 
   test('links to the location on Google Maps', () => {

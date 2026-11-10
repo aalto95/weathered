@@ -166,6 +166,7 @@ const Favorites: React.FC = () => {
             city={city}
             fetchError={false}
             isFetching={false}
+            showForecast={false}
           />
         ))}
       </Grid>

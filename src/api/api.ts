@@ -1,5 +1,10 @@
 import axios from 'axios';
-import { FavoriteLocation, WeatherModel } from '../models/weather.model';
+import {
+  DailyForecast,
+  FavoriteLocation,
+  HourlyForecast,
+  WeatherModel
+} from '../models/weather.model';
 import { getWmoInfo } from './wmo';
 
 const weatherClient = axios.create({
@@ -24,7 +29,23 @@ const CURRENT_FIELDS = [
   'wind_speed_10m',
   'wind_direction_10m',
   'wind_gusts_10m',
-  'visibility'
+  'visibility',
+  'precipitation'
+].join(',');
+
+const HOURLY_FIELDS = [
+  'temperature_2m',
+  'weather_code',
+  'precipitation_probability'
+].join(',');
+
+const DAILY_FIELDS = [
+  'weather_code',
+  'temperature_2m_max',
+  'temperature_2m_min',
+  'precipitation_probability_max',
+  'sunrise',
+  'sunset'
 ].join(',');
 
 interface GeocodingResult {
@@ -63,12 +84,64 @@ interface OpenMeteoResponse {
     wind_direction_10m: number;
     wind_gusts_10m: number;
     visibility: number;
+    precipitation: number;
+  };
+  hourly: {
+    time: string[];
+    temperature_2m: number[];
+    weather_code: number[];
+    precipitation_probability: (number | null)[];
   };
   daily: {
+    time: string[];
+    weather_code: number[];
+    temperature_2m_max: number[];
+    temperature_2m_min: number[];
+    precipitation_probability_max: (number | null)[];
     sunrise: string[];
     sunset: string[];
   };
 }
+
+const toHourlyForecast = (data: OpenMeteoResponse): HourlyForecast[] => {
+  const { time } = data.hourly;
+  let startIndex = 0;
+
+  time.forEach((value, index) => {
+    if (value <= data.current.time) {
+      startIndex = index;
+    }
+  });
+
+  return time.slice(startIndex, startIndex + 24).map((value, offset) => {
+    const index = startIndex + offset;
+    const code = data.hourly.weather_code[index];
+
+    return {
+      time: value,
+      temperature: data.hourly.temperature_2m[index],
+      code,
+      condition: getWmoInfo(code).animation,
+      precipitationProbability:
+        data.hourly.precipitation_probability[index] ?? 0
+    };
+  });
+};
+
+const toDailyForecast = (data: OpenMeteoResponse): DailyForecast[] =>
+  data.daily.time.map((date, index) => {
+    const code = data.daily.weather_code[index];
+
+    return {
+      date,
+      code,
+      condition: getWmoInfo(code).animation,
+      tempMax: data.daily.temperature_2m_max[index],
+      tempMin: data.daily.temperature_2m_min[index],
+      precipitationProbability:
+        data.daily.precipitation_probability_max[index] ?? 0
+    };
+  });
 
 const toWeatherModel = (
   data: OpenMeteoResponse,
@@ -91,11 +164,15 @@ const toWeatherModel = (
         description: condition.description
       }
     ],
+    hourly: toHourlyForecast(data),
+    daily: toDailyForecast(data),
+    updatedAt: data.current.time,
     main: {
       temp: data.current.temperature_2m,
       feels_like: data.current.apparent_temperature,
       pressure: data.current.surface_pressure,
-      humidity: data.current.relative_humidity_2m
+      humidity: data.current.relative_humidity_2m,
+      precipitation: data.current.precipitation
     },
     visibility: data.current.visibility,
     wind: {
@@ -124,7 +201,8 @@ const getWeather = async (
       latitude: lat,
       longitude: lon,
       current: CURRENT_FIELDS,
-      daily: 'sunrise,sunset',
+      hourly: HOURLY_FIELDS,
+      daily: DAILY_FIELDS,
       timezone: 'auto'
     }
   });
@@ -227,7 +305,8 @@ export const weatherAPI = {
         latitude: places.map((place) => place.latitude).join(','),
         longitude: places.map((place) => place.longitude).join(','),
         current: CURRENT_FIELDS,
-        daily: 'sunrise,sunset',
+        hourly: HOURLY_FIELDS,
+        daily: DAILY_FIELDS,
         timezone: 'auto'
       }
     });

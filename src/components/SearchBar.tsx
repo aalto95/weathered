@@ -21,6 +21,7 @@ const Container = styled.section`
   justify-content: center;
   width: 100%;
   padding-top: clamp(8px, 4vw, 32px);
+  padding-bottom: clamp(16px, 3vw, 28px);
 `;
 
 const Form = styled.form`

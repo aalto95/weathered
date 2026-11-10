@@ -12,6 +12,7 @@ import {
 } from '@heroicons/react/24/solid';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import {
+  accentColor,
   borderColor,
   cardShadow,
   hoverColor,
@@ -20,25 +21,12 @@ import {
   surfaceMutedColor,
   textColor
 } from '../constants/theme';
+import { getConditionAccent } from '../constants/weather';
 import { favoritePushed, favoriteRemoved } from '../features/app-slice';
-import {
-  FavoriteLocation,
-  WeatherAnimation,
-  WeatherModel
-} from '../models/weather.model';
+import { FavoriteLocation, WeatherModel } from '../models/weather.model';
 import { Loader } from './Loader';
 import { RiveAnimation } from './RiveAnimation';
-
-const conditionAccents: Record<
-  WeatherAnimation,
-  { light: string; dark: string }
-> = {
-  clear: { light: '#F59E0B', dark: '#FBBF24' },
-  clouds: { light: '#64748B', dark: '#94A3B8' },
-  rain: { light: '#2563EB', dark: '#60A5FA' },
-  snow: { light: '#0891B2', dark: '#67E8F9' },
-  thunderstorm: { light: '#7C3AED', dark: '#A78BFA' }
-};
+import { WeatherIcon } from './WeatherIcon';
 
 const rise = keyframes`
   from {
@@ -215,11 +203,154 @@ const AnimationBox = styled.div<{ $accent: string }>`
   }
 `;
 
+const Section = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const SectionTitle = styled.h2`
+  margin: 0;
+  color: ${mutedTextColor};
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+`;
+
+const HourlyScroll = styled.div`
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const HourCard = styled.div<{ $current: boolean; $accent: string }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 64px;
+  padding: 10px 8px;
+  background-color: ${surfaceMutedColor};
+  border: 1px solid transparent;
+  border-radius: 16px;
+
+  ${({ $current, $accent }) =>
+    $current &&
+    `
+      background-color: ${$accent}1a;
+      border-color: ${$accent}33;
+    `}
+`;
+
+const HourTime = styled.span`
+  color: ${mutedTextColor};
+  font-size: 0.72rem;
+  font-weight: 500;
+  white-space: nowrap;
+`;
+
+const HourTemp = styled.span`
+  color: ${textColor};
+  font-size: 0.92rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+`;
+
+const HourRain = styled.span`
+  color: ${accentColor};
+  font-size: 0.68rem;
+  font-weight: 600;
+`;
+
+const DailyList = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+`;
+
+const DayRow = styled.li`
+  display: grid;
+  grid-template-columns: 2.8rem 26px minmax(30px, 1fr) 2.2rem auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 6px;
+  border-radius: 10px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${hoverColor};
+  }
+`;
+
+const DayName = styled.span`
+  color: ${textColor};
+  font-size: 0.85rem;
+  font-weight: 500;
+`;
+
+const DayRain = styled.span`
+  color: ${accentColor};
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-align: right;
+`;
+
+const RangeTrack = styled.div`
+  position: relative;
+  height: 5px;
+  overflow: hidden;
+  background-color: ${borderColor};
+  border-radius: 999px;
+`;
+
+const RangeBar = styled.div<{
+  $left: number;
+  $width: number;
+  $accent: string;
+}>`
+  position: absolute;
+  top: 0;
+  left: ${({ $left }) => `${$left}%`};
+  width: ${({ $width }) => `${$width}%`};
+  height: 100%;
+  background-color: ${({ $accent }) => $accent};
+  border-radius: 999px;
+`;
+
+const DayTemps = styled.span`
+  color: ${textColor};
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+
+  strong {
+    font-weight: 600;
+  }
+
+  span {
+    color: ${mutedTextColor};
+  }
+`;
+
 const Stats = styled.dl`
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   margin: 0;
+
+  @media (min-width: 560px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 `;
 
 const Stat = styled.div`
@@ -242,9 +373,10 @@ const StatLabel = styled.dt`
 
 const StatValue = styled.dd`
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 `;
 
 const CardFooter = styled.div`
@@ -274,29 +406,50 @@ const MapLink = styled.a`
   }
 `;
 
+const Updated = styled.span`
+  color: ${mutedTextColor};
+  font-size: 0.78rem;
+`;
+
 interface SearchResultsProps {
   city: WeatherModel | null;
   fetchError: boolean;
   isFetching: boolean;
+  showForecast?: boolean;
 }
 
 const coordinatesMatch = (favorite: FavoriteLocation, city: WeatherModel) =>
   Math.abs(favorite.latitude - city.coord.lat) < 0.02 &&
   Math.abs(favorite.longitude - city.coord.lon) < 0.02;
 
+const compassPoint = (degrees: number) => {
+  const points = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+  return points[Math.round(degrees / 45) % 8];
+};
+
 const SearchResults: React.FC<SearchResultsProps> = ({
   city,
   fetchError,
-  isFetching
+  isFetching,
+  showForecast = true
 }) => {
   const dispatch = useAppDispatch();
   const mode = useAppSelector((state) => state.app.mode);
   const favorites = useAppSelector((state) => state.app.favorites);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const formatTime = (isoDate: string) => {
     const time = isoDate.split('T')[1];
     return time ? time.slice(0, 5) : isoDate;
+  };
+
+  const formatDay = (date: string, index: number) => {
+    if (index === 0) {
+      return t('today');
+    }
+    return new Date(`${date}T12:00:00`).toLocaleDateString(i18n.language, {
+      weekday: 'short'
+    });
   };
 
   if (!city) {
@@ -311,8 +464,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   }
 
   const condition = city.weather[0];
-  const accent =
-    conditionAccents[condition.main][mode === 'light' ? 'light' : 'dark'];
+  const accent = getConditionAccent(condition.main, mode);
 
   const favorite = favorites.find(
     (item) => item.id === city.id || coordinatesMatch(item, city)
@@ -335,6 +487,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       dispatch(favoriteRemoved(favorite.id));
     }
   };
+
+  const weekMin = Math.min(...city.daily.map((day) => day.tempMin));
+  const weekMax = Math.max(...city.daily.map((day) => day.tempMax));
+  const weekSpan = Math.max(weekMax - weekMin, 1);
 
   return (
     <Container>
@@ -393,6 +549,30 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               </AnimationBox>
             </Hero>
 
+            {showForecast && city.hourly.length > 0 && (
+              <Section aria-label={t('hourly')}>
+                <SectionTitle>{t('hourly')}</SectionTitle>
+                <HourlyScroll>
+                  {city.hourly.slice(0, 12).map((hour, index) => (
+                    <HourCard
+                      key={hour.time}
+                      $current={index === 0}
+                      $accent={accent}
+                    >
+                      <HourTime>
+                        {index === 0 ? t('now') : formatTime(hour.time)}
+                      </HourTime>
+                      <WeatherIcon condition={hour.condition} size={26} />
+                      <HourTemp>{Math.round(hour.temperature)}°</HourTemp>
+                      {hour.precipitationProbability >= 20 && (
+                        <HourRain>{hour.precipitationProbability}%</HourRain>
+                      )}
+                    </HourCard>
+                  ))}
+                </HourlyScroll>
+              </Section>
+            )}
+
             <Stats>
               <Stat>
                 <StatLabel>{t('visibility')}</StatLabel>
@@ -403,26 +583,68 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               <Stat>
                 <StatLabel>{t('wind')}</StatLabel>
                 <StatValue>
-                  {Math.round(city.wind.speed)} {t('kmperhour')}
+                  {Math.round(city.wind.speed)} {t('kmperhour')}{' '}
+                  {compassPoint(city.wind.deg)}
                 </StatValue>
               </Stat>
               <Stat>
-                <StatLabel>{t('sunrise')}</StatLabel>
-                <StatValue>{formatTime(city.sys.sunrise)}</StatValue>
+                <StatLabel>{t('pressure')}</StatLabel>
+                <StatValue>{Math.round(city.main.pressure)} hPa</StatValue>
               </Stat>
               <Stat>
                 <StatLabel>{t('humidity')}</StatLabel>
                 <StatValue>{Math.round(city.main.humidity)}%</StatValue>
               </Stat>
               <Stat>
+                <StatLabel>{t('precipitation')}</StatLabel>
+                <StatValue>{city.main.precipitation.toFixed(1)} mm</StatValue>
+              </Stat>
+              <Stat>
                 <StatLabel>{t('cloudiness')}</StatLabel>
                 <StatValue>{Math.round(city.clouds.all)}%</StatValue>
+              </Stat>
+              <Stat>
+                <StatLabel>{t('sunrise')}</StatLabel>
+                <StatValue>{formatTime(city.sys.sunrise)}</StatValue>
               </Stat>
               <Stat>
                 <StatLabel>{t('sunset')}</StatLabel>
                 <StatValue>{formatTime(city.sys.sunset)}</StatValue>
               </Stat>
             </Stats>
+
+            {showForecast && city.daily.length > 0 && (
+              <Section aria-label={t('daily')}>
+                <SectionTitle>{t('daily')}</SectionTitle>
+                <DailyList>
+                  {city.daily.slice(0, 7).map((day, index) => (
+                    <DayRow key={day.date}>
+                      <DayName>{formatDay(day.date, index)}</DayName>
+                      <WeatherIcon condition={day.condition} size={24} />
+                      <RangeTrack>
+                        <RangeBar
+                          $left={((day.tempMin - weekMin) / weekSpan) * 100}
+                          $width={Math.max(
+                            ((day.tempMax - day.tempMin) / weekSpan) * 100,
+                            8
+                          )}
+                          $accent={getConditionAccent(day.condition, mode)}
+                        />
+                      </RangeTrack>
+                      <DayRain>
+                        {day.precipitationProbability >= 20
+                          ? `${day.precipitationProbability}%`
+                          : ''}
+                      </DayRain>
+                      <DayTemps>
+                        <strong>{Math.round(day.tempMax)}°</strong>{' '}
+                        <span>/ {Math.round(day.tempMin)}°</span>
+                      </DayTemps>
+                    </DayRow>
+                  ))}
+                </DailyList>
+              </Section>
+            )}
 
             <CardFooter>
               <MapLink
@@ -433,6 +655,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                 <ArrowTopRightOnSquareIcon width={16} />
                 {t('viewOnMap')}
               </MapLink>
+              <Updated>
+                {t('updated')} {formatTime(city.updatedAt)}
+              </Updated>
             </CardFooter>
           </Content>
         </City>

@@ -45,11 +45,23 @@ const openMeteoResponse = (overrides: Record<string, unknown> = {}) => ({
     wind_speed_10m: 6.6,
     wind_direction_10m: 299,
     wind_gusts_10m: 17.6,
-    visibility: 26640
+    visibility: 26640,
+    precipitation: 0.2
+  },
+  hourly: {
+    time: ['2026-11-10T13:00', '2026-11-10T14:00', '2026-11-10T15:00'],
+    temperature_2m: [4.5, 5, 5.5],
+    weather_code: [2, 3, 61],
+    precipitation_probability: [0, 10, 55]
   },
   daily: {
-    sunrise: ['2026-11-10T07:19'],
-    sunset: ['2026-11-10T16:20']
+    time: ['2026-11-10', '2026-11-11'],
+    weather_code: [3, 61],
+    temperature_2m_max: [7, 9],
+    temperature_2m_min: [1, 3],
+    precipitation_probability_max: [20, 80],
+    sunrise: ['2026-11-10T07:19', '2026-11-11T07:20'],
+    sunset: ['2026-11-10T16:20', '2026-11-11T16:19']
   },
   ...overrides
 });
@@ -89,7 +101,8 @@ describe('getCityByName', () => {
         latitude: 52.52437,
         longitude: 13.41053,
         current: expect.stringContaining('weather_code'),
-        daily: 'sunrise,sunset',
+        hourly: expect.stringContaining('precipitation_probability'),
+        daily: expect.stringContaining('temperature_2m_max'),
         timezone: 'auto'
       })
     });
@@ -106,11 +119,47 @@ describe('getCityByName', () => {
           description: 'weather.overcast'
         }
       ],
+      hourly: [
+        {
+          time: '2026-11-10T14:00',
+          temperature: 5,
+          code: 3,
+          condition: 'clouds',
+          precipitationProbability: 10
+        },
+        {
+          time: '2026-11-10T15:00',
+          temperature: 5.5,
+          code: 61,
+          condition: 'rain',
+          precipitationProbability: 55
+        }
+      ],
+      daily: [
+        {
+          date: '2026-11-10',
+          code: 3,
+          condition: 'clouds',
+          tempMax: 7,
+          tempMin: 1,
+          precipitationProbability: 20
+        },
+        {
+          date: '2026-11-11',
+          code: 61,
+          condition: 'rain',
+          tempMax: 9,
+          tempMin: 3,
+          precipitationProbability: 80
+        }
+      ],
+      updatedAt: '2026-11-10T14:45',
       main: {
         temp: 5,
         feels_like: 2.2,
         pressure: 1007.9,
-        humidity: 81
+        humidity: 81,
+        precipitation: 0.2
       },
       visibility: 26640,
       wind: {

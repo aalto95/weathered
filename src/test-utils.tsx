@@ -73,11 +73,47 @@ export const makeCity = (
       description: 'weather.overcast'
     }
   ],
+  hourly: [
+    {
+      time: '2026-11-10T14:00',
+      temperature: 5,
+      code: 3,
+      condition: 'clouds',
+      precipitationProbability: 10
+    },
+    {
+      time: '2026-11-10T15:00',
+      temperature: 5.5,
+      code: 61,
+      condition: 'rain',
+      precipitationProbability: 55
+    }
+  ],
+  daily: [
+    {
+      date: '2026-11-10',
+      code: 3,
+      condition: 'clouds',
+      tempMax: 7,
+      tempMin: 1,
+      precipitationProbability: 20
+    },
+    {
+      date: '2026-11-11',
+      code: 61,
+      condition: 'rain',
+      tempMax: 9,
+      tempMin: 3,
+      precipitationProbability: 80
+    }
+  ],
+  updatedAt: '2026-11-10T14:45',
   main: {
     temp: 5.4,
     feels_like: 2.2,
     pressure: 1007.9,
-    humidity: 81
+    humidity: 81,
+    precipitation: 0.2
   },
   visibility: 26640,
   wind: {

@@ -10,6 +10,25 @@ export interface WeatherCondition {
   description: string;
 }
 
+export interface HourlyForecast {
+  /** Location-local ISO timestamp (e.g. "2026-11-10T14:00"). */
+  time: string;
+  temperature: number;
+  code: number;
+  condition: WeatherAnimation;
+  precipitationProbability: number;
+}
+
+export interface DailyForecast {
+  /** Location-local date (e.g. "2026-11-10"). */
+  date: string;
+  code: number;
+  condition: WeatherAnimation;
+  tempMax: number;
+  tempMin: number;
+  precipitationProbability: number;
+}
+
 export interface WeatherModel {
   /** Stable location id (Open-Meteo geocoding id or a coordinate-derived id). */
   id: number;
@@ -21,11 +40,17 @@ export interface WeatherModel {
     lon: number;
   };
   weather: WeatherCondition[];
+  hourly: HourlyForecast[];
+  daily: DailyForecast[];
+  /** Location-local ISO timestamp of the observation. */
+  updatedAt: string;
   main: {
     temp: number;
     feels_like: number;
     pressure: number;
     humidity: number;
+    /** Current precipitation in millimetres. */
+    precipitation: number;
   };
   /** Visibility in metres. */
   visibility: number;
