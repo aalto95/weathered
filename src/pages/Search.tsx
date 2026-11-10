@@ -62,7 +62,7 @@ const Search: React.FC = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    if ('geolocation' in navigator) {
+    if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         dispatch(
           fetchWeatherByCoords({

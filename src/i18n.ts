@@ -34,6 +34,7 @@ const resources = {
       closeMenu: 'Close menu',
       toggleTheme: 'Toggle theme',
       clearSearch: 'Clear search',
+      dismiss: 'Dismiss',
       weather: {
         clear: 'Clear sky',
         mainlyClear: 'Mainly clear',
@@ -331,6 +332,7 @@ const resources = {
       closeMenu: 'Закрыть меню',
       toggleTheme: 'Переключить тему',
       clearSearch: 'Очистить поиск',
+      dismiss: 'Скрыть',
       weather: {
         clear: 'Ясно',
         mainlyClear: 'Преимущественно ясно',

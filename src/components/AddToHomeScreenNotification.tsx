@@ -130,11 +130,7 @@ export const AddToHomeScreenNotification: React.FC = () => {
       <InstallButton type="button" onClick={install}>
         {t('install')}
       </InstallButton>
-      <DismissButton
-        type="button"
-        onClick={dismiss}
-        aria-label={t('closeMenu')}
-      >
+      <DismissButton type="button" onClick={dismiss} aria-label={t('dismiss')}>
         <XMarkIcon width={18} />
       </DismissButton>
     </Container>

@@ -4,13 +4,7 @@ export const RiveAnimation: React.FC<{
   width?: number;
   height?: number;
   animationName:
-    | '404'
-    | 'clear'
-    | 'clouds'
-    | 'loading'
-    | 'rain'
-    | 'snow'
-    | 'thunderstorm';
+    '404' | 'clear' | 'clouds' | 'loading' | 'rain' | 'snow' | 'thunderstorm';
 }> = ({ width, height, animationName }) => {
   const { RiveComponent } = useRive({
     // Load a local riv `clean_the_car.riv` or upload your own!

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { weatherAPI } from '../api/api';
 import { FavoriteLocation, WeatherModel } from '../models/weather.model';
 
-interface AppState {
+export interface AppState {
   mode: string;
   city: WeatherModel | null;
   fetchError: boolean;
@@ -15,7 +15,7 @@ interface AppState {
   isFavoritesFetching: boolean;
 }
 
-const initialState: AppState = {
+export const initialState: AppState = {
   mode: 'light',
   city: null,
   fetchError: false,
