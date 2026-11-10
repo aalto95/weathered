@@ -1,109 +1,155 @@
+import { HomeIcon, LanguageIcon, StarIcon } from '@heroicons/react/24/outline';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import React, { RefObject, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
-import styled from 'styled-components';
-import theme from 'styled-theming';
+import styled, { keyframes } from 'styled-components';
 import { useOnClickOutside } from 'usehooks-ts';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
+import {
+  borderColor,
+  hoverColor,
+  mutedTextColor,
+  surfaceColor,
+  textColor
+} from '../constants/theme';
 import { fetchWeatherByCityName, sidebarToggled } from '../features/app-slice';
 
-const sidebarColor = theme('mode', {
-  light: '#FFFFFF',
-  dark: '#242526'
-});
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
 
-const sidebarTextColor = theme('mode', {
-  light: '#242526',
-  dark: '#FFFFFF'
-});
-
-const Container = styled.div`
-  position: absolute;
-  height: 100vh;
+const Container = styled.aside`
+  position: fixed;
   top: 0;
-  background-color: ${sidebarColor};
-  @media (max-width: 480px) {
-    width: 100%;
-  }
-  @media (min-width: 480px) {
-    width: 300px;
-  }
-  transition: transform 0.3s;
-  z-index: 2;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(320px, 100%);
+  height: 100dvh;
+  background-color: ${surfaceColor};
+  border-right: 1px solid ${borderColor};
+  box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.45);
+  transition: transform 0.3s ease;
+  z-index: 30;
 `;
 
 const SidebarBackdrop = styled.div`
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1;
-`;
-
-const Heading = styled.h1`
-  font-size: 18px;
-  color: ${sidebarTextColor};
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: ${fadeIn} 0.2s ease;
+  z-index: 20;
 `;
 
 const SidebarHeader = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid ${borderColor};
 `;
 
-const List = styled.ul`
-  margin-top: 10px;
-  padding: 10px;
-`;
-
-const ListItem = styled.li`
-  list-style: none;
-  line-height: 2;
-  color: ${sidebarTextColor};
-  text-decoration: none;
-  cursor: pointer;
+const Heading = styled.h1`
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: ${textColor};
 `;
 
 const IconButton = styled.button`
-  width: 32px;
-  height: 32px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: ${textColor};
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${hoverColor};
+  }
 `;
 
-const HeadingWrapper = styled.div`
+const List = styled.nav`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+`;
+
+const ListItem = styled.button`
+  display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  color: ${textColor};
+  font-size: 0.98rem;
+  text-align: left;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${hoverColor};
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    color: ${mutedTextColor};
+  }
 `;
 
 export const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const city = useAppSelector((state) => state.app.city);
   const dispatch = useAppDispatch();
-  const mode = useAppSelector((state) => state.app.mode);
   const isSidebarOpen = useAppSelector((state) => state.app.isSidebarOpen);
   const location = useLocation();
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLElement>(null);
+  const { t, i18n } = useTranslation();
+
   const closeSidebar = () => {
     dispatch(sidebarToggled(false));
   };
 
-  useOnClickOutside(ref as RefObject<HTMLDivElement>, closeSidebar);
+  useOnClickOutside(ref as RefObject<HTMLElement>, closeSidebar);
 
-  const { t, i18n } = useTranslation();
+  useEffect(() => {
+    if (!isSidebarOpen) {
+      return;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        dispatch(sidebarToggled(false));
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [dispatch, isSidebarOpen]);
 
   const handleLanguageChange = () => {
-    if (i18n.language === 'en') {
-      i18n.changeLanguage('ru');
-      localStorage.setItem('lang', 'ru');
-    } else {
-      i18n.changeLanguage('en');
-      localStorage.setItem('lang', 'en');
-    }
+    const language = i18n.language === 'en' ? 'ru' : 'en';
+    i18n.changeLanguage(language);
+    localStorage.setItem('lang', language);
+    document.documentElement.lang = language;
     closeSidebar();
     if (city) {
       dispatch(fetchWeatherByCityName(city.name));
@@ -120,46 +166,50 @@ export const Sidebar: React.FC = () => {
     closeSidebar();
   };
 
-  const [isMouseDown, setIsMouseDown] = React.useState(false);
-  const [mouseLeft, setMouseLeft] = React.useState(false);
-
-  useEffect(() => {
-    if (mouseLeft && isMouseDown) {
-      dispatch(sidebarToggled(false));
-      setIsMouseDown(false);
-      setMouseLeft(false);
-    }
-  }, [mouseLeft]);
-
   return (
     <>
       <Container
         ref={ref}
+        aria-hidden={!isSidebarOpen}
+        inert={!isSidebarOpen}
         style={
           isSidebarOpen
-            ? { transform: 'translateX(-0%)' }
+            ? { transform: 'translateX(0)' }
             : { transform: 'translateX(-100%)' }
         }
       >
         <SidebarHeader>
-          <HeadingWrapper>
-            <Heading>Weathered</Heading>
-          </HeadingWrapper>
-          <IconButton onClick={closeSidebar}>
-            <XMarkIcon color={mode === 'light' ? 'black' : 'white'} />
+          <Heading>Weathered</Heading>
+          <IconButton
+            type="button"
+            onClick={closeSidebar}
+            aria-label={t('closeMenu')}
+          >
+            <XMarkIcon width={22} />
           </IconButton>
         </SidebarHeader>
         <List>
           {location.pathname === '/' && (
-            <ListItem onClick={goToFavorites}>{t('favorites')}</ListItem>
+            <ListItem type="button" onClick={goToFavorites}>
+              <StarIcon />
+              {t('favorites')}
+            </ListItem>
           )}
           {location.pathname === '/favorites' && (
-            <ListItem onClick={goToHome}>{t('home')}</ListItem>
+            <ListItem type="button" onClick={goToHome}>
+              <HomeIcon />
+              {t('home')}
+            </ListItem>
           )}
-          <ListItem onClick={handleLanguageChange}>{t('switch')}</ListItem>
+          <ListItem type="button" onClick={handleLanguageChange}>
+            <LanguageIcon />
+            {t('switch')}
+          </ListItem>
         </List>
       </Container>
-      {isSidebarOpen && <SidebarBackdrop></SidebarBackdrop>}
+      {isSidebarOpen && (
+        <SidebarBackdrop onClick={closeSidebar} aria-hidden="true" />
+      )}
     </>
   );
 };

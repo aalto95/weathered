@@ -2,77 +2,88 @@ import { XMarkIcon } from '@heroicons/react/24/solid';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import theme from 'styled-theming';
 import { useTimeout } from 'usehooks-ts';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
+import {
+  accentColor,
+  borderColor,
+  cardShadow,
+  hoverColor,
+  surfaceColor,
+  textColor
+} from '../constants/theme';
 import {
   dismissA2HSButton,
   isA2HSButtonDismissedSet
 } from '../features/app-slice';
 
-const buttonColor = theme('mode', {
-  light: '#F2F2F2',
-  dark: '#242526'
-});
-
-const buttonTextColor = theme('mode', {
-  light: '#242526',
-  dark: '#FFFFFF'
-});
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+}
 
 const Container = styled.div`
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 200px;
-  padding: 10px;
-  border-radius: 10px;
   position: fixed;
-  bottom: 0;
+  bottom: 16px;
   left: 0;
   right: 0;
-  margin-left: auto;
-  margin-right: auto;
-  transform: translateY(100px);
-  transition: transform 0.5s;
-  background-color: ${buttonColor};
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  margin: 0 auto;
+  padding: 8px;
+  background-color: ${surfaceColor};
+  border: 1px solid ${borderColor};
+  border-radius: 16px;
+  box-shadow: ${cardShadow};
+  color: ${textColor};
+  transition: transform 0.4s ease;
 `;
 
 const InstallButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 18px;
+  padding: 10px 16px;
+  background-color: ${accentColor};
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
 
-  color: ${buttonTextColor};
+  &:hover {
+    opacity: 0.9;
+  }
 `;
 
 const DismissButton = styled.button`
-  width: 32px;
-  height: 32px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: ${textColor};
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${hoverColor};
+  }
 `;
 
 export const AddToHomeScreenNotification: React.FC = () => {
-  const mode = useAppSelector((state) => state.app.mode);
   const dispatch = useAppDispatch();
-
-  const dismissButton = () => {
-    setVisible(false);
-    setTimeout(() => {
-      dispatch(dismissA2HSButton());
-    }, 1000);
-  };
-
-  const { t } = useTranslation();
-
   const isA2HSButtonDismissed = useAppSelector(
     (state) => state.app.isA2HSButtonDismissed
   );
+  const { t } = useTranslation();
 
+  const [installPrompt, setInstallPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
 
   const show = () => setVisible(true);
-
   useTimeout(show, 1000);
 
   useEffect(() => {
@@ -81,57 +92,51 @@ export const AddToHomeScreenNotification: React.FC = () => {
         localStorage.getItem('a2hsButtonDismissed') === 'true'
       )
     );
-    if (!isA2HSButtonDismissed) {
-      let deferredPrompt: any;
-      const container = document.getElementById('a2hs-container');
-      const addBtn = document.getElementById('add-button');
 
-      container!.style.display = 'none';
+    const onBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setInstallPrompt(event as BeforeInstallPromptEvent);
+    };
 
-      window.addEventListener('beforeinstallprompt', (e) => {
-        // Prevent Chrome 67 and earlier from automatically showing the prompt
-        e.preventDefault();
-        // Stash the event so it can be triggered later.
-        deferredPrompt = e;
-        // Update UI to notify the user they can add to home screen
-        container!.style.display = 'flex';
+    window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt);
+    return () =>
+      window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt);
+  }, [dispatch]);
 
-        addBtn!.addEventListener('click', () => {
-          // hide our user interface that shows our A2HS button
-          container!.style.display = 'none';
-          // Show the prompt
-          deferredPrompt.prompt();
-          // Wait for the user to respond to the prompt
-          deferredPrompt.userChoice.then((choiceResult: any) => {
-            if (choiceResult.outcome === 'accepted') {
-              console.log('User accepted the A2HS prompt');
-            } else {
-              console.log('User dismissed the A2HS prompt');
-            }
-            deferredPrompt = null;
-          });
-        });
-      });
+  const install = async () => {
+    if (!installPrompt) {
+      return;
     }
-  }, []);
+    await installPrompt.prompt();
+    await installPrompt.userChoice;
+    setInstallPrompt(null);
+  };
 
-  if (!isA2HSButtonDismissed) {
-    return (
-      <Container
-        id="a2hs-container"
-        style={
-          visible
-            ? { transform: 'translateY(-20px)' }
-            : { transform: 'translateY(100px)' }
-        }
-      >
-        <InstallButton id="add-button">{t('install')}</InstallButton>
-        <DismissButton onClick={dismissButton}>
-          <XMarkIcon color={mode === 'light' ? 'black' : 'white'} />
-        </DismissButton>
-      </Container>
-    );
+  const dismiss = () => {
+    setVisible(false);
+    setTimeout(() => dispatch(dismissA2HSButton()), 400);
+  };
+
+  if (isA2HSButtonDismissed || !installPrompt) {
+    return null;
   }
 
-  return null;
+  return (
+    <Container
+      style={{
+        transform: visible ? 'translateY(0)' : 'translateY(120px)'
+      }}
+    >
+      <InstallButton type="button" onClick={install}>
+        {t('install')}
+      </InstallButton>
+      <DismissButton
+        type="button"
+        onClick={dismiss}
+        aria-label={t('closeMenu')}
+      >
+        <XMarkIcon width={18} />
+      </DismissButton>
+    </Container>
+  );
 };

@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import styled, { ThemeProvider } from 'styled-components';
-import theme from 'styled-theming';
 import './App.css';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { AddToHomeScreenNotification } from './components/AddToHomeScreenNotification';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
+import { mutedTextColor, pageBackground } from './constants/theme';
 import { favoritesSet, initializeMode } from './features/app-slice';
 import { FavoriteLocation } from './models/weather.model';
 import Favorites from './pages/Favorites';
@@ -14,19 +14,41 @@ import Search from './pages/Search';
 
 const FAVORITES_STORAGE_KEY = 'favorites';
 
-const footerColor = theme('mode', {
-  light: '#1C1E21',
-  dark: '#E3E3E3'
-});
+const AppRoot = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: ${pageBackground};
+`;
+
+const Main = styled.main`
+  flex: 1;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 24px 16px 8px;
+
+  @media (max-width: 480px) {
+    padding: 16px 12px 4px;
+  }
+`;
 
 const Footer = styled.footer`
-  padding: 16px;
+  padding: 20px 16px 28px;
   text-align: center;
   font-size: 12px;
-  color: ${footerColor};
+  color: ${mutedTextColor};
 
   a {
     color: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+
+  a:hover {
+    border-bottom-color: currentColor;
   }
 `;
 
@@ -67,19 +89,22 @@ const App: React.FC = () => {
     if (localStorage.getItem('lang') === null) {
       localStorage.setItem('lang', 'en');
     }
+    document.documentElement.lang = localStorage.getItem('lang') ?? 'en';
     dispatch(initializeMode());
   }, [dispatch]);
 
   return (
-    <div className="App">
+    <AppRoot>
       <BrowserRouter>
         <ThemeProvider theme={{ mode }}>
           <Header />
           <Sidebar />
-          <Routes>
-            <Route path="/" element={<Search />} />
-            <Route path="/favorites" element={<Favorites />} />
-          </Routes>
+          <Main>
+            <Routes>
+              <Route path="/" element={<Search />} />
+              <Route path="/favorites" element={<Favorites />} />
+            </Routes>
+          </Main>
           <Footer>
             Weather data by{' '}
             <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">
@@ -89,7 +114,7 @@ const App: React.FC = () => {
           <AddToHomeScreenNotification />
         </ThemeProvider>
       </BrowserRouter>
-    </div>
+    </AppRoot>
   );
 };
 

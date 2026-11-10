@@ -64,8 +64,10 @@ const setThemeColors = (themeMode: string) => {
   };
   if (themeMode === 'dark') {
     setTheme('#242526', '#1B1B1D');
+    document.documentElement.style.colorScheme = 'dark';
   } else if (themeMode === 'light') {
     setTheme('#FFFFFF', '#FAFAFA');
+    document.documentElement.style.colorScheme = 'light';
   }
 };
 

@@ -1,45 +1,49 @@
 import { SunIcon } from '@heroicons/react/24/outline';
 import { Bars3Icon, MoonIcon } from '@heroicons/react/24/solid';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import styled from 'styled-components';
-import theme from 'styled-theming';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
+import {
+  borderColor,
+  headerBackground,
+  hoverColor,
+  textColor
+} from '../constants/theme';
 import { sidebarToggled, toggleMode } from '../features/app-slice';
 
-const headingColor = theme('mode', {
-  light: '#1C1E21',
-  dark: '#E3E3E3'
-});
-
-const sectionBackgroundColor = theme('mode', {
-  light: '#FFF',
-  dark: 'rgb(36, 37, 38)'
-});
-
 const Container = styled.header`
-  background-color: ${sectionBackgroundColor};
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: ${headerBackground};
+  border-bottom: 1px solid ${borderColor};
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+`;
+
+const Inner = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   width: 100%;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
-  padding: 10px;
-  z-index: 1;
-`;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 10px 16px;
 
-const ToggleButton = styled.button`
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  color: #fff;
-  font-size: 16px;
-  height: 32px;
+  @media (max-width: 480px) {
+    padding: 8px 12px;
+  }
 `;
 
 const Heading = styled.h1`
-  font-size: 18px;
-  color: ${headingColor};
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: ${textColor};
 `;
 
 const HeadingWrapper = styled.div`
@@ -48,13 +52,39 @@ const HeadingWrapper = styled.div`
   gap: 10px;
 `;
 
-const LogoButton = styled.button`
-  height: 32px;
+const IconButton = styled.button`
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: ${textColor};
+  background: transparent;
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease;
+
+  &:hover {
+    background-color: ${hoverColor};
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+`;
+
+const LogoLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: inherit;
+  text-decoration: none;
 `;
 
 export const Header: React.FC = () => {
   const dispatch = useAppDispatch();
   const mode = useAppSelector((state) => state.app.mode);
+  const { t } = useTranslation();
 
   const toggleTheme = () => {
     dispatch(toggleMode(mode === 'light' ? 'dark' : 'light'));
@@ -66,32 +96,28 @@ export const Header: React.FC = () => {
 
   return (
     <Container>
-      <HeadingWrapper>
-        <LogoButton onClick={toggleSidebar}>
-          {mode === 'light' && <Bars3Icon width="32" color="#1C1E21" />}
-          {mode === 'dark' && <Bars3Icon width="32" color="#E3E3E3" />}
-        </LogoButton>
-        <Link
-          to="/"
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '10px',
-            textDecoration: 'none'
-          }}
+      <Inner>
+        <HeadingWrapper>
+          <IconButton
+            type="button"
+            onClick={toggleSidebar}
+            aria-label={t('openMenu')}
+          >
+            <Bars3Icon width={22} />
+          </IconButton>
+          <LogoLink to="/">
+            <Heading>Weathered</Heading>
+          </LogoLink>
+        </HeadingWrapper>
+        <IconButton
+          type="button"
+          onClick={toggleTheme}
+          aria-label={t('toggleTheme')}
+          title={t('toggleTheme')}
         >
-          <Heading>Weathered</Heading>
-        </Link>
-      </HeadingWrapper>
-      <ToggleButton onClick={toggleTheme}>
-        {mode === 'light' && (
-          <MoonIcon color="#1C1E21" style={{ width: '32px' }} />
-        )}
-        {mode === 'dark' && (
-          <SunIcon color="#E3E3E3" style={{ width: '32px' }} />
-        )}
-      </ToggleButton>
+          {mode === 'light' ? <MoonIcon width={22} /> : <SunIcon width={22} />}
+        </IconButton>
+      </Inner>
     </Container>
   );
 };
