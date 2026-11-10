@@ -1,33 +1,18 @@
+import { sendNotification, setVapidDetails } from 'web-push';
 import type { NotificationMessage, NotificationPreferences } from './types.js';
-
-type WebPushClient = typeof import('web-push');
-
-// Vercel compiles the API functions to CommonJS, while web-push 4 is ESM-only.
-// A normal require() or transpiled import() becomes require() again, so load it
-// with a native runtime import that the transpiler leaves untouched.
-// eslint-disable-next-line no-new-func
-const importWebPush = new Function(
-  'return import("web-push")'
-) as () => Promise<WebPushClient>;
 
 const publicKey = process.env.VAPID_PUBLIC_KEY;
 const privateKey = process.env.VAPID_PRIVATE_KEY;
 const subject =
   process.env.VAPID_SUBJECT || 'mailto:notifications@weathered.vercel.app';
 
-let clientPromise: Promise<WebPushClient> | null = null;
 let vapidConfigured = false;
 
-const getWebPush = async () => {
-  clientPromise ??= importWebPush();
-  const webpush = await clientPromise;
-
+const ensureVapid = () => {
   if (!vapidConfigured && publicKey && privateKey) {
-    webpush.setVapidDetails(subject, publicKey, privateKey);
+    setVapidDetails(subject, publicKey, privateKey);
     vapidConfigured = true;
   }
-
-  return webpush;
 };
 
 export const isPushConfigured = () => Boolean(publicKey && privateKey);
@@ -43,10 +28,10 @@ export const sendPush = async (
   }
 
   try {
-    const webpush = await getWebPush();
-    await webpush.sendNotification(
+    ensureVapid();
+    await sendNotification(
       preferences.subscription as unknown as Parameters<
-        typeof webpush.sendNotification
+        typeof sendNotification
       >[0],
       JSON.stringify(message),
       { TTL: 60 * 60 * 24 }
