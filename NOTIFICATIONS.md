@@ -9,24 +9,32 @@ favorite city. The backend is implemented with Vercel Functions and Vercel Blob.
    browser with `pushManager.subscribe()`.
 2. The subscription, local delivery time, timezone, language and favorites are
    stored as a private JSON blob at `notifications/<id>.json`.
-3. A GitHub Actions workflow calls `POST /api/tick` every 5 minutes.
+3. Vercel Cron runs `/api/tick` every hour. Because Hobby cron jobs are limited
+   to one run per day, `vercel.json` contains one daily job per hour. Each job
+   can fire anywhere inside its hour, so delivery is typically within about an
+   hour of the chosen local time.
 4. `api/tick.ts` finds subscriptions whose local time has arrived, fetches
    current weather from Open-Meteo, sends the digest with `web-push`, and records
    `lastSentDate` so it only sends once per local day.
+
+The optional GitHub Actions workflow remains as a more precise scheduler. If
+you use it, add the same `CRON_SECRET` as a GitHub Actions repository secret.
+The Vercel Cron jobs are the reliable fallback and use the `CRON_SECRET` that is
+already configured in Vercel.
 
 The Blob store `weathered-notifications` is already connected to the Vercel
 project and injects `BLOB_READ_WRITE_TOKEN` automatically.
 
 ## Required environment variables
 
-| Variable | Purpose |
-| --- | --- |
-| `VAPID_PUBLIC_KEY` | Web Push public key (server + client) |
-| `VAPID_PRIVATE_KEY` | Web Push private key (server only, secret) |
-| `VAPID_SUBJECT` | Contact URL or `mailto:` address |
-| `VITE_VAPID_PUBLIC_KEY` | Public key exposed to the Vite build |
-| `CRON_SECRET` | Shared secret for `/api/tick` |
-| `BLOB_READ_WRITE_TOKEN` | Injected by Vercel Blob |
+| Variable                | Purpose                                    |
+| ----------------------- | ------------------------------------------ |
+| `VAPID_PUBLIC_KEY`      | Web Push public key (server + client)      |
+| `VAPID_PRIVATE_KEY`     | Web Push private key (server only, secret) |
+| `VAPID_SUBJECT`         | Contact URL or `mailto:` address           |
+| `VITE_VAPID_PUBLIC_KEY` | Public key exposed to the Vite build       |
+| `CRON_SECRET`           | Shared secret for `/api/tick`              |
+| `BLOB_READ_WRITE_TOKEN` | Injected by Vercel Blob                    |
 
 Generate and write the local configuration:
 
@@ -84,12 +92,12 @@ curl -X POST \
 
 ## API
 
-| Endpoint | Method | Purpose |
-| --- | --- | --- |
-| `/api/subscribe` | `POST` | Create or update a subscription |
-| `/api/unsubscribe` | `POST` | Delete a subscription |
-| `/api/test` | `POST` | Send a test notification |
-| `/api/tick` | `GET`/`POST` | Process due notifications (requires `CRON_SECRET`) |
+| Endpoint           | Method       | Purpose                                            |
+| ------------------ | ------------ | -------------------------------------------------- |
+| `/api/subscribe`   | `POST`       | Create or update a subscription                    |
+| `/api/unsubscribe` | `POST`       | Delete a subscription                              |
+| `/api/test`        | `POST`       | Send a test notification                           |
+| `/api/tick`        | `GET`/`POST` | Process due notifications (requires `CRON_SECRET`) |
 
 ## Limitations
 

@@ -54,8 +54,12 @@ describe('isDueNow', () => {
     expect(isDueNow(at('2026-11-10T07:45:00'), preferences)).toBe(true);
   });
 
+  test('is still due after 90 minutes', () => {
+    expect(isDueNow(at('2026-11-10T08:30:00'), preferences)).toBe(true);
+  });
+
   test('is not due after the grace window', () => {
-    expect(isDueNow(at('2026-11-10T09:30:00'), preferences)).toBe(false);
+    expect(isDueNow(at('2026-11-10T09:01:00'), preferences)).toBe(false);
   });
 
   test('does not fire twice on the same local date', () => {

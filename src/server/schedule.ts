@@ -29,7 +29,7 @@ type DuePreferences = Pick<
 export const isDueNow = (
   now: DateTime,
   preferences: DuePreferences,
-  graceMinutes = 60
+  graceMinutes = 120
 ) => {
   if (
     !isValidTime(preferences.time) ||
