@@ -9,7 +9,7 @@ import { sidebarToggled, toggleMode } from '../features/app-slice';
 
 const headingColor = theme('mode', {
   light: '#1C1E21',
-  dark: '#E3E3E3;'
+  dark: '#E3E3E3'
 });
 
 const sectionBackgroundColor = theme('mode', {

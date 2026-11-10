@@ -54,8 +54,12 @@ const PurgeButton = styled.button`
 export const SearchBar: React.FC = () => {
   const dispatch = useAppDispatch();
 
-  const commenceSearch = () => {
-    dispatch(fetchWeatherByCityName(inputField));
+  const commenceSearch = (event?: React.FormEvent<HTMLFormElement>) => {
+    event?.preventDefault();
+    if (!inputField.trim()) {
+      return;
+    }
+    dispatch(fetchWeatherByCityName(inputField.trim()));
   };
 
   const clearInputField = () => {
@@ -64,7 +68,7 @@ export const SearchBar: React.FC = () => {
 
   const [inputField, setInputField] = useState('');
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <Container>
@@ -78,15 +82,10 @@ export const SearchBar: React.FC = () => {
             onChange={(e: React.FormEvent<HTMLInputElement>) =>
               setInputField(e.currentTarget.value)
             }
-            onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
-              if (e.key === 'Enter') {
-                commenceSearch();
-              }
-            }}
           />
         </Span>
         {inputField && (
-          <PurgeButton onClick={clearInputField}>
+          <PurgeButton type="button" onClick={clearInputField}>
             <XMarkIcon color="black" />
           </PurgeButton>
         )}

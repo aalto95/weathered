@@ -12,7 +12,7 @@ import {
 
 const buttonColor = theme('mode', {
   light: '#F2F2F2',
-  dark: '#242526;'
+  dark: '#242526'
 });
 
 const buttonTextColor = theme('mode', {
@@ -63,7 +63,7 @@ export const AddToHomeScreenNotification: React.FC = () => {
     }, 1000);
   };
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const isA2HSButtonDismissed = useAppSelector(
     (state) => state.app.isA2HSButtonDismissed
@@ -96,7 +96,7 @@ export const AddToHomeScreenNotification: React.FC = () => {
         // Update UI to notify the user they can add to home screen
         container!.style.display = 'flex';
 
-        addBtn!.addEventListener('click', (e) => {
+        addBtn!.addEventListener('click', () => {
           // hide our user interface that shows our A2HS button
           container!.style.display = 'none';
           // Show the prompt

@@ -10,7 +10,7 @@ import { fetchWeatherByCityName, sidebarToggled } from '../features/app-slice';
 
 const sidebarColor = theme('mode', {
   light: '#FFFFFF',
-  dark: '#242526;'
+  dark: '#242526'
 });
 
 const sidebarTextColor = theme('mode', {
@@ -29,7 +29,6 @@ const Container = styled.div`
   @media (min-width: 480px) {
     width: 300px;
   }
-  translatex: -100%;
   transition: transform 0.3s;
   z-index: 2;
 `;
@@ -106,7 +105,9 @@ export const Sidebar: React.FC = () => {
       localStorage.setItem('lang', 'en');
     }
     closeSidebar();
-    dispatch(fetchWeatherByCityName(city!.name));
+    if (city) {
+      dispatch(fetchWeatherByCityName(city.name));
+    }
   };
 
   const goToFavorites = () => {

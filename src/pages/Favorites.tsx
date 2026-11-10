@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import theme from 'styled-theming';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { Loader } from '../components/Loader';
+import { RiveAnimation } from '../components/RiveAnimation';
 import SearchResults from '../components/SearchResults';
 import { fetchMultipleCities } from '../features/app-slice';
-
-interface FavoritesProps {}
 
 const Container = styled.div`
   display: flex;
@@ -20,7 +20,7 @@ const Container = styled.div`
 
 const noFavoritesColor = theme('mode', {
   light: '#1C1E21',
-  dark: '#E3E3E3;'
+  dark: '#E3E3E3'
 });
 
 const NoFavoritesText = styled.h1`
@@ -28,40 +28,59 @@ const NoFavoritesText = styled.h1`
   padding: 1rem;
 `;
 
-const Favorites: React.FC<FavoritesProps> = () => {
+const Favorites: React.FC = () => {
   const dispatch = useAppDispatch();
   const favorites = useAppSelector((state) => state.app.favorites);
-  const favoritesIds = useAppSelector((state) => state.app.favoritesIds);
-  const isFetching = useAppSelector((state) => state.app.isFetching);
-  const fetchError = useAppSelector((state) => state.app.fetchError);
+  const favoritesWeather = useAppSelector(
+    (state) => state.app.favoritesWeather
+  );
+  const isFavoritesFetching = useAppSelector(
+    (state) => state.app.isFavoritesFetching
+  );
+  const favoritesFetchError = useAppSelector(
+    (state) => state.app.favoritesFetchError
+  );
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   useEffect(() => {
-    dispatch(fetchMultipleCities(favoritesIds));
-  }, []);
+    dispatch(fetchMultipleCities(favorites));
+  }, [dispatch, favorites]);
 
-  if (favorites.length) {
+  if (!favorites.length) {
     return (
       <Container>
-        {favorites.map((city: any, id: number) => {
-          return (
-            <SearchResults
-              key={id}
-              city={city}
-              fetchError={fetchError}
-              isFetching={isFetching}
-              isFavorite={true}
-            ></SearchResults>
-          );
-        })}
+        <NoFavoritesText>{t('noFavorites')}</NoFavoritesText>
+      </Container>
+    );
+  }
+
+  if (favoritesFetchError) {
+    return (
+      <Container>
+        <RiveAnimation animationName="404" />
+      </Container>
+    );
+  }
+
+  if (isFavoritesFetching && !favoritesWeather.length) {
+    return (
+      <Container>
+        <Loader />
       </Container>
     );
   }
 
   return (
     <Container>
-      <NoFavoritesText>{t('noFavorites')}</NoFavoritesText>
+      {favoritesWeather.map((city) => (
+        <SearchResults
+          key={city.id}
+          city={city}
+          fetchError={false}
+          isFetching={false}
+        />
+      ))}
     </Container>
   );
 };

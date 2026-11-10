@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { weatherAPI } from '../api/api';
-import { WeatherModel } from '../models/weather.model';
+import { FavoriteLocation, WeatherModel } from '../models/weather.model';
 
 interface AppState {
   mode: string;
@@ -9,8 +9,10 @@ interface AppState {
   isFetching: boolean;
   isSidebarOpen: boolean;
   isA2HSButtonDismissed: boolean;
-  favoritesIds: number[];
-  favorites: WeatherModel[];
+  favorites: FavoriteLocation[];
+  favoritesWeather: WeatherModel[];
+  favoritesFetchError: boolean;
+  isFavoritesFetching: boolean;
 }
 
 const initialState: AppState = {
@@ -20,14 +22,16 @@ const initialState: AppState = {
   isFetching: false,
   isSidebarOpen: false,
   isA2HSButtonDismissed: false,
-  favoritesIds: [],
-  favorites: []
+  favorites: [],
+  favoritesWeather: [],
+  favoritesFetchError: false,
+  isFavoritesFetching: false
 };
 
 export const fetchWeatherByCityName = createAsyncThunk(
   'city/fetchWeatherByCityName',
   async (cityName: string) => {
-    const lang = window.localStorage.lang;
+    const lang = window.localStorage.getItem('lang') ?? 'en';
     const response = await weatherAPI.getCityByName(cityName, lang);
     return response;
   }
@@ -43,11 +47,8 @@ export const fetchWeatherByCoords = createAsyncThunk(
 
 export const fetchMultipleCities = createAsyncThunk(
   'city/fetchMultipleCities',
-  async (cities: number[]) => {
-    const response = await weatherAPI.getMultipleCities(
-      initializeFavoritesIds()
-    );
-    return response;
+  async (cities: FavoriteLocation[]) => {
+    return weatherAPI.getMultipleCities(cities);
   }
 );
 
@@ -100,13 +101,10 @@ export const initializeMode = createAsyncThunk(
   }
 );
 
-const initializeFavoritesIds = () => {
-  const favoritesIds = localStorage.getItem('favoritesIds');
-  if (favoritesIds === null) {
-    localStorage.setItem('favoritesIds', '[]');
-    return [];
-  }
-  return JSON.parse(favoritesIds);
+const FAVORITES_STORAGE_KEY = 'favorites';
+
+const persistFavorites = (favorites: FavoriteLocation[]) => {
+  localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
 };
 
 const appSlice = createSlice({
@@ -125,21 +123,26 @@ const appSlice = createSlice({
     sidebarToggled(state, action) {
       state.isSidebarOpen = action.payload;
     },
-    favoritesIdsSet(state, action) {
-      state.favoritesIds = action.payload;
+    favoritesSet(state, action: PayloadAction<FavoriteLocation[]>) {
+      state.favorites = action.payload;
     },
-    favoritePushed(state, action) {
-      state.favoritesIds.push(action.payload);
-      localStorage.setItem('favoritesIds', JSON.stringify(state.favoritesIds));
+    favoritePushed(state, action: PayloadAction<FavoriteLocation>) {
+      if (
+        state.favorites.some((favorite) => favorite.id === action.payload.id)
+      ) {
+        return;
+      }
+      state.favorites.push(action.payload);
+      persistFavorites(state.favorites);
     },
-    favoriteRemoved(state, action) {
-      state.favoritesIds = state.favoritesIds.filter(
-        (id) => id !== action.payload
-      );
+    favoriteRemoved(state, action: PayloadAction<number>) {
       state.favorites = state.favorites.filter(
+        (favorite) => favorite.id !== action.payload
+      );
+      state.favoritesWeather = state.favoritesWeather.filter(
         (city) => city.id !== action.payload
       );
-      localStorage.setItem('favoritesIds', JSON.stringify(state.favoritesIds));
+      persistFavorites(state.favorites);
     }
   },
   extraReducers: (builder) => {
@@ -177,13 +180,17 @@ const appSlice = createSlice({
       .addCase(dismissA2HSButton.fulfilled, (state) => {
         state.isA2HSButtonDismissed = true;
       })
-      .addCase(fetchMultipleCities.pending, (state, action) => {
-        state.fetchError = false;
-        state.isFetching = true;
+      .addCase(fetchMultipleCities.pending, (state) => {
+        state.favoritesFetchError = false;
+        state.isFavoritesFetching = true;
+      })
+      .addCase(fetchMultipleCities.rejected, (state) => {
+        state.favoritesFetchError = true;
+        state.isFavoritesFetching = false;
       })
       .addCase(fetchMultipleCities.fulfilled, (state, action) => {
-        state.isFetching = false;
-        state.favorites = action.payload.list;
+        state.isFavoritesFetching = false;
+        state.favoritesWeather = action.payload;
       });
   }
 });
@@ -195,6 +202,6 @@ export const {
   isA2HSButtonDismissedSet,
   favoritePushed,
   favoriteRemoved,
-  favoritesIdsSet
+  favoritesSet
 } = appSlice.actions;
 export default appSlice.reducer;
