@@ -1,5 +1,10 @@
-import webpush from 'web-push';
+import { createRequire } from 'node:module';
 import type { NotificationMessage, NotificationPreferences } from './types.js';
+
+// web-push is a CommonJS module. Vercel emits ESM functions here, so a default
+// import fails at runtime with "does not provide an export named 'default'".
+const require = createRequire(import.meta.url);
+const webpush = require('web-push') as typeof import('web-push');
 
 const publicKey = process.env.VAPID_PUBLIC_KEY;
 const privateKey = process.env.VAPID_PRIVATE_KEY;
