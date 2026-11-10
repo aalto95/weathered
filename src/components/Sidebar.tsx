@@ -32,6 +32,8 @@ const Container = styled.aside`
   flex-direction: column;
   width: min(320px, 100%);
   height: 100dvh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
   background-color: ${surfaceColor};
   border-right: 1px solid ${borderColor};
   box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.45);

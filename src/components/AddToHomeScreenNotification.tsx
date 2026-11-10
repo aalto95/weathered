@@ -24,7 +24,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 const Container = styled.div`
   position: fixed;
-  bottom: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
   left: 0;
   right: 0;
   z-index: 40;

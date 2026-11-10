@@ -17,6 +17,9 @@ const Container = styled.header`
   position: sticky;
   top: 0;
   z-index: 10;
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-left: env(safe-area-inset-left);
   background-color: ${headerBackground};
   border-bottom: 1px solid ${borderColor};
   backdrop-filter: blur(12px);

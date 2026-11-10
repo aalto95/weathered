@@ -26,15 +26,24 @@ const Main = styled.main`
   width: 100%;
   max-width: 1040px;
   margin: 0 auto;
-  padding: 24px 16px 8px;
+  padding-top: 24px;
+  padding-right: max(16px, env(safe-area-inset-right));
+  padding-bottom: 8px;
+  padding-left: max(16px, env(safe-area-inset-left));
 
   @media (max-width: 480px) {
-    padding: 16px 12px 4px;
+    padding-top: 16px;
+    padding-right: max(12px, env(safe-area-inset-right));
+    padding-bottom: 4px;
+    padding-left: max(12px, env(safe-area-inset-left));
   }
 `;
 
 const Footer = styled.footer`
-  padding: 20px 16px 28px;
+  padding-top: 20px;
+  padding-right: max(16px, env(safe-area-inset-right));
+  padding-bottom: calc(28px + env(safe-area-inset-bottom));
+  padding-left: max(16px, env(safe-area-inset-left));
   text-align: center;
   font-size: 12px;
   color: ${mutedTextColor};
