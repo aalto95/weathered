@@ -10,8 +10,12 @@ import {
   buildDailyNotification,
   fetchWeatherSummaries
 } from '../src/server/digest.js';
+import { getAppUrl } from '../src/server/http.js';
 import { isPushConfigured, sendPush } from '../src/server/push.js';
+import { cancelNotification } from '../src/server/qstash.js';
 import { isDueNow, localDateKey } from '../src/server/schedule.js';
+import { scheduleNextDelivery } from '../src/server/scheduler.js';
+import type { NotificationPreferences } from '../src/server/types.js';
 
 export default async function handler(
   request: VercelRequest,
@@ -40,6 +44,13 @@ export default async function handler(
       .json({ error: 'Notifications are not configured' });
   }
 
+  let appUrl: string | undefined;
+  try {
+    appUrl = getAppUrl(request);
+  } catch {
+    // Fall back to the hourly crons; QStash rescheduling is skipped.
+  }
+
   try {
     const now = DateTime.utc();
     const preferences = await listPreferences();
@@ -63,11 +74,27 @@ export default async function handler(
         const outcome = await sendPush(subscriber, message);
 
         if (outcome === 'sent') {
-          await savePreferences({
+          const next: NotificationPreferences = {
             ...subscriber,
             lastSentDate: localDateKey(now, subscriber.timezone),
-            lastSentAt: now.toISO()
-          });
+            lastSentAt: now.toISO() ?? undefined,
+            qstashMessageId: undefined
+          };
+
+          await cancelNotification(subscriber.qstashMessageId);
+
+          try {
+            if (appUrl) {
+              const messageId = await scheduleNextDelivery(next, appUrl);
+              if (messageId) {
+                next.qstashMessageId = messageId;
+              }
+            }
+          } catch (error) {
+            console.error('Failed to schedule the next QStash delivery', error);
+          }
+
+          await savePreferences(next);
           result.sent += 1;
         } else if (outcome === 'expired') {
           await deletePreferences(subscriber.id);
