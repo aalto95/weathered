@@ -23,6 +23,33 @@ const resources = {
       favorites: 'Favorites',
       noFavorites: 'No favorites yet',
       home: 'Home',
+      notifications: 'Notifications',
+      notificationsIntro:
+        'Get a daily digest with the current weather for all your favorite cities.',
+      notificationsEmptyTitle: 'No favorite cities yet',
+      notificationsEmpty:
+        'Add at least one city to your favorites before enabling daily notifications.',
+      notificationsUnsupported:
+        'This browser does not support push notifications.',
+      notificationsMissingConfig:
+        'Notifications are not configured for this deployment yet.',
+      notificationsIosInstall:
+        'On iPhone and iPad, add Weathered to your Home Screen first, then enable notifications.',
+      notificationsDenied:
+        'Notification permission is blocked. Allow notifications for Weathered in your browser settings.',
+      notificationTime: 'Delivery time',
+      notificationTimezone: 'Timezone',
+      notificationCities: 'Cities in the digest',
+      notificationEnabled: 'Enabled',
+      notificationDisabled: 'Disabled',
+      notificationDailyAt: 'Daily at',
+      enableNotifications: 'Enable daily notifications',
+      disableNotifications: 'Turn off',
+      saveNotificationTime: 'Save changes',
+      sendTestNotification: 'Send test notification',
+      notificationSaved: 'Notification settings saved.',
+      notificationTestSent: 'Test notification sent.',
+      saving: 'Saving…',
       myLocation: 'My location',
       addToFavorites: 'Add to favorites',
       removeFromFavorites: 'Remove from favorites',
@@ -328,6 +355,33 @@ const resources = {
       favorites: 'Избранное',
       noFavorites: 'Нет избранных городов',
       home: 'Главная страница',
+      notifications: 'Уведомления',
+      notificationsIntro:
+        'Получайте ежедневную сводку с текущей погодой по всем избранным городам.',
+      notificationsEmptyTitle: 'Нет избранных городов',
+      notificationsEmpty:
+        'Добавьте хотя бы один город в избранное, чтобы включить ежедневные уведомления.',
+      notificationsUnsupported:
+        'Этот браузер не поддерживает push-уведомления.',
+      notificationsMissingConfig:
+        'Уведомления ещё не настроены для этого развёртывания.',
+      notificationsIosInstall:
+        'На iPhone и iPad сначала добавьте Weathered на экран «Домой», затем включите уведомления.',
+      notificationsDenied:
+        'Доступ к уведомлениям заблокирован. Разрешите уведомления для Weathered в настройках браузера.',
+      notificationTime: 'Время отправки',
+      notificationTimezone: 'Часовой пояс',
+      notificationCities: 'Города в сводке',
+      notificationEnabled: 'Включено',
+      notificationDisabled: 'Выключено',
+      notificationDailyAt: 'Ежедневно в',
+      enableNotifications: 'Включить ежедневные уведомления',
+      disableNotifications: 'Отключить',
+      saveNotificationTime: 'Сохранить изменения',
+      sendTestNotification: 'Отправить тестовое уведомление',
+      notificationSaved: 'Настройки уведомлений сохранены.',
+      notificationTestSent: 'Тестовое уведомление отправлено.',
+      saving: 'Сохранение…',
       myLocation: 'Моё местоположение',
       addToFavorites: 'Добавить в избранное',
       removeFromFavorites: 'Удалить из избранного',

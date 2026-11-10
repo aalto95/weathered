@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/tick.ts": {
+      "maxDuration": 60
+    }
+  }
+}

@@ -19,6 +19,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,riv,json,webmanifest}'],
         navigateFallback: '/index.html',
         cleanupOutdatedCaches: true,
+        importScripts: ['push-handler.js'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/api\.open-meteo\.com\/.*/i,

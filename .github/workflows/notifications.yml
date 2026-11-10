@@ -1,0 +1,25 @@
+name: Weather notifications
+
+on:
+  schedule:
+    # GitHub schedules in UTC and may run a few minutes late.
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: weather-notifications
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger the notification tick
+        run: |
+          curl --fail --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://weathered.vercel.app/api/tick"

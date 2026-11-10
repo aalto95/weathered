@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import styled, { ThemeProvider } from 'styled-components';
 import './App.css';
@@ -8,8 +9,10 @@ import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { mutedTextColor, pageBackground } from './constants/theme';
 import { favoritesSet, initializeMode } from './features/app-slice';
+import { useNotificationAutoSync } from './hooks/usePushNotifications';
 import { FavoriteLocation } from './models/weather.model';
 import Favorites from './pages/Favorites';
+import Notifications from './pages/Notifications';
 import Search from './pages/Search';
 
 const FAVORITES_STORAGE_KEY = 'favorites';
@@ -78,6 +81,10 @@ const isFavoriteLocation = (value: unknown): value is FavoriteLocation => {
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
   const mode = useAppSelector((state) => state.app.mode);
+  const favorites = useAppSelector((state) => state.app.favorites);
+  const { i18n } = useTranslation();
+
+  useNotificationAutoSync(favorites, i18n.language === 'ru' ? 'ru' : 'en');
 
   useEffect(() => {
     const storedFavorites = localStorage.getItem(FAVORITES_STORAGE_KEY);
@@ -112,6 +119,7 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<Search />} />
               <Route path="/favorites" element={<Favorites />} />
+              <Route path="/notifications" element={<Notifications />} />
             </Routes>
           </Main>
           <Footer>

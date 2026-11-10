@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Daily notifications
+
+Daily weather push notifications are implemented with Vercel Functions, Vercel Blob and a GitHub Actions scheduler. See [NOTIFICATIONS.md](./NOTIFICATIONS.md) for the setup and deployment steps.
+
 ## Available Scripts
 
 In the project directory, you can run:

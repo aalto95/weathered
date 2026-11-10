@@ -1,8 +1,13 @@
-import { HomeIcon, LanguageIcon, StarIcon } from '@heroicons/react/24/outline';
+import {
+  BellIcon,
+  HomeIcon,
+  LanguageIcon,
+  StarIcon
+} from '@heroicons/react/24/outline';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import React, { RefObject, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import styled, { keyframes } from 'styled-components';
 import { useOnClickOutside } from 'usehooks-ts';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
@@ -116,7 +121,6 @@ export const Sidebar: React.FC = () => {
   const city = useAppSelector((state) => state.app.city);
   const dispatch = useAppDispatch();
   const isSidebarOpen = useAppSelector((state) => state.app.isSidebarOpen);
-  const location = useLocation();
   const ref = useRef<HTMLElement>(null);
   const { t, i18n } = useTranslation();
 
@@ -168,6 +172,11 @@ export const Sidebar: React.FC = () => {
     closeSidebar();
   };
 
+  const goToNotifications = () => {
+    navigate('/notifications');
+    closeSidebar();
+  };
+
   return (
     <>
       <Container
@@ -191,18 +200,18 @@ export const Sidebar: React.FC = () => {
           </IconButton>
         </SidebarHeader>
         <List>
-          {location.pathname === '/' && (
-            <ListItem type="button" onClick={goToFavorites}>
-              <StarIcon />
-              {t('favorites')}
-            </ListItem>
-          )}
-          {location.pathname === '/favorites' && (
-            <ListItem type="button" onClick={goToHome}>
-              <HomeIcon />
-              {t('home')}
-            </ListItem>
-          )}
+          <ListItem type="button" onClick={goToHome}>
+            <HomeIcon />
+            {t('home')}
+          </ListItem>
+          <ListItem type="button" onClick={goToFavorites}>
+            <StarIcon />
+            {t('favorites')}
+          </ListItem>
+          <ListItem type="button" onClick={goToNotifications}>
+            <BellIcon />
+            {t('notifications')}
+          </ListItem>
           <ListItem type="button" onClick={handleLanguageChange}>
             <LanguageIcon />
             {t('switch')}
