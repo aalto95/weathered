@@ -54,6 +54,8 @@ export const sendPush = async (
     return 'sent';
   } catch (error) {
     const statusCode = (error as { statusCode?: number }).statusCode;
+    const errorCode = (error as { code?: string }).code;
+    const errorMessage = error instanceof Error ? error.message : String(error);
 
     if (statusCode === 404 || statusCode === 410) {
       return 'expired';
@@ -62,7 +64,7 @@ export const sendPush = async (
     console.error(
       `Push delivery failed for subscription ${preferences.id} (status ${
         statusCode ?? 'unknown'
-      })`
+      }, code ${errorCode ?? 'none'}): ${errorMessage}`
     );
     return 'failed';
   }
