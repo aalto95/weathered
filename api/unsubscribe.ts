@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { deletePreferences, isStorageConfigured } from '../src/server/blob';
-import { parseId, ValidationError } from '../src/server/validation';
+import { deletePreferences, isStorageConfigured } from '../src/server/blob.js';
+import { parseId, ValidationError } from '../src/server/validation.js';
 
 export default async function handler(
   request: VercelRequest,

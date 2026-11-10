@@ -1,10 +1,10 @@
-import { isValidTime, isValidTimezone } from './schedule';
-import {
+import { isValidTime, isValidTimezone } from './schedule.js';
+import type {
   NotificationCity,
   NotificationLang,
   PushSubscriptionRecord,
   SubscribePayload
-} from './types';
+} from './types.js';
 
 export class ValidationError extends Error {}
 

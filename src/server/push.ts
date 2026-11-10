@@ -1,5 +1,5 @@
 import webpush from 'web-push';
-import { NotificationMessage, NotificationPreferences } from './types';
+import type { NotificationMessage, NotificationPreferences } from './types.js';
 
 const publicKey = process.env.VAPID_PUBLIC_KEY;
 const privateKey = process.env.VAPID_PRIVATE_KEY;

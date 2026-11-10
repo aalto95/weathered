@@ -1,5 +1,5 @@
 import { BlobNotFoundError, del, get, list, put } from '@vercel/blob';
-import { NotificationPreferences } from './types';
+import type { NotificationPreferences } from './types.js';
 
 const PREFIX = 'notifications/';
 

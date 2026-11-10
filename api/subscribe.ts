@@ -4,12 +4,12 @@ import {
   isStorageConfigured,
   loadPreferences,
   savePreferences
-} from '../src/server/blob';
-import { NotificationPreferences } from '../src/server/types';
+} from '../src/server/blob.js';
+import type { NotificationPreferences } from '../src/server/types.js';
 import {
   parseSubscribePayload,
   ValidationError
-} from '../src/server/validation';
+} from '../src/server/validation.js';
 
 export default async function handler(
   request: VercelRequest,

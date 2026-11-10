@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { NotificationPreferences } from './types';
+import type { NotificationPreferences } from './types.js';
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
 

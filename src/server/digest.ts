@@ -1,9 +1,9 @@
-import { getWmoInfo } from '../api/wmo';
-import {
+import { getWmoInfo } from '../api/wmo.js';
+import type {
   NotificationCity,
   NotificationLang,
   NotificationMessage
-} from './types';
+} from './types.js';
 
 const labels: Record<string, { en: string; ru: string }> = {
   'weather.clear': { en: 'Clear sky', ru: 'Ясно' },

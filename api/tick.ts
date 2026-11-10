@@ -5,13 +5,13 @@ import {
   isStorageConfigured,
   listPreferences,
   savePreferences
-} from '../src/server/blob';
+} from '../src/server/blob.js';
 import {
   buildDailyNotification,
   fetchWeatherSummaries
-} from '../src/server/digest';
-import { isPushConfigured, sendPush } from '../src/server/push';
-import { isDueNow, localDateKey } from '../src/server/schedule';
+} from '../src/server/digest.js';
+import { isPushConfigured, sendPush } from '../src/server/push.js';
+import { isDueNow, localDateKey } from '../src/server/schedule.js';
 
 export default async function handler(
   request: VercelRequest,

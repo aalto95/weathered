@@ -1,4 +1,4 @@
-import { WeatherAnimation } from '../models/weather.model';
+import type { WeatherAnimation } from '../models/weather.model.js';
 
 export interface WmoInfo {
   animation: WeatherAnimation;

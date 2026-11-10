@@ -59,7 +59,9 @@ const urlBase64ToUint8Array = (base64: string) => {
   return Uint8Array.from(raw, (character) => character.charCodeAt(0));
 };
 
-const isIos = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isIos = () =>
+  /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 const isStandalone = () =>
   window.matchMedia('(display-mode: standalone)').matches ||
@@ -99,15 +101,17 @@ const subscribeToPush = async () => {
 };
 
 const getBlockedReason = (): NotificationBlockedReason | null => {
+  // iOS only exposes Web Push to PWAs installed on the Home Screen, so this
+  // check has to run before the generic API support check.
+  if (isIos() && !isStandalone()) {
+    return 'ios-install';
+  }
+
   if (!environmentSupported()) {
     if ('Notification' in window && !VAPID_PUBLIC_KEY) {
       return 'missing-config';
     }
     return 'unsupported';
-  }
-
-  if (isIos() && !isStandalone()) {
-    return 'ios-install';
   }
 
   if (Notification.permission === 'denied') {

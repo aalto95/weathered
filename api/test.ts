@@ -3,11 +3,11 @@ import {
   deletePreferences,
   isStorageConfigured,
   loadPreferences
-} from '../src/server/blob';
-import { buildTestNotification } from '../src/server/digest';
-import { readJsonBody } from '../src/server/http';
-import { isPushConfigured, sendPush } from '../src/server/push';
-import { parseId, ValidationError } from '../src/server/validation';
+} from '../src/server/blob.js';
+import { buildTestNotification } from '../src/server/digest.js';
+import { readJsonBody } from '../src/server/http.js';
+import { isPushConfigured, sendPush } from '../src/server/push.js';
+import { parseId, ValidationError } from '../src/server/validation.js';
 
 export default async function handler(
   request: VercelRequest,
