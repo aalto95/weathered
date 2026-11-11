@@ -13,6 +13,15 @@ vi.mock('@rive-app/react-canvas', () => ({
   useRive: () => ({ RiveComponent: () => null })
 }));
 
+// The PWA virtual module is provided by vite-plugin-pwa at build time.
+vi.mock('virtual:pwa-register/react', () => ({
+  useRegisterSW: vi.fn(() => ({
+    needRefresh: [false, vi.fn()],
+    offlineReady: [false, vi.fn()],
+    updateServiceWorker: vi.fn()
+  }))
+}));
+
 beforeEach(async () => {
   localStorage.clear();
   await i18n.changeLanguage('en');

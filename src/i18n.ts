@@ -69,6 +69,9 @@ const resources = {
       toggleTheme: 'Toggle theme',
       clearSearch: 'Clear search',
       dismiss: 'Dismiss',
+      updateAvailable: 'A new version of Weathered is available.',
+      updateApp: 'Update',
+      updateLater: 'Later',
       weather: {
         clear: 'Clear sky',
         mainlyClear: 'Mainly clear',
@@ -401,6 +404,9 @@ const resources = {
       toggleTheme: 'Переключить тему',
       clearSearch: 'Очистить поиск',
       dismiss: 'Скрыть',
+      updateAvailable: 'Доступна новая версия Weathered.',
+      updateApp: 'Обновить',
+      updateLater: 'Позже',
       weather: {
         clear: 'Ясно',
         mainlyClear: 'Преимущественно ясно',

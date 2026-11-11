@@ -10,7 +10,7 @@ export default defineConfig({
     react(),
     viteTsconfigPaths(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       injectRegister: 'auto',
       // The manifest lives in public/manifest.json so it can be edited without
       // touching the build config.

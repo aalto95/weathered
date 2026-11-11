@@ -6,6 +6,7 @@ import './App.css';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { AddToHomeScreenNotification } from './components/AddToHomeScreenNotification';
 import { Header } from './components/Header';
+import { PwaUpdateNotification } from './components/PwaUpdateNotification';
 import { Sidebar } from './components/Sidebar';
 import { mutedTextColor, pageBackground } from './constants/theme';
 import { favoritesSet, initializeMode } from './features/app-slice';
@@ -129,6 +130,7 @@ const App: React.FC = () => {
             </a>
           </Footer>
           <AddToHomeScreenNotification />
+          <PwaUpdateNotification />
         </ThemeProvider>
       </BrowserRouter>
     </AppRoot>
