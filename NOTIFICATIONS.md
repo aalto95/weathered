@@ -1,7 +1,8 @@
 # Daily weather notifications
 
 Weathered can send one daily web-push digest with the current weather for every
-favorite city. The backend is implemented with Vercel Functions and Vercel Blob.
+favorite city. The backend is built with Hono and deployed as Vercel Functions,
+using Vercel Blob for storage.
 
 ## How it works
 

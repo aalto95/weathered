@@ -15,8 +15,10 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@hono/vercel": "^1.0.1",
 		"@upstash/qstash": "^2.12.1",
 		"@vercel/blob": "^2.8.2",
+		"hono": "^4.13.17",
 		"luxon": "^3.7.2",
 		"react": "^19.3.1",
 		"react-dom": "^19.3.1",

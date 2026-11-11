@@ -1,28 +1,12 @@
-import type { VercelRequest } from '@vercel/node';
+import type { Context } from 'hono';
 
-export const readJsonBody = (request: VercelRequest): unknown => {
-  if (typeof request.body === 'string') {
-    try {
-      return JSON.parse(request.body);
-    } catch {
-      return null;
-    }
-  }
-  return request.body;
-};
-
-const firstHeader = (value: string | string[] | undefined) =>
-  Array.isArray(value) ? value[0] : value;
-
-export const getAppUrl = (request: VercelRequest) => {
+export const getAppUrl = (c: Context) => {
   if (process.env.APP_URL) {
     return process.env.APP_URL.replace(/\/$/, '');
   }
 
-  const proto = firstHeader(request.headers['x-forwarded-proto']) ?? 'https';
-  const host = firstHeader(
-    request.headers['x-forwarded-host'] ?? request.headers.host
-  );
+  const proto = c.req.header('x-forwarded-proto') ?? 'https';
+  const host = c.req.header('x-forwarded-host') ?? c.req.header('host');
 
   if (!host) {
     throw new Error('Could not determine the application URL');

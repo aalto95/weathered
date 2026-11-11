@@ -1,10 +1,9 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import sendHandler from '../../api/send';
-import subscribeHandler from '../../api/subscribe';
-import testHandler from '../../api/test';
-import tickHandler from '../../api/tick';
-import unsubscribeHandler from '../../api/unsubscribe';
+import { app as sendApp } from '../../api/send';
+import { app as subscribeApp } from '../../api/subscribe';
+import { app as testApp } from '../../api/test';
+import { app as tickApp } from '../../api/tick';
+import { app as unsubscribeApp } from '../../api/unsubscribe';
 import {
   deletePreferences,
   isStorageConfigured,
@@ -67,27 +66,32 @@ const schedule = vi.mocked(scheduleNotification);
 const cancel = vi.mocked(cancelNotification);
 const verify = vi.mocked(verifyQstashRequest);
 
-const request = (
-  method: string,
+const apps = {
+  '/api/subscribe': subscribeApp,
+  '/api/unsubscribe': unsubscribeApp,
+  '/api/test': testApp,
+  '/api/send': sendApp,
+  '/api/tick': tickApp
+};
+
+type ApiPath = keyof typeof apps;
+
+const request = (path: ApiPath, init?: RequestInit) =>
+  apps[path].request(path, init);
+
+const post = (
+  path: ApiPath,
   body?: unknown,
   headers: Record<string, string> = {}
 ) =>
-  ({
-    method,
-    body,
-    headers
-  }) as unknown as VercelRequest;
-
-const response = () => {
-  const res = {
-    setHeader: vi.fn(),
-    status: vi.fn(),
-    json: vi.fn()
-  };
-  res.status.mockReturnValue(res);
-  res.json.mockReturnValue(res);
-  return res as unknown as VercelResponse & typeof res;
-};
+  request(path, {
+    method: 'POST',
+    headers: {
+      ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+      ...headers
+    },
+    body: body === undefined ? undefined : JSON.stringify(body)
+  });
 
 const validBody = () => ({
   subscription: {
@@ -142,12 +146,11 @@ afterEach(() => {
 
 describe('POST /api/subscribe', () => {
   test('creates a subscription', async () => {
-    const res = response();
+    const res = await post('/api/subscribe', validBody());
 
-    await subscribeHandler(request('POST', validBody()), res);
-
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({ id: expect.any(String) });
+    expect(res.status).toBe(200);
+    expect(res.headers.get('cache-control')).toBe('no-store');
+    expect(await res.json()).toEqual({ id: expect.any(String) });
     expect(save).toHaveBeenCalledWith(
       expect.objectContaining({
         time: '08:30',
@@ -164,13 +167,13 @@ describe('POST /api/subscribe', () => {
   test('updates an existing subscription and preserves creation time', async () => {
     const existing = preferences({ qstashMessageId: 'msg_old' });
     load.mockResolvedValue(existing);
-    const res = response();
 
-    await subscribeHandler(
-      request('POST', { ...validBody(), id: existing.id }),
-      res
-    );
+    const res = await post('/api/subscribe', {
+      ...validBody(),
+      id: existing.id
+    });
 
+    expect(res.status).toBe(200);
     expect(cancel).toHaveBeenCalledWith('msg_old');
     expect(save).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -182,44 +185,38 @@ describe('POST /api/subscribe', () => {
   });
 
   test('rejects invalid input', async () => {
-    const res = response();
+    const res = await post('/api/subscribe', {
+      ...validBody(),
+      time: '25:00'
+    });
 
-    await subscribeHandler(
-      request('POST', { ...validBody(), time: '25:00' }),
-      res
-    );
-
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toBe(400);
   });
 
   test('rejects unsupported methods', async () => {
-    const res = response();
+    const res = await request('/api/subscribe');
 
-    await subscribeHandler(request('GET'), res);
-
-    expect(res.status).toHaveBeenCalledWith(405);
+    expect(res.status).toBe(405);
+    expect(await res.json()).toEqual({ error: 'Method not allowed' });
   });
 });
 
 describe('POST /api/unsubscribe', () => {
   test('deletes the subscription and cancels the QStash message', async () => {
-    const res = response();
     const id = '3f1b2c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d';
     load.mockResolvedValue(preferences({ qstashMessageId: 'msg_old' }));
 
-    await unsubscribeHandler(request('POST', { id }), res);
+    const res = await post('/api/unsubscribe', { id });
 
+    expect(res.status).toBe(200);
     expect(cancel).toHaveBeenCalledWith('msg_old');
     expect(remove).toHaveBeenCalledWith(id);
-    expect(res.status).toHaveBeenCalledWith(200);
   });
 
   test('rejects invalid ids', async () => {
-    const res = response();
+    const res = await post('/api/unsubscribe', { id: '../x' });
 
-    await unsubscribeHandler(request('POST', { id: '../x' }), res);
-
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toBe(400);
   });
 });
 
@@ -234,28 +231,25 @@ describe('POST /api/test', () => {
       tag: 'test',
       url: '/notifications'
     });
-    const res = response();
 
-    await testHandler(request('POST', { id: prefs.id }), res);
+    const res = await post('/api/test', { id: prefs.id });
 
+    expect(res.status).toBe(200);
     expect(testMessage).toHaveBeenCalledWith(prefs.lang);
     expect(send).toHaveBeenCalledWith(
       prefs,
       expect.objectContaining({ title: 'Test' })
     );
-    expect(res.status).toHaveBeenCalledWith(200);
   });
 
   test('returns 404 for an unknown subscription', async () => {
     load.mockResolvedValue(null);
-    const res = response();
 
-    await testHandler(
-      request('POST', { id: '3f1b2c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d' }),
-      res
-    );
+    const res = await post('/api/test', {
+      id: '3f1b2c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d'
+    });
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toBe(404);
   });
 
   test('cleans up an expired subscription', async () => {
@@ -268,26 +262,26 @@ describe('POST /api/test', () => {
       tag: 'test',
       url: '/notifications'
     });
-    const res = response();
 
-    await testHandler(request('POST', { id: prefs.id }), res);
+    const res = await post('/api/test', { id: prefs.id });
 
+    expect(res.status).toBe(410);
     expect(remove).toHaveBeenCalledWith(prefs.id);
-    expect(res.status).toHaveBeenCalledWith(410);
   });
 });
 
-describe('GET /api/tick', () => {
+describe('/api/tick', () => {
   const tickRequest = (secret = 'secret') =>
-    request('POST', undefined, { authorization: `Bearer ${secret}` });
+    post('/api/tick', undefined, {
+      authorization: `Bearer ${secret}`
+    });
 
   test('rejects missing or wrong secrets', async () => {
     process.env.CRON_SECRET = 'secret';
-    const res = response();
 
-    await tickHandler(tickRequest('wrong'), res);
+    const res = await tickRequest('wrong');
 
-    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.status).toBe(401);
   });
 
   test('sends a due digest and records the local send date', async () => {
@@ -305,10 +299,10 @@ describe('GET /api/tick', () => {
       url: '/favorites'
     });
     send.mockResolvedValue('sent');
-    const res = response();
 
-    await tickHandler(tickRequest(), res);
+    const res = await tickRequest();
 
+    expect(res.status).toBe(200);
     expect(send).toHaveBeenCalled();
     expect(schedule).toHaveBeenCalled();
     expect(save).toHaveBeenCalledWith(
@@ -317,7 +311,7 @@ describe('GET /api/tick', () => {
         lastSentDate: '2026-11-10'
       })
     );
-    expect(res.json).toHaveBeenCalledWith(
+    expect(await res.json()).toEqual(
       expect.objectContaining({ checked: 1, sent: 1, failed: 0 })
     );
   });
@@ -330,12 +324,11 @@ describe('GET /api/tick', () => {
     list.mockResolvedValue([
       preferences({ time: '08:00', lastSentDate: '2026-11-10' })
     ]);
-    const res = response();
 
-    await tickHandler(tickRequest(), res);
+    const res = await tickRequest();
 
     expect(send).not.toHaveBeenCalled();
-    expect(res.json).toHaveBeenCalledWith(
+    expect(await res.json()).toEqual(
       expect.objectContaining({ sent: 0, skipped: 1 })
     );
   });
@@ -355,28 +348,24 @@ describe('GET /api/tick', () => {
       url: '/favorites'
     });
     send.mockResolvedValue('expired');
-    const res = response();
 
-    await tickHandler(tickRequest(), res);
+    const res = await tickRequest();
 
     expect(remove).toHaveBeenCalledWith(prefs.id);
-    expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ expired: 1 })
-    );
+    expect(await res.json()).toEqual(expect.objectContaining({ expired: 1 }));
   });
 });
 
 describe('POST /api/send', () => {
   const sendRequest = (id: string, headers: Record<string, string> = {}) =>
-    request('POST', { id }, headers);
+    post('/api/send', { id }, headers);
 
   test('rejects an unauthorized request', async () => {
     process.env.CRON_SECRET = 'secret';
-    const res = response();
 
-    await sendHandler(sendRequest(preferences().id), res);
+    const res = await sendRequest(preferences().id);
 
-    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.status).toBe(401);
   });
 
   test('accepts a valid QStash signature', async () => {
@@ -396,19 +385,16 @@ describe('POST /api/send', () => {
     });
     send.mockResolvedValue('sent');
 
-    const res = response();
+    const res = await sendRequest(prefs.id, {
+      'upstash-signature': 'signature'
+    });
 
-    await sendHandler(
-      sendRequest(prefs.id, { 'upstash-signature': 'signature' }),
-      res
-    );
-
+    expect(res.status).toBe(200);
     expect(verify).toHaveBeenCalledWith(
       'signature',
       JSON.stringify({ id: prefs.id })
     );
     expect(send).toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(200);
   });
 
   test('sends a due digest and schedules the next QStash run', async () => {
@@ -431,13 +417,11 @@ describe('POST /api/send', () => {
     send.mockResolvedValue('sent');
     schedule.mockResolvedValue('msg_next');
 
-    const res = response();
+    const res = await sendRequest(prefs.id, {
+      'x-weathered-secret': 'secret'
+    });
 
-    await sendHandler(
-      sendRequest(prefs.id, { 'x-weathered-secret': 'secret' }),
-      res
-    );
-
+    expect(res.status).toBe(200);
     expect(send).toHaveBeenCalled();
     expect(schedule).toHaveBeenCalled();
     expect(save).toHaveBeenCalledWith(
@@ -446,7 +430,6 @@ describe('POST /api/send', () => {
         qstashMessageId: 'msg_next'
       })
     );
-    expect(res.status).toHaveBeenCalledWith(200);
   });
 
   test('skips a message that is not due yet and reschedules', async () => {
@@ -457,16 +440,13 @@ describe('POST /api/send', () => {
     const prefs = preferences({ time: '08:00' });
     load.mockResolvedValue(prefs);
 
-    const res = response();
-
-    await sendHandler(
-      sendRequest(prefs.id, { 'x-weathered-secret': 'secret' }),
-      res
-    );
+    const res = await sendRequest(prefs.id, {
+      'x-weathered-secret': 'secret'
+    });
 
     expect(send).not.toHaveBeenCalled();
     expect(schedule).toHaveBeenCalled();
-    expect(res.json).toHaveBeenCalledWith({
+    expect(await res.json()).toEqual({
       ok: true,
       skipped: 'not-due'
     });
@@ -488,14 +468,11 @@ describe('POST /api/send', () => {
     });
     send.mockResolvedValue('failed');
 
-    const res = response();
+    const res = await sendRequest(prefs.id, {
+      'x-weathered-secret': 'secret'
+    });
 
-    await sendHandler(
-      sendRequest(prefs.id, { 'x-weathered-secret': 'secret' }),
-      res
-    );
-
-    expect(res.status).toHaveBeenCalledWith(502);
+    expect(res.status).toBe(502);
     expect(schedule).not.toHaveBeenCalled();
   });
 
@@ -503,14 +480,11 @@ describe('POST /api/send', () => {
     process.env.CRON_SECRET = 'secret';
     load.mockResolvedValue(null);
 
-    const res = response();
+    const res = await sendRequest(preferences().id, {
+      'x-weathered-secret': 'secret'
+    });
 
-    await sendHandler(
-      sendRequest(preferences().id, { 'x-weathered-secret': 'secret' }),
-      res
-    );
-
-    expect(res.json).toHaveBeenCalledWith({
+    expect(await res.json()).toEqual({
       ok: true,
       skipped: 'missing'
     });
