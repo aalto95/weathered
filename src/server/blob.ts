@@ -1,7 +1,9 @@
 import { BlobNotFoundError, del, get, list, put } from '@vercel/blob';
+import { withTimeout } from './timeout.js';
 import type { NotificationPreferences } from './types.js';
 
 const PREFIX = 'notifications/';
+const BLOB_REQUEST_TIMEOUT_MS = 10_000;
 
 const token = () => {
   const value = process.env.BLOB_READ_WRITE_TOKEN;
@@ -17,23 +19,31 @@ export const isStorageConfigured = () =>
   Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 
 export const savePreferences = async (preferences: NotificationPreferences) => {
-  await put(pathFor(preferences.id), JSON.stringify(preferences), {
-    access: 'private',
-    allowOverwrite: true,
-    addRandomSuffix: false,
-    contentType: 'application/json',
-    token: token()
-  });
+  await withTimeout(
+    put(pathFor(preferences.id), JSON.stringify(preferences), {
+      access: 'private',
+      allowOverwrite: true,
+      addRandomSuffix: false,
+      contentType: 'application/json',
+      token: token()
+    }),
+    BLOB_REQUEST_TIMEOUT_MS,
+    'Blob write'
+  );
 };
 
 export const loadPreferences = async (
   id: string
 ): Promise<NotificationPreferences | null> => {
-  const result = await get(pathFor(id), {
-    access: 'private',
-    useCache: false,
-    token: token()
-  });
+  const result = await withTimeout(
+    get(pathFor(id), {
+      access: 'private',
+      useCache: false,
+      token: token()
+    }),
+    BLOB_REQUEST_TIMEOUT_MS,
+    'Blob read'
+  );
 
   if (!result || result.statusCode !== 200) {
     return null;
@@ -44,7 +54,11 @@ export const loadPreferences = async (
 
 export const deletePreferences = async (id: string) => {
   try {
-    await del(pathFor(id), { token: token() });
+    await withTimeout(
+      del(pathFor(id), { token: token() }),
+      BLOB_REQUEST_TIMEOUT_MS,
+      'Blob delete'
+    );
   } catch (error) {
     if (!(error instanceof BlobNotFoundError)) {
       throw error;
@@ -58,23 +72,31 @@ export const listPreferences = async (): Promise<NotificationPreferences[]> => {
   let cursor: string | undefined;
 
   do {
-    const page = await list({
-      prefix: PREFIX,
-      cursor,
-      limit: 1000,
-      token: blobToken
-    });
+    const page = await withTimeout(
+      list({
+        prefix: PREFIX,
+        cursor,
+        limit: 1000,
+        token: blobToken
+      }),
+      BLOB_REQUEST_TIMEOUT_MS,
+      'Blob list'
+    );
 
     for (const blob of page.blobs) {
       if (!blob.pathname.endsWith('.json')) {
         continue;
       }
 
-      const result = await get(blob.pathname, {
-        access: 'private',
-        useCache: false,
-        token: blobToken
-      });
+      const result = await withTimeout(
+        get(blob.pathname, {
+          access: 'private',
+          useCache: false,
+          token: blobToken
+        }),
+        BLOB_REQUEST_TIMEOUT_MS,
+        'Blob read'
+      );
 
       if (result?.statusCode === 200) {
         preferences.push(

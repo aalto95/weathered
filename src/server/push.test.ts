@@ -104,7 +104,10 @@ describe('sendPush', () => {
     );
     expect(fetchMock).toHaveBeenCalledWith(
       prefs.subscription.endpoint,
-      payload
+      expect.objectContaining({
+        ...payload,
+        signal: expect.any(AbortSignal)
+      })
     );
   });
 

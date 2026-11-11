@@ -16,6 +16,7 @@ import type { NotificationPreferences } from '../types.js';
 import { methodNotAllowed } from './shared.js';
 
 const tick = new Hono();
+const TICK_BUDGET_MS = 50_000;
 
 const runTick = async (c: Context) => {
   const secret = process.env.CRON_SECRET;
@@ -41,6 +42,7 @@ const runTick = async (c: Context) => {
   try {
     const now = DateTime.utc();
     const preferences = await listPreferences();
+    const deadline = Date.now() + TICK_BUDGET_MS;
     const result = {
       checked: preferences.length,
       sent: 0,
@@ -50,6 +52,13 @@ const runTick = async (c: Context) => {
     };
 
     for (const subscriber of preferences) {
+      if (Date.now() >= deadline) {
+        console.warn(
+          'Tick deadline reached; remaining subscribers will be handled later'
+        );
+        break;
+      }
+
       if (!isDueNow(now, subscriber)) {
         result.skipped += 1;
         continue;

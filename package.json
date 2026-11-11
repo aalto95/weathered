@@ -19,7 +19,6 @@
 	},
 	"dependencies": {
 		"@block65/webcrypto-web-push": "^2.0.0",
-		"@hono/vercel": "^1.0.1",
 		"@upstash/qstash": "^2.12.1",
 		"@vercel/blob": "^2.8.2",
 		"hono": "^4.13.17",

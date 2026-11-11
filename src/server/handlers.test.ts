@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { app as sendApp } from '../../api/send';
-import { app as subscribeApp } from '../../api/subscribe';
+import subscribeEntry, { app as subscribeApp } from '../../api/subscribe';
 import { app as testApp } from '../../api/test';
 import { app as tickApp } from '../../api/tick';
 import { app as unsubscribeApp } from '../../api/unsubscribe';
@@ -198,6 +198,19 @@ describe('POST /api/subscribe', () => {
 
     expect(res.status).toBe(405);
     expect(await res.json()).toEqual({ error: 'Method not allowed' });
+  });
+
+  test('exposes the Vercel fetch handler', async () => {
+    const res = await subscribeEntry.fetch(
+      new Request('https://weathered.test/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(validBody())
+      })
+    );
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ id: expect.any(String) });
   });
 });
 

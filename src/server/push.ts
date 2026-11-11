@@ -5,6 +5,7 @@ import {
 import type { NotificationMessage, NotificationPreferences } from './types.js';
 
 const DEFAULT_SUBJECT = 'mailto:notifications@weathered.vercel.app';
+const PUSH_REQUEST_TIMEOUT_MS = 10_000;
 
 const getVapidKeys = () => ({
   publicKey: process.env.VAPID_PUBLIC_KEY,
@@ -45,7 +46,10 @@ export const sendPush = async (
       vapid
     );
 
-    const response = await fetch(subscription.endpoint, payload);
+    const response = await fetch(subscription.endpoint, {
+      ...payload,
+      signal: AbortSignal.timeout(PUSH_REQUEST_TIMEOUT_MS)
+    });
 
     if (response.ok) {
       return 'sent';

@@ -1,4 +1,3 @@
-import { handle } from '@hono/vercel';
 import { createEndpoint } from '../src/server/endpoint.js';
 import tick from '../src/server/routes/tick.js';
 
@@ -8,4 +7,8 @@ export const config = {
   runtime: 'nodejs'
 };
 
-export default handle(app);
+export default {
+  fetch(request: Request) {
+    return app.fetch(request);
+  }
+};
