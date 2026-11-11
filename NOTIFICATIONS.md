@@ -16,9 +16,10 @@ using Vercel Blob for storage.
 4. The Vercel Cron jobs in `vercel.json` remain as a fallback. They run
    `/api/tick` hourly; anything QStash already delivered is skipped by
    `lastSentDate`, and if QStash failed the cron picks it up.
-5. `api/tick.ts` and `api/send.ts` fetch current weather from Open-Meteo, send
-   the digest with `web-push`, and record `lastSentDate` so each subscriber gets
-   at most one digest per local day.
+5. `api/tick.ts` and `api/send.ts` fetch current weather from Open-Meteo, encrypt
+   the digest with `@block65/webcrypto-web-push`, deliver it with `fetch`, and
+   record `lastSentDate` so each subscriber gets at most one digest per local
+   day.
 
 QStash gives minute-level scheduling. The Vercel Cron fallback is approximate
 because Hobby cron jobs have an hourly window.
@@ -47,7 +48,9 @@ pnpm notifications:setup
 ```
 
 This creates `.env.local` (gitignored), prints the **public** key, and keeps the
-private key and cron secret out of the terminal output.
+private key and cron secret out of the terminal output. `web-push` is only used
+by this setup script (as a dev dependency) to generate the VAPID key pair; push
+delivery itself uses `@block65/webcrypto-web-push`.
 
 Add these to Vercel for Production, Preview and Development:
 

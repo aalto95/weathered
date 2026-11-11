@@ -14,7 +14,11 @@
 		"notifications:setup": "node scripts/setup-notifications.mjs"
 	},
 	"type": "module",
+	"engines": {
+		"node": ">=22"
+	},
 	"dependencies": {
+		"@block65/webcrypto-web-push": "^2.0.0",
 		"@hono/vercel": "^1.0.1",
 		"@upstash/qstash": "^2.12.1",
 		"@vercel/blob": "^2.8.2",
@@ -23,8 +27,7 @@
 		"react": "^19.3.1",
 		"react-dom": "^19.3.1",
 		"react-redux": "^9.3.1",
-		"react-router": "^7.18.5",
-		"web-push": "^4.0.0"
+		"react-router": "^7.18.5"
 	},
 	"devDependencies": {
 		"@heroicons/react": "^2.2.0",
@@ -41,7 +44,6 @@
 		"@types/react-redux": "^7.1.35",
 		"@types/styled-components": "^5.1.36",
 		"@types/styled-theming": "^2.2.9",
-		"@types/web-push": "^3.6.4",
 		"@typescript-eslint/eslint-plugin": "^8.72.1",
 		"@typescript-eslint/parser": "^8.72.1",
 		"@vercel/node": "^30.0.0",
@@ -70,7 +72,8 @@
 		"vite-plugin-pwa": "^2.0.0",
 		"vite-tsconfig-paths": "^5.1.4",
 		"vitest": "^3.2.7",
-		"vitest-canvas-mock": "^0.3.3"
+		"vitest-canvas-mock": "^0.3.3",
+		"web-push": "^4.0.0"
 	},
 	"eslintConfig": {
 		"extends": [

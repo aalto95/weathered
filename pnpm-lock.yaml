@@ -166,6 +166,9 @@ importers:
 
   .:
     dependencies:
+      '@block65/webcrypto-web-push':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@hono/vercel':
         specifier: ^1.0.1
         version: 1.0.1(hono@4.13.17)
@@ -193,9 +196,6 @@ importers:
       react-router:
         specifier: ^7.18.5
         version: 7.18.5(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      web-push:
-        specifier: ^4.0.0
-        version: 4.0.0(supports-color@7.2.0)
     devDependencies:
       '@heroicons/react':
         specifier: ^2.2.0
@@ -239,9 +239,6 @@ importers:
       '@types/styled-theming':
         specifier: ^2.2.9
         version: 2.2.9
-      '@types/web-push':
-        specifier: ^3.6.4
-        version: 3.6.4
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.72.1
         version: 8.72.1(@typescript-eslint/parser@8.72.1(eslint@8.57.1(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3))(eslint@8.57.1(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3)
@@ -329,6 +326,9 @@ importers:
       vitest-canvas-mock:
         specifier: ^0.3.3
         version: 0.3.3(vitest@3.2.7(@edge-runtime/vm@3.2.0)(@types/node@24.19.2)(happy-dom@18.0.1)(sass@1.108.1)(supports-color@7.2.0)(terser@5.51.2)(tsx@4.21.0))
+      web-push:
+        specifier: ^4.0.0
+        version: 4.0.0(supports-color@7.2.0)
 
 packages:
 
@@ -861,6 +861,10 @@ packages:
   '@bcoe/v8-coverage@1.0.2':
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
+
+  '@block65/webcrypto-web-push@2.0.0':
+    resolution: {integrity: sha512-BMrw8hABq5krABWPy3zFJvBC73HeRkyT/GTZ2AD7wqzo9hd9vO56MstBqjGMIxIw3e4lbRUbYxgihCcfhoTI2g==}
+    engines: {node: '>=22.0.0'}
 
   '@edge-runtime/format@2.2.1':
     resolution: {integrity: sha512-JQTRVuiusQLNNLe2W9tnzBlV/GvSVcozLl4XZHk5swnRZ/v6jp8TqR8P7sqmJsQqblDZ3EztcWmLDbhRje/+8g==}
@@ -2026,9 +2030,6 @@ packages:
 
   '@types/use-sync-external-store@0.0.6':
     resolution: {integrity: sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==}
-
-  '@types/web-push@3.6.4':
-    resolution: {integrity: sha512-GnJmSr40H3RAnj0s34FNTcJi1hmWFV5KXugE0mYWnYhgTAHLJ/dJKAwDmvPJYMke0RplY2XE9LnM4hqSqKIjhQ==}
 
   '@types/whatwg-mimetype@3.0.2':
     resolution: {integrity: sha512-c2AKvDT8ToxLIOUlN51gTiHXflsfIFisS4pO7pDPoKouJCESkhZnEy623gwP9laCy5lnLDAw1vAzu2vM2YLOrA==}
@@ -4228,6 +4229,10 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  uint8array-extras@1.6.0:
+    resolution: {integrity: sha512-8iAasVS4wUx0gPLjH8Xtz2PeDzTSiy8QiLGu2DT3X5GU+egFEQhpnbtkehbAwjvDcxIERmCYcysiODFmE3Ud0Q==}
+    engines: {node: '>=18'}
+
   unbox-primitive@1.1.0:
     resolution: {integrity: sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw==}
     engines: {node: '>= 0.4'}
@@ -5219,6 +5224,10 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
+  '@block65/webcrypto-web-push@2.0.0':
+    dependencies:
+      uint8array-extras: 1.6.0
+
   '@edge-runtime/format@2.2.1': {}
 
   '@edge-runtime/node-utils@2.3.0': {}
@@ -6023,10 +6032,6 @@ snapshots:
   '@types/trusted-types@2.0.7': {}
 
   '@types/use-sync-external-store@0.0.6': {}
-
-  '@types/web-push@3.6.4':
-    dependencies:
-      '@types/node': 24.19.2
 
   '@types/whatwg-mimetype@3.0.2': {}
 
@@ -8583,6 +8588,8 @@ snapshots:
       reflect.getprototypeof: 1.0.10
 
   typescript@5.9.3: {}
+
+  uint8array-extras@1.6.0: {}
 
   unbox-primitive@1.1.0:
     dependencies:
