@@ -23,8 +23,12 @@ subscribe.post('/', async (c) => {
     const payload = parseSubscribePayload(await readJsonBody(c));
     const id = payload.id ?? randomUUID();
     const existing = payload.id ? await loadPreferences(payload.id) : null;
+    const scheduleChanged =
+      !existing ||
+      existing.time !== payload.time ||
+      existing.timezone !== payload.timezone;
 
-    if (existing?.qstashMessageId) {
+    if (existing?.qstashMessageId && scheduleChanged) {
       await cancelNotification(existing.qstashMessageId);
     }
 
@@ -44,16 +48,24 @@ subscribe.post('/', async (c) => {
 
     await savePreferences(preferences);
 
-    try {
-      const messageId = await scheduleNextDelivery(preferences, getAppUrl(c));
+    // Background syncs update favorites and language. They should not cancel a
+    // pending QStash message unless the delivery time itself changed.
+    if (scheduleChanged || !existing?.qstashMessageId) {
+      try {
+        const messageId = await scheduleNextDelivery(
+          preferences,
+          getAppUrl(c),
+          true
+        );
 
-      if (messageId) {
-        preferences.qstashMessageId = messageId;
-        await savePreferences(preferences);
+        if (messageId) {
+          preferences.qstashMessageId = messageId;
+          await savePreferences(preferences);
+        }
+      } catch (error) {
+        // The hourly Vercel Cron still acts as a fallback.
+        console.error('Failed to schedule the next QStash delivery', error);
       }
-    } catch (error) {
-      // The hourly Vercel Cron still acts as a fallback.
-      console.error('Failed to schedule the next QStash delivery', error);
     }
 
     return c.json({ id });

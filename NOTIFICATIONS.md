@@ -35,10 +35,11 @@ project and injects `BLOB_READ_WRITE_TOKEN` automatically.
 | `VAPID_PRIVATE_KEY`          | Web Push private key (server only, secret) |
 | `VAPID_SUBJECT`              | Contact URL or `mailto:` address           |
 | `VITE_VAPID_PUBLIC_KEY`      | Public key exposed to the Vite build       |
-| `QSTASH_TOKEN`               | Upstash QStash token                       |
+| `QSTASH_TOKEN`               | Upstash QStash token (required for precise scheduling) |
 | `QSTASH_CURRENT_SIGNING_KEY` | QStash request verification key            |
 | `QSTASH_NEXT_SIGNING_KEY`    | QStash key-rotation verification key       |
 | `CRON_SECRET`                | Shared secret for `/api/tick`              |
+| `APP_URL`                    | Optional public base URL for QStash calls  |
 | `BLOB_READ_WRITE_TOKEN`      | Injected by Vercel Blob                    |
 
 Generate and write the local configuration:
@@ -112,6 +113,26 @@ curl -X POST \
 | `/api/test`        | `POST`       | Send a test notification                                      |
 | `/api/send`        | `POST`       | QStash delivery endpoint for one subscriber                   |
 | `/api/tick`        | `GET`/`POST` | Fallback sweep for due subscriptions (requires `CRON_SECRET`) |
+
+## Notifications arrive late
+
+Precise delivery depends on `QSTASH_TOKEN`. The signing keys are only needed to
+verify incoming QStash requests; they are not required for scheduling.
+
+1. Check the Vercel logs for `Scheduled QStash delivery <id> ... at <time>`.
+   If that line is missing, QStash is not scheduling and only the cron fallback
+   is active.
+2. If you see `QSTASH_TOKEN is not configured`, add the token to Vercel.
+3. Check `APP_URL` in Vercel. It must be your public production URL or unset.
+   A `localhost` value makes QStash deliver to an unreachable host; the code now
+   ignores localhost values, but leaving it unset is safest.
+4. The Vercel cron fallback is hourly and may run anywhere inside its window.
+   The GitHub Actions workflow runs every 5 minutes, but it needs the
+   `CRON_SECRET` repository secret and GitHub disables scheduled workflows after
+   60 days without repository activity.
+5. Opening the app no longer cancels a pending QStash message unless the
+   delivery time or timezone changed. Favorites/language syncs leave the
+   schedule untouched.
 
 ## Limitations
 

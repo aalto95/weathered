@@ -165,7 +165,10 @@ describe('POST /api/subscribe', () => {
   });
 
   test('updates an existing subscription and preserves creation time', async () => {
-    const existing = preferences({ qstashMessageId: 'msg_old' });
+    const existing = preferences({
+      time: '09:00',
+      qstashMessageId: 'msg_old'
+    });
     load.mockResolvedValue(existing);
 
     const res = await post('/api/subscribe', {
@@ -182,6 +185,34 @@ describe('POST /api/subscribe', () => {
       })
     );
     expect(schedule).toHaveBeenCalled();
+  });
+
+  test('keeps a pending schedule when only favorites change', async () => {
+    const existing = preferences({ qstashMessageId: 'msg_old' });
+    load.mockResolvedValue(existing);
+    const favorites = [
+      ...validBody().favorites,
+      {
+        id: 2,
+        name: 'Paris',
+        country: 'FR',
+        latitude: 48.86,
+        longitude: 2.35
+      }
+    ];
+
+    const res = await post('/api/subscribe', {
+      ...validBody(),
+      id: existing.id,
+      favorites
+    });
+
+    expect(res.status).toBe(200);
+    expect(cancel).not.toHaveBeenCalled();
+    expect(schedule).not.toHaveBeenCalled();
+    expect(save).toHaveBeenCalledWith(
+      expect.objectContaining({ id: existing.id, favorites })
+    );
   });
 
   test('rejects invalid input', async () => {

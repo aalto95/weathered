@@ -77,6 +77,11 @@ send.post('/', async (c) => {
 
     const summaries = await fetchWeatherSummaries(preferences.favorites);
     const message = buildDailyNotification(summaries, preferences.lang);
+    console.info(
+      `Sending digest for ${id} at ${now.toISO()} (${preferences.time} ${
+        preferences.timezone
+      })`
+    );
     const outcome = await sendPush(preferences, message);
 
     if (outcome === 'expired') {

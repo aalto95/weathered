@@ -9,7 +9,7 @@ import {
 import { buildDailyNotification, fetchWeatherSummaries } from '../digest.js';
 import { getAppUrl } from '../http.js';
 import { isPushConfigured, sendPush } from '../push.js';
-import { cancelNotification } from '../qstash.js';
+import { cancelNotification, isQstashConfigured } from '../qstash.js';
 import { isDueNow, localDateKey } from '../schedule.js';
 import { scheduleNextDelivery } from '../scheduler.js';
 import type { NotificationPreferences } from '../types.js';
@@ -48,7 +48,8 @@ const runTick = async (c: Context) => {
       sent: 0,
       skipped: 0,
       expired: 0,
-      failed: 0
+      failed: 0,
+      qstash: isQstashConfigured()
     };
 
     for (const subscriber of preferences) {

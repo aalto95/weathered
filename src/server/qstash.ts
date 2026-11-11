@@ -18,7 +18,10 @@ const getClient = () => {
 };
 
 export const isQstashConfigured = () =>
-  Boolean(token && currentSigningKey && nextSigningKey);
+  // Scheduling only needs the token. The signing keys are only required to
+  // verify incoming QStash requests, so don't disable precise scheduling when
+  // they are absent.
+  Boolean(token);
 
 export const scheduleNotification = async (
   url: string,
