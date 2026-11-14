@@ -1,50 +1,84 @@
-# Getting Started with Create React App
+# Weathered
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A weather forecast **Progressive Web App**. Search for a city or use your current
+location to see current conditions, hourly and daily forecasts, and save favorite places.
 
-## Daily notifications
+## Features
 
-Daily weather push notifications are implemented with Vercel Functions, Vercel Blob and a GitHub Actions scheduler. See [NOTIFICATIONS.md](./NOTIFICATIONS.md) for the setup and deployment steps.
+- Current conditions, hourly forecast and daily forecast (Open-Meteo)
+- City search with geocoding; "use my location" via browser geolocation and reverse geocoding
+- Favorites and a dedicated notifications screen
+- Animated weather illustrations (Rive) that follow the WMO weather code
+- English and Russian UI, light and dark themes
+- Installable PWA: app-shell precache, offline caching for weather/geocoding requests,
+  and an in-app update prompt
+- Optional daily push notifications (Vercel Functions + QStash + Vercel Blob + GitHub
+  Actions scheduler) — see [NOTIFICATIONS.md](./NOTIFICATIONS.md)
 
-## Available Scripts
+## Tech stack
 
-In the project directory, you can run:
+React 19 · TypeScript · Vite 7 · Redux Toolkit / React Redux · React Router 7 ·
+styled-components · i18next · Rive · `vite-plugin-pwa` · Vitest + Testing Library ·
+ESLint + Prettier
 
-### `yarn start`
+## Requirements
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Node.js >= 22
+- pnpm 12 (`packageManager` is pinned in `package.json`)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Getting started
 
-### `yarn test`
+```bash
+pnpm install
+pnpm start
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The dev server starts on <http://localhost:3000> and opens automatically.
 
-### `yarn build`
+No API keys are needed for the weather itself: the app talks to the public
+[Open-Meteo](https://open-meteo.com/) forecast and geocoding APIs and
+[BigDataCloud](https://www.bigdatacloud.com/) for reverse geocoding.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Scripts
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+| Command | Description |
+| --- | --- |
+| `pnpm start` | Vite dev server on port 3000 |
+| `pnpm build` | Production build to `dist/` |
+| `pnpm test` | Vitest with coverage |
+| `pnpm lint` / `pnpm lint:fix` | ESLint |
+| `pnpm prettier` / `pnpm prettier:fix` | Prettier check / write |
+| `pnpm notifications:setup` | Generate VAPID keys into `.env.local` |
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Push notifications (optional)
 
-### `yarn eject`
+Daily forecast notifications are implemented as Vercel Functions in `api/`, scheduled by
+`vercel.json` crons and per-subscriber QStash jobs. Setup and deployment are documented in
+[NOTIFICATIONS.md](./NOTIFICATIONS.md); `.env.example` lists every required variable.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+For local development of the notification backend:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+pnpm notifications:setup   # writes VAPID keys to .env.local
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Project layout
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```
+api/                    Vercel Functions (subscribe, unsubscribe, tick, send, test)
+src/
+  api/                  Open-Meteo / BigDataCloud clients, WMO code mapping
+  app/                  Redux store and typed hooks
+  components/           UI: header, search, sidebar, animations, PWA prompts
+  features/app-slice.ts Redux slice
+  pages/                Search, Favorites, Notifications
+  server/               Push, scheduling, validation and Blob helpers
+  hooks/                Push notification hook
+public/                 Manifest, service-worker push handler, Rive assets, splash screens
+```
 
-## Learn More
+## Deployment
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+The project targets **Vercel**: the SPA is built with Vite, `api/` holds the serverless
+functions, `vercel.json` configures hourly crons and SPA rewrites, and the PWA manifest
+points at `weathered.vercel.app`.
